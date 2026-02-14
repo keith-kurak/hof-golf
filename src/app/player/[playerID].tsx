@@ -29,6 +29,7 @@ type Bio = {
 };
 
 type YearRange = { minYear: number; maxYear: number };
+type HofStatus = { yearid: number; category: string };
 
 function StatSection({
   title,
@@ -125,6 +126,7 @@ export default function PlayerDetailScreen() {
   const [year, setYear] = useState(yearParam ? Number(yearParam) : 2025);
   const [bio, setBio] = useState<Bio | null>(null);
   const [yearRange, setYearRange] = useState<YearRange | null>(null);
+  const [hofStatus, setHofStatus] = useState<HofStatus | null>(null);
   const [yearTeams, setYearTeams] = useState<string[]>([]);
   const [yearBatting, setYearBatting] = useState<BattingStats | null>(null);
   const [yearPitching, setYearPitching] = useState<PitchingStats | null>(null);
@@ -142,6 +144,11 @@ export default function PlayerDetailScreen() {
     db.getFirstAsync<YearRange>(YEAR_RANGE_QUERY, [playerID, playerID]).then(
       (r) => r && setYearRange(r),
     );
+
+    db.getFirstAsync<HofStatus>(
+      `SELECT yearid, category FROM HallOfFame WHERE playerID = ? AND inducted = 'Y'`,
+      [playerID],
+    ).then(setHofStatus);
 
     db.getFirstAsync<BattingStats>(battingQuery(), [playerID]).then((r) =>
       setCareerBatting(hasData(r) ? r : null),
@@ -181,6 +188,11 @@ export default function PlayerDetailScreen() {
 
         {bio && (
           <View style={styles.bioSection}>
+            {hofStatus && (
+              <ThemedText type="default">
+                Hall of Fame, elected in {hofStatus.yearid}
+              </ThemedText>
+            )}
             <ThemedText type="small" themeColor="textSecondary">
               B/T: {bio.bats ?? "—"}/{bio.throws ?? "—"}
               {"  "}Debut: {bio.debut ?? "—"}
