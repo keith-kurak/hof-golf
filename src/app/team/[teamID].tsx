@@ -1,7 +1,7 @@
-import { useLocalSearchParams, Stack } from "expo-router";
+import { useLocalSearchParams, Stack, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -29,6 +29,7 @@ export default function TeamRosterScreen() {
     year?: string;
   }>();
   const db = useSQLiteContext();
+  const router = useRouter();
   const [year, setYear] = useState(yearParam ? Number(yearParam) : 2025);
   const [players, setPlayers] = useState<Player[]>([]);
 
@@ -134,24 +135,37 @@ export default function TeamRosterScreen() {
           </>
         }
         renderItem={({ item }) => (
-          <ThemedView type="backgroundElement" style={styles.playerRow}>
-            <ThemedText
-              type="code"
-              themeColor="textSecondary"
-              style={styles.posCol}
-            >
-              {formatPositions(item)}
-            </ThemedText>
-            <ThemedText style={styles.nameCol}>
-              {item.nameFirst} {item.nameLast}
-            </ThemedText>
-            <ThemedText themeColor="textSecondary" type="small" style={styles.statCol}>
-              {item.G_all}
-            </ThemedText>
-            <ThemedText themeColor="textSecondary" type="small" style={styles.statCol}>
-              {item.bats ?? "—"}/{item.throws ?? "—"}
-            </ThemedText>
-          </ThemedView>
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/player/[playerID]",
+                params: {
+                  playerID: item.playerID,
+                  playerName: `${item.nameFirst} ${item.nameLast}`,
+                  year: String(year),
+                },
+              })
+            }
+          >
+            <ThemedView type="backgroundElement" style={styles.playerRow}>
+              <ThemedText
+                type="code"
+                themeColor="textSecondary"
+                style={styles.posCol}
+              >
+                {formatPositions(item)}
+              </ThemedText>
+              <ThemedText style={styles.nameCol}>
+                {item.nameFirst} {item.nameLast}
+              </ThemedText>
+              <ThemedText themeColor="textSecondary" type="small" style={styles.statCol}>
+                {item.G_all}
+              </ThemedText>
+              <ThemedText themeColor="textSecondary" type="small" style={styles.statCol}>
+                {item.bats ?? "—"}/{item.throws ?? "—"}
+              </ThemedText>
+            </ThemedView>
+          </Pressable>
         )}
       />
     </ThemedView>

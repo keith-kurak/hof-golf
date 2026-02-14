@@ -25,6 +25,10 @@ export default function RootLayout() {
             name="team/[teamID]"
             options={{ title: "Roster" }}
           />
+          <Stack.Screen
+            name="player/[playerID]"
+            options={{ title: "Player" }}
+          />
         </Stack>
       </ThemeProvider>
     </SQLiteProvider>
