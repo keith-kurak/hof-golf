@@ -5,6 +5,7 @@ import { FlatList, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
 
 type Player = {
@@ -22,11 +23,13 @@ function formatPositions(row: Player): string {
 }
 
 export default function TeamRosterScreen() {
-  const { teamID, teamName } = useLocalSearchParams<{
+  const { teamID, teamName, year: yearParam } = useLocalSearchParams<{
     teamID: string;
     teamName?: string;
+    year?: string;
   }>();
   const db = useSQLiteContext();
+  const [year, setYear] = useState(yearParam ? Number(yearParam) : 2025);
   const [players, setPlayers] = useState<Player[]>([]);
 
   useEffect(() => {
@@ -98,11 +101,11 @@ export default function TeamRosterScreen() {
          END as positions
        FROM Appearances a
        JOIN People p ON a.playerID = p.playerID
-       WHERE a.yearID = 2025 AND a.teamID = ?
+       WHERE a.yearID = ? AND a.teamID = ?
        ORDER BY a.G_all DESC`,
-      [teamID]
+      [year, teamID]
     ).then(setPlayers);
-  }, [db, teamID]);
+  }, [db, teamID, year]);
 
   return (
     <ThemedView style={styles.container}>
@@ -112,6 +115,8 @@ export default function TeamRosterScreen() {
         keyExtractor={(item) => item.playerID}
         contentContainerStyle={styles.list}
         ListHeaderComponent={
+          <>
+          <YearPicker year={year} onYearChange={setYear} />
           <View style={styles.headerRow}>
             <ThemedText type="smallBold" style={styles.posCol}>
               POS
@@ -126,6 +131,7 @@ export default function TeamRosterScreen() {
               B/T
             </ThemedText>
           </View>
+          </>
         }
         renderItem={({ item }) => (
           <ThemedView type="backgroundElement" style={styles.playerRow}>

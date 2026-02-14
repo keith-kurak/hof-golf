@@ -5,6 +5,7 @@ import { Pressable, SectionList, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
 
 type Team = {
@@ -35,14 +36,16 @@ const DIVISION_ORDER = ["AL-E", "AL-C", "AL-W", "NL-E", "NL-C", "NL-W"];
 export default function TeamsScreen() {
   const db = useSQLiteContext();
   const router = useRouter();
+  const [year, setYear] = useState(2025);
   const [sections, setSections] = useState<Section[]>([]);
 
   useEffect(() => {
     db.getAllAsync<Team>(
       `SELECT teamID, name, lgID, divID, W, L
        FROM Teams
-       WHERE yearID = 2025
-       ORDER BY lgID, divID, W DESC`
+       WHERE yearID = ?
+       ORDER BY lgID, divID, W DESC`,
+      [year]
     ).then((teams) => {
       const grouped: Record<string, Team[]> = {};
       for (const team of teams) {
@@ -59,7 +62,7 @@ export default function TeamsScreen() {
           }))
       );
     });
-  }, [db]);
+  }, [db, year]);
 
   return (
     <ThemedView style={styles.container}>
@@ -68,6 +71,7 @@ export default function TeamsScreen() {
         keyExtractor={(item) => item.teamID}
         contentContainerStyle={styles.list}
         stickySectionHeadersEnabled={false}
+        ListHeaderComponent={<YearPicker year={year} onYearChange={setYear} />}
         renderSectionHeader={({ section }) => (
           <ThemedText type="smallBold" style={styles.sectionHeader}>
             {section.title}
@@ -78,7 +82,7 @@ export default function TeamsScreen() {
             onPress={() =>
               router.push({
                 pathname: "/team/[teamID]",
-                params: { teamID: item.teamID, teamName: item.name },
+                params: { teamID: item.teamID, teamName: item.name, year: String(year) },
               })
             }
             style={({ pressed }) => pressed && styles.pressed}
