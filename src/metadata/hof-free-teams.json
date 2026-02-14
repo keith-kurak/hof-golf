@@ -1,0 +1,3432 @@
+[
+  {
+    "yearID": 1947,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 1947,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 1947,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 1948,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 1948,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 1948,
+    "teamID": "SLA",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "St. Louis Browns"
+  },
+  {
+    "yearID": 1949,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 1949,
+    "teamID": "SLA",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "St. Louis Browns"
+  },
+  {
+    "yearID": 1949,
+    "teamID": "WS1",
+    "franchID": "MIN",
+    "lgID": "AL",
+    "name": "Washington Senators"
+  },
+  {
+    "yearID": 1950,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 1950,
+    "teamID": "SLA",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "St. Louis Browns"
+  },
+  {
+    "yearID": 1951,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 1951,
+    "teamID": "PHA",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Philadelphia Athletics"
+  },
+  {
+    "yearID": 1952,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 1952,
+    "teamID": "PHA",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Philadelphia Athletics"
+  },
+  {
+    "yearID": 1953,
+    "teamID": "PHA",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Philadelphia Athletics"
+  },
+  {
+    "yearID": 1954,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 1954,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Redlegs"
+  },
+  {
+    "yearID": 1954,
+    "teamID": "PHA",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Philadelphia Athletics"
+  },
+  {
+    "yearID": 1954,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 1955,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Redlegs"
+  },
+  {
+    "yearID": 1961,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1961,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels"
+  },
+  {
+    "yearID": 1961,
+    "teamID": "WS2",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Washington Senators"
+  },
+  {
+    "yearID": 1962,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1962,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "NL",
+    "name": "Houston Colt .45's"
+  },
+  {
+    "yearID": 1962,
+    "teamID": "KC1",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Kansas City Athletics"
+  },
+  {
+    "yearID": 1962,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels"
+  },
+  {
+    "yearID": 1962,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 1962,
+    "teamID": "WS2",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Washington Senators"
+  },
+  {
+    "yearID": 1963,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels"
+  },
+  {
+    "yearID": 1964,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1964,
+    "teamID": "KC1",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Kansas City Athletics"
+  },
+  {
+    "yearID": 1964,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels"
+  },
+  {
+    "yearID": 1965,
+    "teamID": "CAL",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "California Angels"
+  },
+  {
+    "yearID": 1965,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1966,
+    "teamID": "CAL",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "California Angels"
+  },
+  {
+    "yearID": 1966,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1967,
+    "teamID": "CAL",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "California Angels"
+  },
+  {
+    "yearID": 1967,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1968,
+    "teamID": "CAL",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "California Angels"
+  },
+  {
+    "yearID": 1968,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1968,
+    "teamID": "WS2",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Washington Senators"
+  },
+  {
+    "yearID": 1969,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1969,
+    "teamID": "MON",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Montreal Expos"
+  },
+  {
+    "yearID": 1969,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 1969,
+    "teamID": "SE1",
+    "franchID": "MIL",
+    "lgID": "AL",
+    "name": "Seattle Pilots"
+  },
+  {
+    "yearID": 1970,
+    "teamID": "CAL",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "California Angels"
+  },
+  {
+    "yearID": 1970,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1970,
+    "teamID": "ML4",
+    "franchID": "MIL",
+    "lgID": "AL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 1970,
+    "teamID": "MON",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Montreal Expos"
+  },
+  {
+    "yearID": 1970,
+    "teamID": "NYA",
+    "franchID": "NYY",
+    "lgID": "AL",
+    "name": "New York Yankees"
+  },
+  {
+    "yearID": 1970,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 1971,
+    "teamID": "CAL",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "California Angels"
+  },
+  {
+    "yearID": 1971,
+    "teamID": "CHA",
+    "franchID": "CHW",
+    "lgID": "AL",
+    "name": "Chicago White Sox"
+  },
+  {
+    "yearID": 1971,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1971,
+    "teamID": "ML4",
+    "franchID": "MIL",
+    "lgID": "AL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 1971,
+    "teamID": "MON",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Montreal Expos"
+  },
+  {
+    "yearID": 1971,
+    "teamID": "NYA",
+    "franchID": "NYY",
+    "lgID": "AL",
+    "name": "New York Yankees"
+  },
+  {
+    "yearID": 1971,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 1972,
+    "teamID": "ML4",
+    "franchID": "MIL",
+    "lgID": "AL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 1972,
+    "teamID": "MON",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Montreal Expos"
+  },
+  {
+    "yearID": 1972,
+    "teamID": "NYA",
+    "franchID": "NYY",
+    "lgID": "AL",
+    "name": "New York Yankees"
+  },
+  {
+    "yearID": 1972,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 1973,
+    "teamID": "ML4",
+    "franchID": "MIL",
+    "lgID": "AL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 1973,
+    "teamID": "MON",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Montreal Expos"
+  },
+  {
+    "yearID": 1973,
+    "teamID": "NYA",
+    "franchID": "NYY",
+    "lgID": "AL",
+    "name": "New York Yankees"
+  },
+  {
+    "yearID": 1974,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "NL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 1974,
+    "teamID": "NYA",
+    "franchID": "NYY",
+    "lgID": "AL",
+    "name": "New York Yankees"
+  },
+  {
+    "yearID": 1974,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1975,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 1975,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 1975,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "NL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 1975,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1976,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 1976,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "NL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 1976,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1977,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "NL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 1977,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 1977,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 1978,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1978,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "NL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 1978,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 1978,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 1978,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 1979,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1979,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "NL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 1979,
+    "teamID": "MIN",
+    "franchID": "MIN",
+    "lgID": "AL",
+    "name": "Minnesota Twins"
+  },
+  {
+    "yearID": 1979,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 1979,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 1980,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1980,
+    "teamID": "MIN",
+    "franchID": "MIN",
+    "lgID": "AL",
+    "name": "Minnesota Twins"
+  },
+  {
+    "yearID": 1980,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 1980,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 1981,
+    "teamID": "MIN",
+    "franchID": "MIN",
+    "lgID": "AL",
+    "name": "Minnesota Twins"
+  },
+  {
+    "yearID": 1981,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 1981,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 1982,
+    "teamID": "MIN",
+    "franchID": "MIN",
+    "lgID": "AL",
+    "name": "Minnesota Twins"
+  },
+  {
+    "yearID": 1982,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 1982,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 1983,
+    "teamID": "MIN",
+    "franchID": "MIN",
+    "lgID": "AL",
+    "name": "Minnesota Twins"
+  },
+  {
+    "yearID": 1983,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 1984,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 1984,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 1984,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 1984,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 1985,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 1985,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 1985,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1985,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 1986,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 1987,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1987,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 1988,
+    "teamID": "CAL",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "California Angels"
+  },
+  {
+    "yearID": 1988,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1988,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1988,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 1989,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1990,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 1990,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 1990,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 1991,
+    "teamID": "NYA",
+    "franchID": "NYY",
+    "lgID": "AL",
+    "name": "New York Yankees"
+  },
+  {
+    "yearID": 1991,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 1991,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 1991,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1992,
+    "teamID": "NYA",
+    "franchID": "NYY",
+    "lgID": "AL",
+    "name": "New York Yankees"
+  },
+  {
+    "yearID": 1992,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 1992,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1993,
+    "teamID": "CAL",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "California Angels"
+  },
+  {
+    "yearID": 1993,
+    "teamID": "COL",
+    "franchID": "COL",
+    "lgID": "NL",
+    "name": "Colorado Rockies"
+  },
+  {
+    "yearID": 1993,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 1993,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1994,
+    "teamID": "CAL",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "California Angels"
+  },
+  {
+    "yearID": 1994,
+    "teamID": "COL",
+    "franchID": "COL",
+    "lgID": "NL",
+    "name": "Colorado Rockies"
+  },
+  {
+    "yearID": 1994,
+    "teamID": "FLO",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Florida Marlins"
+  },
+  {
+    "yearID": 1994,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 1994,
+    "teamID": "ML4",
+    "franchID": "MIL",
+    "lgID": "AL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 1994,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 1994,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1995,
+    "teamID": "BOS",
+    "franchID": "BOS",
+    "lgID": "AL",
+    "name": "Boston Red Sox"
+  },
+  {
+    "yearID": 1995,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 1995,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 1995,
+    "teamID": "ML4",
+    "franchID": "MIL",
+    "lgID": "AL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 1995,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 1995,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1996,
+    "teamID": "BOS",
+    "franchID": "BOS",
+    "lgID": "AL",
+    "name": "Boston Red Sox"
+  },
+  {
+    "yearID": 1996,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 1996,
+    "teamID": "ML4",
+    "franchID": "MIL",
+    "lgID": "AL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 1996,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 1996,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 1996,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 1997,
+    "teamID": "BOS",
+    "franchID": "BOS",
+    "lgID": "AL",
+    "name": "Boston Red Sox"
+  },
+  {
+    "yearID": 1997,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 1997,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 1997,
+    "teamID": "ML4",
+    "franchID": "MIL",
+    "lgID": "AL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 1997,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 1997,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 1997,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 1997,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 1998,
+    "teamID": "ANA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Anaheim Angels"
+  },
+  {
+    "yearID": 1998,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 1998,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 1998,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 1998,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 1998,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 1998,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 1999,
+    "teamID": "ANA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Anaheim Angels"
+  },
+  {
+    "yearID": 1999,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 1999,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 1999,
+    "teamID": "FLO",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Florida Marlins"
+  },
+  {
+    "yearID": 1999,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 1999,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 1999,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2000,
+    "teamID": "ANA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Anaheim Angels"
+  },
+  {
+    "yearID": 2000,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2000,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 2000,
+    "teamID": "FLO",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Florida Marlins"
+  },
+  {
+    "yearID": 2000,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2000,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2000,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2000,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2001,
+    "teamID": "ANA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Anaheim Angels"
+  },
+  {
+    "yearID": 2001,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 2001,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2001,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2001,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2001,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2002,
+    "teamID": "ANA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Anaheim Angels"
+  },
+  {
+    "yearID": 2002,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2002,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 2002,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2002,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2002,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2002,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2002,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Devil Rays"
+  },
+  {
+    "yearID": 2003,
+    "teamID": "ANA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Anaheim Angels"
+  },
+  {
+    "yearID": 2003,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2003,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2003,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2003,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2003,
+    "teamID": "MIN",
+    "franchID": "MIN",
+    "lgID": "AL",
+    "name": "Minnesota Twins"
+  },
+  {
+    "yearID": 2003,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2003,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2003,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2003,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Devil Rays"
+  },
+  {
+    "yearID": 2003,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 2004,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2004,
+    "teamID": "FLO",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Florida Marlins"
+  },
+  {
+    "yearID": 2004,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2004,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2004,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2004,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2004,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2004,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 2005,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 2005,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2005,
+    "teamID": "FLO",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Florida Marlins"
+  },
+  {
+    "yearID": 2005,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2005,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2005,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2005,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2005,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2005,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Devil Rays"
+  },
+  {
+    "yearID": 2005,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 2006,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 2006,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2006,
+    "teamID": "FLO",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Florida Marlins"
+  },
+  {
+    "yearID": 2006,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2006,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2006,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 2006,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2006,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2006,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Devil Rays"
+  },
+  {
+    "yearID": 2006,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 2007,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2007,
+    "teamID": "FLO",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Florida Marlins"
+  },
+  {
+    "yearID": 2007,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2007,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2007,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 2007,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2007,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2007,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Devil Rays"
+  },
+  {
+    "yearID": 2007,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 2007,
+    "teamID": "WAS",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Washington Nationals"
+  },
+  {
+    "yearID": 2008,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2008,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2008,
+    "teamID": "FLO",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Florida Marlins"
+  },
+  {
+    "yearID": 2008,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "NL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 2008,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2008,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 2008,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2008,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2008,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2008,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 2008,
+    "teamID": "WAS",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Washington Nationals"
+  },
+  {
+    "yearID": 2009,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 2009,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2009,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2009,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 2009,
+    "teamID": "FLO",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Florida Marlins"
+  },
+  {
+    "yearID": 2009,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2009,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2009,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2009,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 2009,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2009,
+    "teamID": "WAS",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Washington Nationals"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "CHA",
+    "franchID": "CHW",
+    "lgID": "AL",
+    "name": "Chicago White Sox"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "FLO",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Florida Marlins"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "NL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels of Anaheim"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2010,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "CHA",
+    "franchID": "CHW",
+    "lgID": "AL",
+    "name": "Chicago White Sox"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "FLO",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Florida Marlins"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "NL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels of Anaheim"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "LAN",
+    "franchID": "LAD",
+    "lgID": "NL",
+    "name": "Los Angeles Dodgers"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2011,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "CHA",
+    "franchID": "CHW",
+    "lgID": "AL",
+    "name": "Chicago White Sox"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "NL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels of Anaheim"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "LAN",
+    "franchID": "LAD",
+    "lgID": "NL",
+    "name": "Los Angeles Dodgers"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "MIA",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Miami Marlins"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "SLN",
+    "franchID": "STL",
+    "lgID": "NL",
+    "name": "St. Louis Cardinals"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 2012,
+    "teamID": "WAS",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Washington Nationals"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "ATL",
+    "franchID": "ATL",
+    "lgID": "NL",
+    "name": "Atlanta Braves"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "CHA",
+    "franchID": "CHW",
+    "lgID": "AL",
+    "name": "Chicago White Sox"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "AL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels of Anaheim"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "LAN",
+    "franchID": "LAD",
+    "lgID": "NL",
+    "name": "Los Angeles Dodgers"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "MIA",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Miami Marlins"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "SLN",
+    "franchID": "STL",
+    "lgID": "NL",
+    "name": "St. Louis Cardinals"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 2013,
+    "teamID": "WAS",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Washington Nationals"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "ATL",
+    "franchID": "ATL",
+    "lgID": "NL",
+    "name": "Atlanta Braves"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "CHA",
+    "franchID": "CHW",
+    "lgID": "AL",
+    "name": "Chicago White Sox"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "COL",
+    "franchID": "COL",
+    "lgID": "NL",
+    "name": "Colorado Rockies"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "AL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels of Anaheim"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "LAN",
+    "franchID": "LAD",
+    "lgID": "NL",
+    "name": "Los Angeles Dodgers"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "MIA",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Miami Marlins"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "SLN",
+    "franchID": "STL",
+    "lgID": "NL",
+    "name": "St. Louis Cardinals"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 2014,
+    "teamID": "WAS",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Washington Nationals"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "ATL",
+    "franchID": "ATL",
+    "lgID": "NL",
+    "name": "Atlanta Braves"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "CHA",
+    "franchID": "CHW",
+    "lgID": "AL",
+    "name": "Chicago White Sox"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "COL",
+    "franchID": "COL",
+    "lgID": "NL",
+    "name": "Colorado Rockies"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "AL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels of Anaheim"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "LAN",
+    "franchID": "LAD",
+    "lgID": "NL",
+    "name": "Los Angeles Dodgers"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "SLN",
+    "franchID": "STL",
+    "lgID": "NL",
+    "name": "St. Louis Cardinals"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 2015,
+    "teamID": "WAS",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Washington Nationals"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "ATL",
+    "franchID": "ATL",
+    "lgID": "NL",
+    "name": "Atlanta Braves"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "CHA",
+    "franchID": "CHW",
+    "lgID": "AL",
+    "name": "Chicago White Sox"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "COL",
+    "franchID": "COL",
+    "lgID": "NL",
+    "name": "Colorado Rockies"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "AL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels of Anaheim"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "LAN",
+    "franchID": "LAD",
+    "lgID": "NL",
+    "name": "Los Angeles Dodgers"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "SLN",
+    "franchID": "STL",
+    "lgID": "NL",
+    "name": "St. Louis Cardinals"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 2016,
+    "teamID": "WAS",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Washington Nationals"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "ATL",
+    "franchID": "ATL",
+    "lgID": "NL",
+    "name": "Atlanta Braves"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "BOS",
+    "franchID": "BOS",
+    "lgID": "AL",
+    "name": "Boston Red Sox"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "CHA",
+    "franchID": "CHW",
+    "lgID": "AL",
+    "name": "Chicago White Sox"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "COL",
+    "franchID": "COL",
+    "lgID": "NL",
+    "name": "Colorado Rockies"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "AL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels of Anaheim"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "LAN",
+    "franchID": "LAD",
+    "lgID": "NL",
+    "name": "Los Angeles Dodgers"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "SEA",
+    "franchID": "SEA",
+    "lgID": "AL",
+    "name": "Seattle Mariners"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "SLN",
+    "franchID": "STL",
+    "lgID": "NL",
+    "name": "St. Louis Cardinals"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 2017,
+    "teamID": "WAS",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Washington Nationals"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "ATL",
+    "franchID": "ATL",
+    "lgID": "NL",
+    "name": "Atlanta Braves"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "BOS",
+    "franchID": "BOS",
+    "lgID": "AL",
+    "name": "Boston Red Sox"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "CHA",
+    "franchID": "CHW",
+    "lgID": "AL",
+    "name": "Chicago White Sox"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "COL",
+    "franchID": "COL",
+    "lgID": "NL",
+    "name": "Colorado Rockies"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "AL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels of Anaheim"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "LAN",
+    "franchID": "LAD",
+    "lgID": "NL",
+    "name": "Los Angeles Dodgers"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "MIA",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Miami Marlins"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "SLN",
+    "franchID": "STL",
+    "lgID": "NL",
+    "name": "St. Louis Cardinals"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 2018,
+    "teamID": "WAS",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Washington Nationals"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "ARI",
+    "franchID": "ARI",
+    "lgID": "NL",
+    "name": "Arizona Diamondbacks"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "ATL",
+    "franchID": "ATL",
+    "lgID": "NL",
+    "name": "Atlanta Braves"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "BAL",
+    "franchID": "BAL",
+    "lgID": "AL",
+    "name": "Baltimore Orioles"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "BOS",
+    "franchID": "BOS",
+    "lgID": "AL",
+    "name": "Boston Red Sox"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "CHA",
+    "franchID": "CHW",
+    "lgID": "AL",
+    "name": "Chicago White Sox"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "CHN",
+    "franchID": "CHC",
+    "lgID": "NL",
+    "name": "Chicago Cubs"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "CIN",
+    "franchID": "CIN",
+    "lgID": "NL",
+    "name": "Cincinnati Reds"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "CLE",
+    "franchID": "CLE",
+    "lgID": "AL",
+    "name": "Cleveland Indians"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "COL",
+    "franchID": "COL",
+    "lgID": "NL",
+    "name": "Colorado Rockies"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "DET",
+    "franchID": "DET",
+    "lgID": "AL",
+    "name": "Detroit Tigers"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "HOU",
+    "franchID": "HOU",
+    "lgID": "AL",
+    "name": "Houston Astros"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "KCA",
+    "franchID": "KCR",
+    "lgID": "AL",
+    "name": "Kansas City Royals"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "LAA",
+    "franchID": "ANA",
+    "lgID": "AL",
+    "name": "Los Angeles Angels of Anaheim"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "LAN",
+    "franchID": "LAD",
+    "lgID": "NL",
+    "name": "Los Angeles Dodgers"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "MIA",
+    "franchID": "FLA",
+    "lgID": "NL",
+    "name": "Miami Marlins"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "MIL",
+    "franchID": "MIL",
+    "lgID": "NL",
+    "name": "Milwaukee Brewers"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "MIN",
+    "franchID": "MIN",
+    "lgID": "AL",
+    "name": "Minnesota Twins"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "NYN",
+    "franchID": "NYM",
+    "lgID": "NL",
+    "name": "New York Mets"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "OAK",
+    "franchID": "OAK",
+    "lgID": "AL",
+    "name": "Oakland Athletics"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "PHI",
+    "franchID": "PHI",
+    "lgID": "NL",
+    "name": "Philadelphia Phillies"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "PIT",
+    "franchID": "PIT",
+    "lgID": "NL",
+    "name": "Pittsburgh Pirates"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "SDN",
+    "franchID": "SDP",
+    "lgID": "NL",
+    "name": "San Diego Padres"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "SFN",
+    "franchID": "SFG",
+    "lgID": "NL",
+    "name": "San Francisco Giants"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "SLN",
+    "franchID": "STL",
+    "lgID": "NL",
+    "name": "St. Louis Cardinals"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "TBA",
+    "franchID": "TBD",
+    "lgID": "AL",
+    "name": "Tampa Bay Rays"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "TEX",
+    "franchID": "TEX",
+    "lgID": "AL",
+    "name": "Texas Rangers"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "TOR",
+    "franchID": "TOR",
+    "lgID": "AL",
+    "name": "Toronto Blue Jays"
+  },
+  {
+    "yearID": 2019,
+    "teamID": "WAS",
+    "franchID": "WSN",
+    "lgID": "NL",
+    "name": "Washington Nationals"
+  }
+]
