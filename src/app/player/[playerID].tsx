@@ -128,6 +128,7 @@ export default function PlayerDetailScreen() {
   const [yearRange, setYearRange] = useState<YearRange | null>(null);
   const [hofStatus, setHofStatus] = useState<HofStatus | null>(null);
   const [yearTeams, setYearTeams] = useState<string[]>([]);
+  const [allStar, setAllStar] = useState(false);
   const [yearBatting, setYearBatting] = useState<BattingStats | null>(null);
   const [yearPitching, setYearPitching] = useState<PitchingStats | null>(null);
   const [careerBatting, setCareerBatting] = useState<BattingStats | null>(null);
@@ -164,6 +165,11 @@ export default function PlayerDetailScreen() {
       [playerID, year],
     ).then((rows) => setYearTeams(rows.map((r) => r.teamID)));
 
+    db.getFirstAsync<{ c: number }>(
+      `SELECT COUNT(*) as c FROM AllstarFull WHERE playerID = ? AND yearID = ?`,
+      [playerID, year],
+    ).then((r) => setAllStar((r?.c ?? 0) > 0));
+
     db.getFirstAsync<BattingStats>(battingQuery(true), [playerID, year]).then(
       (r) => setYearBatting(hasData(r) ? r : null),
     );
@@ -198,6 +204,11 @@ export default function PlayerDetailScreen() {
               {"  "}Debut: {bio.debut ?? "—"}
               {"  "}Final: {bio.finalGame ?? "—"}
             </ThemedText>
+            {allStar && (
+              <ThemedText type="small">
+                {year} All-Star
+              </ThemedText>
+            )}
           </View>
         )}
 

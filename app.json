@@ -17,7 +17,8 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.keithkurak.hofgolf"
     },
     "web": {
       "output": "static",
@@ -40,6 +41,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b4b5b473-8c41-43da-a8ac-773e0bf35423"
+      }
+    },
+    "owner": "expo-production"
   }
 }
