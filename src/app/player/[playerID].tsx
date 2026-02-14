@@ -1,4 +1,4 @@
-import { useLocalSearchParams, Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -7,6 +7,17 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
+import {
+  type BattingStats,
+  type PitchingStats,
+  type StatRow,
+  battingQuery,
+  formatBattingRows,
+  formatPitchingRows,
+  hasData,
+  pitchingQuery,
+  YEAR_RANGE_QUERY,
+} from "@/util/stats";
 
 type Bio = {
   nameFirst: string;
@@ -17,131 +28,66 @@ type Bio = {
   finalGame: string | null;
 };
 
-type BattingStats = {
-  G: number | null;
-  AB: number | null;
-  R: number | null;
-  H: number | null;
-  "2B": number | null;
-  "3B": number | null;
-  HR: number | null;
-  RBI: number | null;
-  BB: number | null;
-  SO: number | null;
-  SB: number | null;
-};
+type YearRange = { minYear: number; maxYear: number };
 
-type PitchingStats = {
-  W: number | null;
-  L: number | null;
-  G: number | null;
-  GS: number | null;
-  SV: number | null;
-  IPouts: number | null;
-  SO: number | null;
-  BB: number | null;
-  H: number | null;
-  HR: number | null;
-  ER: number | null;
-};
-
-const BATTING_QUERY = `SELECT SUM(G) as G, SUM(AB) as AB, SUM(R) as R, SUM(H) as H,
-  SUM("2B") as "2B", SUM("3B") as "3B", SUM(HR) as HR, SUM(RBI) as RBI,
-  SUM(BB) as BB, SUM(SO) as SO, SUM(SB) as SB
-  FROM Batting WHERE playerID = ?`;
-
-const PITCHING_QUERY = `SELECT SUM(W) as W, SUM(L) as L, SUM(G) as G, SUM(GS) as GS,
-  SUM(SV) as SV, SUM(IPouts) as IPouts, SUM(SO) as SO, SUM(BB) as BB,
-  SUM(H) as H, SUM(HR) as HR, SUM(ER) as ER
-  FROM Pitching WHERE playerID = ?`;
-
-function formatAvg(h: number | null, ab: number | null): string {
-  if (!ab) return "—";
-  return (h! / ab).toFixed(3).replace(/^0/, "");
-}
-
-function formatEra(er: number | null, ipouts: number | null): string {
-  if (!ipouts) return "—";
-  return ((er! * 9) / (ipouts / 3)).toFixed(2);
-}
-
-function formatIP(ipouts: number | null): string {
-  if (ipouts == null) return "—";
-  const full = Math.floor(ipouts / 3);
-  const remainder = ipouts % 3;
-  return remainder === 0 ? `${full}` : `${full}.${remainder}`;
-}
-
-function statVal(v: number | null): string {
-  return v != null ? String(v) : "—";
-}
-
-function StatTable({
+function StatSection({
   title,
-  headers,
-  values,
+  yearLabel,
+  rows,
 }: {
   title: string;
-  headers: string[];
-  values: string[];
+  yearLabel: string;
+  rows: StatRow[];
 }) {
   return (
     <View style={statStyles.section}>
       <ThemedText type="smallBold" style={statStyles.sectionTitle}>
         {title}
       </ThemedText>
-      <ThemedView type="backgroundElement" style={statStyles.table}>
+      <ThemedView style={statStyles.table}>
         <View style={statStyles.row}>
-          {headers.map((h) => (
+          <ThemedText
+            type="mediumBold"
+            themeColor="textSecondary"
+            style={statStyles.labelCell}
+          />
+          <ThemedText
+            type="mediumBold"
+            themeColor="textSecondary"
+            style={statStyles.valueCell}
+          >
+            {yearLabel}
+          </ThemedText>
+          <ThemedText
+            type="mediumBold"
+            themeColor="textSecondary"
+            style={statStyles.valueCell}
+          >
+            Career
+          </ThemedText>
+        </View>
+        {rows.map((row) => (
+          <View key={row.label} style={statStyles.row}>
             <ThemedText
-              key={h}
-              type="smallBold"
+              type="mediumBold"
               themeColor="textSecondary"
-              style={statStyles.cell}
+              style={statStyles.labelCell}
             >
-              {h}
+              {row.label}
             </ThemedText>
-          ))}
-        </View>
-        <View style={statStyles.row}>
-          {values.map((v, i) => (
-            <ThemedText key={i} type="code" style={statStyles.cell}>
-              {v}
+            <ThemedText type="medium" style={statStyles.valueCell}>
+              {row.year}
             </ThemedText>
-          ))}
-        </View>
+            <ThemedView type="backgroundElement" style={{ flex: 1 }}>
+              <ThemedText type="medium" style={statStyles.valueCell}>
+                {row.career}
+              </ThemedText>
+            </ThemedView>
+          </View>
+        ))}
       </ThemedView>
     </View>
   );
-}
-
-function battingHeaders(): string[] {
-  return ["G", "AB", "R", "H", "2B", "3B", "HR", "RBI", "BB", "SO", "SB", "AVG"];
-}
-
-function battingValues(s: BattingStats): string[] {
-  return [
-    statVal(s.G), statVal(s.AB), statVal(s.R), statVal(s.H),
-    statVal(s["2B"]), statVal(s["3B"]), statVal(s.HR), statVal(s.RBI),
-    statVal(s.BB), statVal(s.SO), statVal(s.SB), formatAvg(s.H, s.AB),
-  ];
-}
-
-function pitchingHeaders(): string[] {
-  return ["W", "L", "ERA", "G", "GS", "SV", "IP", "SO", "BB", "H", "HR"];
-}
-
-function pitchingValues(s: PitchingStats): string[] {
-  return [
-    statVal(s.W), statVal(s.L), formatEra(s.ER, s.IPouts),
-    statVal(s.G), statVal(s.GS), statVal(s.SV), formatIP(s.IPouts),
-    statVal(s.SO), statVal(s.BB), statVal(s.H), statVal(s.HR),
-  ];
-}
-
-function hasData(row: Record<string, unknown> | null): boolean {
-  if (!row) return false;
-  return Object.values(row).some((v) => v != null && v !== 0);
 }
 
 export default function PlayerDetailScreen() {
@@ -157,35 +103,39 @@ export default function PlayerDetailScreen() {
   const db = useSQLiteContext();
   const [year, setYear] = useState(yearParam ? Number(yearParam) : 2025);
   const [bio, setBio] = useState<Bio | null>(null);
+  const [yearRange, setYearRange] = useState<YearRange | null>(null);
   const [yearBatting, setYearBatting] = useState<BattingStats | null>(null);
   const [yearPitching, setYearPitching] = useState<PitchingStats | null>(null);
   const [careerBatting, setCareerBatting] = useState<BattingStats | null>(null);
-  const [careerPitching, setCareerPitching] = useState<PitchingStats | null>(null);
+  const [careerPitching, setCareerPitching] = useState<PitchingStats | null>(
+    null,
+  );
 
   useEffect(() => {
     db.getFirstAsync<Bio>(
       `SELECT nameFirst, nameLast, bats, throws, debut, finalGame FROM People WHERE playerID = ?`,
-      [playerID]
+      [playerID],
     ).then(setBio);
 
-    db.getFirstAsync<BattingStats>(BATTING_QUERY, [playerID]).then((r) =>
-      setCareerBatting(hasData(r) ? r : null)
+    db.getFirstAsync<YearRange>(YEAR_RANGE_QUERY, [playerID, playerID]).then(
+      (r) => r && setYearRange(r),
     );
-    db.getFirstAsync<PitchingStats>(PITCHING_QUERY, [playerID]).then((r) =>
-      setCareerPitching(hasData(r) ? r : null)
+
+    db.getFirstAsync<BattingStats>(battingQuery(), [playerID]).then((r) =>
+      setCareerBatting(hasData(r) ? r : null),
+    );
+    db.getFirstAsync<PitchingStats>(pitchingQuery(), [playerID]).then((r) =>
+      setCareerPitching(hasData(r) ? r : null),
     );
   }, [db, playerID]);
 
   useEffect(() => {
-    db.getFirstAsync<BattingStats>(BATTING_QUERY + " AND yearID = ?", [
-      playerID,
-      year,
-    ]).then((r) => setYearBatting(hasData(r) ? r : null));
-
-    db.getFirstAsync<PitchingStats>(PITCHING_QUERY + " AND yearID = ?", [
-      playerID,
-      year,
-    ]).then((r) => setYearPitching(hasData(r) ? r : null));
+    db.getFirstAsync<BattingStats>(battingQuery(true), [playerID, year]).then(
+      (r) => setYearBatting(hasData(r) ? r : null),
+    );
+    db.getFirstAsync<PitchingStats>(pitchingQuery(true), [playerID, year]).then(
+      (r) => setYearPitching(hasData(r) ? r : null),
+    );
   }, [db, playerID, year]);
 
   const displayName =
@@ -195,7 +145,12 @@ export default function PlayerDetailScreen() {
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: displayName }} />
       <ScrollView contentContainerStyle={styles.content}>
-        <YearPicker year={year} onYearChange={setYear} />
+        <YearPicker
+          year={year}
+          onYearChange={setYear}
+          minYear={yearRange?.minYear}
+          maxYear={yearRange?.maxYear}
+        />
 
         {bio && (
           <View style={styles.bioSection}>
@@ -209,35 +164,19 @@ export default function PlayerDetailScreen() {
           </View>
         )}
 
-        {yearBatting && (
-          <StatTable
-            title={`${year} Batting`}
-            headers={battingHeaders()}
-            values={battingValues(yearBatting)}
-          />
-        )}
-
-        {yearPitching && (
-          <StatTable
-            title={`${year} Pitching`}
-            headers={pitchingHeaders()}
-            values={pitchingValues(yearPitching)}
-          />
-        )}
-
         {careerBatting && (
-          <StatTable
-            title="Career Batting"
-            headers={battingHeaders()}
-            values={battingValues(careerBatting)}
+          <StatSection
+            title="Batting"
+            yearLabel={String(year)}
+            rows={formatBattingRows(yearBatting, careerBatting)}
           />
         )}
 
         {careerPitching && (
-          <StatTable
-            title="Career Pitching"
-            headers={pitchingHeaders()}
-            values={pitchingValues(careerPitching)}
+          <StatSection
+            title="Pitching"
+            yearLabel={String(year)}
+            rows={formatPitchingRows(yearPitching, careerPitching)}
           />
         )}
       </ScrollView>
@@ -267,13 +206,17 @@ const statStyles = StyleSheet.create({
     marginBottom: Spacing.two,
   },
   table: {
-    borderRadius: Spacing.two,
     padding: Spacing.three,
   },
   row: {
     flexDirection: "row",
+    alignItems: "center",
   },
-  cell: {
+  labelCell: {
+    width: 48,
+    paddingVertical: Spacing.one,
+  },
+  valueCell: {
     flex: 1,
     textAlign: "center",
     paddingVertical: Spacing.one,
