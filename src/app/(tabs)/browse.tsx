@@ -8,6 +8,7 @@ import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
 import { DIVISION_ORDER, divisionName } from "@/util/divisions";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Team = {
   teamID: string;
@@ -52,8 +53,10 @@ export default function TeamsScreen() {
     });
   }, [db, year]);
 
+  const { top } = useSafeAreaInsets();
+
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: top }]}>
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.teamID}
