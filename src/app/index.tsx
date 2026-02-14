@@ -1,62 +1,98 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
+import { useEffect, useState } from "react";
+import { Pressable, SectionList, StyleSheet, View } from "react-native";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Spacing } from "@/constants/theme";
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+type Team = {
+  teamID: string;
+  name: string;
+  lgID: string;
+  divID: string;
+  W: number;
+  L: number;
+};
 
-export default function HomeScreen() {
+type Section = {
+  title: string;
+  data: Team[];
+};
+
+const DIVISION_LABELS: Record<string, string> = {
+  "AL-E": "AL East",
+  "AL-C": "AL Central",
+  "AL-W": "AL West",
+  "NL-E": "NL East",
+  "NL-C": "NL Central",
+  "NL-W": "NL West",
+};
+
+const DIVISION_ORDER = ["AL-E", "AL-C", "AL-W", "NL-E", "NL-C", "NL-W"];
+
+export default function TeamsScreen() {
+  const db = useSQLiteContext();
+  const router = useRouter();
+  const [sections, setSections] = useState<Section[]>([]);
+
+  useEffect(() => {
+    db.getAllAsync<Team>(
+      `SELECT teamID, name, lgID, divID, W, L
+       FROM Teams
+       WHERE yearID = 2025
+       ORDER BY lgID, divID, W DESC`
+    ).then((teams) => {
+      const grouped: Record<string, Team[]> = {};
+      for (const team of teams) {
+        const key = `${team.lgID}-${team.divID}`;
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(team);
+      }
+      setSections(
+        DIVISION_ORDER
+          .filter((key) => grouped[key])
+          .map((key) => ({
+            title: DIVISION_LABELS[key] ?? key,
+            data: grouped[key],
+          }))
+      );
+    });
+  }, [db]);
+
   return (
     <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item.teamID}
+        contentContainerStyle={styles.list}
+        stickySectionHeadersEnabled={false}
+        renderSectionHeader={({ section }) => (
+          <ThemedText type="smallBold" style={styles.sectionHeader}>
+            {section.title}
           </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
+        )}
+        renderItem={({ item }) => (
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/team/[teamID]",
+                params: { teamID: item.teamID, teamName: item.name },
+              })
+            }
+            style={({ pressed }) => pressed && styles.pressed}
+          >
+            <ThemedView type="backgroundElement" style={styles.teamRow}>
+              <ThemedText style={styles.teamName}>{item.name}</ThemedText>
+              <ThemedText themeColor="textSecondary" type="small">
+                {item.W}-{item.L}
+              </ThemedText>
+            </ThemedView>
+          </Pressable>
+        )}
+        renderSectionFooter={() => <View style={styles.sectionFooter} />}
+      />
     </ThemedView>
   );
 }
@@ -64,35 +100,33 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+  list: {
+    padding: Spacing.three,
+    paddingBottom: Spacing.six,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
+  sectionHeader: {
+    textTransform: "uppercase",
     paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+    paddingTop: Spacing.three,
+    paddingBottom: Spacing.two,
+  },
+  sectionFooter: {
+    height: Spacing.two,
+  },
+  teamRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: Spacing.three,
+    paddingHorizontal: Spacing.three,
+    borderRadius: Spacing.two,
+    marginVertical: Spacing.half,
+  },
+  teamName: {
+    flex: 1,
+  },
+  pressed: {
+    opacity: 0.7,
   },
 });
