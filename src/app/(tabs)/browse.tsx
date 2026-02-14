@@ -35,7 +35,7 @@ export default function TeamsScreen() {
        FROM Teams
        WHERE yearID = ?
        ORDER BY lgID, divID, W DESC`,
-      [year]
+      [year],
     ).then((teams) => {
       const grouped: Record<string, Team[]> = {};
       for (const team of teams) {
@@ -44,12 +44,10 @@ export default function TeamsScreen() {
         grouped[key].push(team);
       }
       setSections(
-        DIVISION_ORDER
-          .filter((key) => grouped[key])
-          .map((key) => ({
-            title: divisionName(key.split("-")[0], key.split("-")[1]) || key,
-            data: grouped[key],
-          }))
+        DIVISION_ORDER.filter((key) => grouped[key]).map((key) => ({
+          title: divisionName(key.split("-")[0], key.split("-")[1]) || key,
+          data: grouped[key],
+        })),
       );
     });
   }, [db, year]);
@@ -72,7 +70,11 @@ export default function TeamsScreen() {
             onPress={() =>
               router.push({
                 pathname: "/team/[teamID]",
-                params: { teamID: item.teamID, teamName: item.name, year: String(year) },
+                params: {
+                  teamID: item.teamID,
+                  teamName: item.name,
+                  year: String(year),
+                },
               })
             }
             style={({ pressed }) => pressed && styles.pressed}
