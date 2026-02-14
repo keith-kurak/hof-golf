@@ -7,6 +7,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
+import { DIVISION_ORDER, divisionName } from "@/util/divisions";
 
 type Team = {
   teamID: string;
@@ -21,17 +22,6 @@ type Section = {
   title: string;
   data: Team[];
 };
-
-const DIVISION_LABELS: Record<string, string> = {
-  "AL-E": "AL East",
-  "AL-C": "AL Central",
-  "AL-W": "AL West",
-  "NL-E": "NL East",
-  "NL-C": "NL Central",
-  "NL-W": "NL West",
-};
-
-const DIVISION_ORDER = ["AL-E", "AL-C", "AL-W", "NL-E", "NL-C", "NL-W"];
 
 export default function TeamsScreen() {
   const db = useSQLiteContext();
@@ -57,7 +47,7 @@ export default function TeamsScreen() {
         DIVISION_ORDER
           .filter((key) => grouped[key])
           .map((key) => ({
-            title: DIVISION_LABELS[key] ?? key,
+            title: divisionName(key.split("-")[0], key.split("-")[1]) || key,
             data: grouped[key],
           }))
       );

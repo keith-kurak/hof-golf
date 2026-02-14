@@ -1,12 +1,13 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, SectionList, StyleSheet } from "react-native";
+import { Pressable, SectionList, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
+import { divisionName } from "@/util/divisions";
 import { formatAvg, formatEra, formatIP, statVal } from "@/util/stats";
 
 // ---------------------------------------------------------------------------
@@ -89,17 +90,81 @@ WHERE a.yearID = ? AND a.teamID = ?
   AND COALESCE(a.G_p, 0) > 0
 ORDER BY a.G_all DESC`;
 
+type TeamInfo = {
+  W: number;
+  L: number;
+  R: number;
+  RA: number;
+  Rank: number | null;
+  DivWin: string | null;
+  WCWin: string | null;
+  lgID: string | null;
+  divID: string | null;
+  manager: string;
+};
+
+const TEAM_INFO_QUERY = `SELECT t.W, t.L, CAST(t.R AS INTEGER) as R, CAST(t.RA AS INTEGER) as RA,
+  t.Rank, t.DivWin, t.WCWin, t.lgID, t.divID,
+  GROUP_CONCAT(p.nameFirst || ' ' || p.nameLast, ' / ') as manager
+FROM Teams t
+LEFT JOIN Managers m ON t.yearID = m.yearID AND t.teamID = m.teamID
+LEFT JOIN People p ON m.playerID = p.playerID
+WHERE t.yearID = ? AND t.teamID = ?
+GROUP BY t.yearID, t.teamID`;
+
+function ordinal(n: number): string {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+function formatStanding(info: TeamInfo): string {
+  const div = divisionName(info.lgID, info.divID);
+  const parts: string[] = [];
+  if (info.Rank != null && div) {
+    parts.push(`${ordinal(info.Rank)} place in ${div}`);
+  }
+  if (info.WCWin === "Y") {
+    parts.push("(Wild Card)");
+  }
+  return parts.join(" ");
+}
+
+function pythagWL(r: number, ra: number): string {
+  if (r === 0 && ra === 0) return "—";
+  const exp = 1.83;
+  const wpct = r ** exp / (r ** exp + ra ** exp);
+  const g = 162;
+  const w = Math.round(wpct * g);
+  return `${w}-${g - w}`;
+}
+
 // ---------------------------------------------------------------------------
 // Position grouping logic
 // ---------------------------------------------------------------------------
 
 const STARTING_POSITIONS = [
-  "C", "1B", "2B", "SS", "3B", "LF", "CF", "RF", "DH",
+  "C",
+  "1B",
+  "2B",
+  "SS",
+  "3B",
+  "LF",
+  "CF",
+  "RF",
+  "DH",
 ] as const;
 
 const POS_KEY: Record<string, keyof RawBatter> = {
-  C: "G_c", "1B": "G_1b", "2B": "G_2b", "3B": "G_3b",
-  SS: "G_ss", LF: "G_lf", CF: "G_cf", RF: "G_rf", DH: "G_dh",
+  C: "G_c",
+  "1B": "G_1b",
+  "2B": "G_2b",
+  "3B": "G_3b",
+  SS: "G_ss",
+  LF: "G_lf",
+  CF: "G_cf",
+  RF: "G_rf",
+  DH: "G_dh",
 };
 
 const IF_POSITIONS = new Set(["G_c", "G_1b", "G_2b", "G_3b", "G_ss"]);
@@ -137,7 +202,10 @@ function classifyBenchPosition(b: RawBatter): string {
   return "";
 }
 
-function groupBatters(raw: RawBatter[]): { starters: Batter[]; bench: Batter[] } {
+function groupBatters(raw: RawBatter[]): {
+  starters: Batter[];
+  bench: Batter[];
+} {
   const assigned = new Set<string>();
   const starters: Batter[] = [];
 
@@ -201,12 +269,20 @@ export default function TeamRosterScreen() {
   const db = useSQLiteContext();
   const router = useRouter();
   const [year, setYear] = useState(yearParam ? Number(yearParam) : 2025);
+  const [teamInfo, setTeamInfo] = useState<TeamInfo | null>(null);
   const [rawBatters, setRawBatters] = useState<RawBatter[]>([]);
   const [rawPitchers, setRawPitchers] = useState<Pitcher[]>([]);
 
   useEffect(() => {
-    db.getAllAsync<RawBatter>(BATTERS_QUERY, [year, teamID]).then(setRawBatters);
-    db.getAllAsync<Pitcher>(PITCHERS_QUERY, [year, teamID]).then(setRawPitchers);
+    db.getFirstAsync<TeamInfo>(TEAM_INFO_QUERY, [year, teamID]).then(
+      setTeamInfo,
+    );
+    db.getAllAsync<RawBatter>(BATTERS_QUERY, [year, teamID]).then(
+      setRawBatters,
+    );
+    db.getAllAsync<Pitcher>(PITCHERS_QUERY, [year, teamID]).then(
+      setRawPitchers,
+    );
   }, [db, teamID, year]);
 
   const sections: Section[] = useMemo(() => {
@@ -234,7 +310,31 @@ export default function TeamRosterScreen() {
         keyExtractor={(item) => item.playerID}
         contentContainerStyle={styles.list}
         stickySectionHeadersEnabled={true}
-        ListHeaderComponent={<YearPicker year={year} onYearChange={setYear} />}
+        ListHeaderComponent={
+          <>
+            <YearPicker year={year} onYearChange={setYear} />
+            {teamInfo && (
+              <View style={styles.teamInfo}>
+                <ThemedText type="default">
+                  {teamInfo.W}-{teamInfo.L}
+                  {"  "}
+                  <ThemedText type="small" themeColor="textSecondary">
+                    {formatStanding(teamInfo)}
+                  </ThemedText>
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Pythagorean W-L: {pythagWL(teamInfo.R, teamInfo.RA)},{" "}
+                  {teamInfo.R} RS / {teamInfo.RA} RA
+                </ThemedText>
+                {teamInfo.manager && (
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Manager: {teamInfo.manager}
+                  </ThemedText>
+                )}
+              </View>
+            )}
+          </>
+        }
         renderSectionHeader={({ section }) => (
           <ThemedView style={styles.headerRow}>
             <ThemedText type="smallBold" style={styles.posCol} />
@@ -368,6 +468,10 @@ const styles = StyleSheet.create({
   list: {
     padding: Spacing.three,
     paddingBottom: Spacing.six,
+  },
+  teamInfo: {
+    gap: Spacing.one,
+    marginBottom: Spacing.three,
   },
   headerRow: {
     flexDirection: "row",
