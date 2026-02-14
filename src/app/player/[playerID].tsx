@@ -33,10 +33,12 @@ type YearRange = { minYear: number; maxYear: number };
 function StatSection({
   title,
   yearLabel,
+  yearTeams,
   rows,
 }: {
   title: string;
   yearLabel: string;
+  yearTeams: string[];
   rows: StatRow[];
 }) {
   return (
@@ -45,6 +47,25 @@ function StatSection({
         {title}
       </ThemedText>
       <ThemedView style={statStyles.table}>
+        <View style={statStyles.row}>
+          <ThemedText
+            type="mediumBold"
+            themeColor="textSecondary"
+            style={[statStyles.labelCell, { paddingVertical: 0 }]}
+          />
+          <ThemedText
+            type="mediumBold"
+            themeColor="textSecondary"
+            style={[statStyles.valueCell, { paddingVertical: 0 }]}
+          >
+            {yearTeams.length > 0 ? yearTeams.join(", ") : ""}
+          </ThemedText>
+          <ThemedText
+            type="mediumBold"
+            themeColor="textSecondary"
+            style={[statStyles.valueCell, { paddingVertical: 0 }]}
+          />
+        </View>
         <View style={statStyles.row}>
           <ThemedText
             type="mediumBold"
@@ -104,6 +125,7 @@ export default function PlayerDetailScreen() {
   const [year, setYear] = useState(yearParam ? Number(yearParam) : 2025);
   const [bio, setBio] = useState<Bio | null>(null);
   const [yearRange, setYearRange] = useState<YearRange | null>(null);
+  const [yearTeams, setYearTeams] = useState<string[]>([]);
   const [yearBatting, setYearBatting] = useState<BattingStats | null>(null);
   const [yearPitching, setYearPitching] = useState<PitchingStats | null>(null);
   const [careerBatting, setCareerBatting] = useState<BattingStats | null>(null);
@@ -130,6 +152,11 @@ export default function PlayerDetailScreen() {
   }, [db, playerID]);
 
   useEffect(() => {
+    db.getAllAsync<{ teamID: string }>(
+      `SELECT DISTINCT teamID FROM Appearances WHERE playerID = ? AND yearID = ? ORDER BY G_all DESC`,
+      [playerID, year],
+    ).then((rows) => setYearTeams(rows.map((r) => r.teamID)));
+
     db.getFirstAsync<BattingStats>(battingQuery(true), [playerID, year]).then(
       (r) => setYearBatting(hasData(r) ? r : null),
     );
@@ -154,11 +181,9 @@ export default function PlayerDetailScreen() {
 
         {bio && (
           <View style={styles.bioSection}>
-            <ThemedText type="default">
-              B/T: {bio.bats ?? "—"}/{bio.throws ?? "—"}
-            </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Debut: {bio.debut ?? "—"}
+              B/T: {bio.bats ?? "—"}/{bio.throws ?? "—"}
+              {"  "}Debut: {bio.debut ?? "—"}
               {"  "}Final: {bio.finalGame ?? "—"}
             </ThemedText>
           </View>
@@ -167,6 +192,7 @@ export default function PlayerDetailScreen() {
         {careerBatting && (
           <StatSection
             title="Batting"
+            yearTeams={yearTeams}
             yearLabel={String(year)}
             rows={formatBattingRows(yearBatting, careerBatting)}
           />
@@ -175,6 +201,7 @@ export default function PlayerDetailScreen() {
         {careerPitching && (
           <StatSection
             title="Pitching"
+            yearTeams={yearTeams}
             yearLabel={String(year)}
             rows={formatPitchingRows(yearPitching, careerPitching)}
           />
