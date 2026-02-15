@@ -78,7 +78,7 @@ Game variants are defined in `src/metadata/game-modes.json`. Each entry describe
 ## Rules (Generic)
 
 1. **Start**: You begin on a team+year drawn from the variant's starting pool.
-2. **Each round**: You're looking at a team roster. You pick any player on that roster, then pick a *different* team+year that player also played for. That becomes your next roster.
+2. **Each round**: You're looking at a team roster. You pick any player on that roster, then pick a *different team* (not just a different year) that player also played for. That becomes your next roster.
 3. **Scoring**: When you arrive at a new roster, you score points based on the variant's target set. Each individual target player only counts once per game.
 4. **9 rounds**: After arriving at 9 rosters (start roster + 8 navigations = 9 scored rosters), the game ends.
 5. **Target eligibility** varies by variant (see above).
@@ -333,18 +333,18 @@ No AsyncStorage dependency needed — expo-sqlite/kv-store handles all key-value
 - Share results
 - Collection progress per variant (e.g., X/301 HOFers found across all games)
 
-## Open Questions
+## Resolved Questions
 
-1. **Round counting**: Is round 1 the starting roster (where you might score 0), or is round 1 the first roster you navigate to? I've assumed the start is "round 0" and you make 9 jumps, scoring each destination — so 9 scored rosters total.
+1. **Round counting**: Start at round 0 (no score), make 9 jumps total, scoring each destination — 9 scored rosters.
 
-2. **Same-team restriction**: Can you jump to the same team you're currently on (but a different year)? Probably yes — the rule is just "a different team+year", meaning the combination must differ.
+2. **Same-team restriction**: You must jump to a **different team**. Same team + different year is not allowed.
 
-3. **Managers on rosters**: Should HOF managers who played count only when they appear in Batting/Pitching for that team+year? Or also when they managed? The simplest rule: they count if they appear as a *player* on the roster (have Batting or Pitching entries for that team+year). Managing doesn't count.
+3. **Managers on rosters**: They count if they appear as a *player* on the roster (have Batting or Pitching entries for that team+year). Managing doesn't count.
 
-4. **Navigation UX**: When a player taps a season row on the player screen during a game, should there be a confirmation ("Jump to 1975 Red Sox?") or should it be instant? A confirmation prevents accidental taps but adds friction. Could do a brief "undo" toast instead.
+4. **Navigation UX**: There **will be** a confirmation dialog ("Jump to 1975 Red Sox?") before finalizing a jump.
 
-5. **Can you pick a player who only played for one team?**: No — they have no other team to jump to. The UI should indicate which players have multi-team careers (or at least, played for a different team than the current one in some year).
+5. **Single-team players**: You can tap on them and see their career stats, but no teams/years will be selectable as jump targets (since they only played for the current team). The player screen is still viewable — just no actionable rows.
 
-6. **All-Star Golf starting roster scoring**: The starting 2025 team has exactly one All-Star who you "get for free." Does that mean you auto-score their selections on arrival, or do they just not count against uniqueness for future rounds?
+6. **All-Star Golf starting roster scoring**: Everyone starts with 1 point (the freebie All-Star is auto-scored on arrival). This is fun because you discover who the All-Star is.
 
-7. **Manager Golf year range**: Can you navigate to any year, or only years where the manager-player actually played? (Probably any year — the player just needs to be on the roster, and they score if they're in the managers-who-played set regardless of when they managed.)
+7. **Manager Golf / jumping logic**: Navigation works the same as HOF Golf — any year is fine, the player just needs to be on the roster.
