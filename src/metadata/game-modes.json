@@ -2,7 +2,7 @@
   {
     "id": "hof-golf-2026",
     "name": "HOF Golf (2026)",
-    "description": "Collect Hall of Famers across 9 rounds",
+    "label": "HOF",
     "active": true,
     "rounds": 9,
     "scoring": {
@@ -14,12 +14,25 @@
     "start": {
       "pool": "hof-free-teams",
       "yearRange": [1947, 2025]
+    },
+    "info": {
+      "overview": "Navigate baseball history to collect Hall of Famers across 9 rounds.",
+      "howToPlay": [
+        "You start on a random team+year that has zero Hall of Famers on its roster.",
+        "Pick any player on the roster, then choose a different team that player also played for.",
+        "You land on the new roster and score 1 point for each Hall of Famer there.",
+        "Repeat for 9 rounds. Each Hall of Famer only counts once per game."
+      ],
+      "bullets": [
+        "301 collectible Hall of Famers (players inducted as Player).",
+        "Starting rosters span 1947 to 2025."
+      ]
     }
   },
   {
     "id": "all-star-golf-2026",
     "name": "All-Star Golf (2026)",
-    "description": "Start on a 2025 team with one All-Star and collect All-Star appearances",
+    "label": "All-Star",
     "active": true,
     "rounds": 9,
     "scoring": {
@@ -32,12 +45,25 @@
       "pool": "one-allstar-2025-teams",
       "yearRange": [2025, 2025],
       "freebie": true
+    },
+    "info": {
+      "overview": "Chase All-Star appearances for big point totals.",
+      "howToPlay": [
+        "You start on a random 2025 team with exactly one All-Star — that one's a freebie.",
+        "Pick any player on the roster, then choose a different team that player also played for.",
+        "Points equal each player's career All-Star selections (e.g. a 12-time All-Star is worth 12 points).",
+        "Repeat for 9 rounds. Each All-Star only counts once per game."
+      ],
+      "bullets": [
+        "2,308 collectible All-Stars across baseball history.",
+        "Target players with lots of selections for big scores."
+      ]
     }
   },
   {
     "id": "manager-golf-2026",
     "name": "Manager Golf (2026)",
-    "description": "Start on a 2025 team and collect players who became managers",
+    "label": "Manager",
     "active": true,
     "rounds": 9,
     "scoring": {
@@ -49,6 +75,19 @@
     "start": {
       "pool": "all-2025-teams",
       "yearRange": [2025, 2025]
+    },
+    "info": {
+      "overview": "Find the players who went on to manage.",
+      "howToPlay": [
+        "You start on a random 2025 team.",
+        "Pick any player on the roster, then choose a different team that player also played for.",
+        "Score 1 point for each player on the roster who later became a manager.",
+        "Repeat for 9 rounds. Each manager-player only counts once per game."
+      ],
+      "bullets": [
+        "766 collectible players who became managers.",
+        "Players count if they appear on the roster as a player, not as a manager."
+      ]
     }
   }
 ]

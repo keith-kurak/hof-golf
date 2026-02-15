@@ -12,7 +12,7 @@ import { getTargetsOnRoster } from "./roster-targets";
 export type GameMode = {
   id: string;
   name: string;
-  description: string;
+  label: string;
   active: boolean;
   rounds: number;
   scoring: {
@@ -25,6 +25,11 @@ export type GameMode = {
     pool: string;
     yearRange: [number, number];
     freebie?: boolean;
+  };
+  info: {
+    overview: string;
+    howToPlay: string[];
+    bullets: string[];
   };
 };
 
