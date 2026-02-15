@@ -57,38 +57,49 @@ type Section = { title: string; data: RosterPlayer[] };
 // ---------------------------------------------------------------------------
 
 const BATTERS_QUERY = `SELECT
-  a.playerID, p.nameFirst, p.nameLast, a.G_all as G,
+  bat.playerID, p.nameFirst, p.nameLast, bat.G,
   COALESCE(a.G_c, 0) as G_c, COALESCE(a.G_1b, 0) as G_1b,
   COALESCE(a.G_2b, 0) as G_2b, COALESCE(a.G_3b, 0) as G_3b,
   COALESCE(a.G_ss, 0) as G_ss, COALESCE(a.G_lf, 0) as G_lf,
   COALESCE(a.G_cf, 0) as G_cf, COALESCE(a.G_rf, 0) as G_rf,
   COALESCE(a.G_dh, 0) as G_dh,
-  b.HR, b.RBI, b.SB, b.H, b.AB
-FROM Appearances a
-JOIN People p ON a.playerID = p.playerID
-LEFT JOIN (
+  bat.HR, bat.RBI, bat.SB, bat.H, bat.AB
+FROM (
   SELECT playerID, teamID, yearID,
-    SUM(HR) as HR, SUM(RBI) as RBI, SUM(SB) as SB, SUM(H) as H, SUM(AB) as AB
+    SUM(G) as G, SUM(HR) as HR, SUM(RBI) as RBI,
+    SUM(SB) as SB, SUM(H) as H, SUM(AB) as AB
   FROM Batting GROUP BY playerID, teamID, yearID
-) b ON a.playerID = b.playerID AND a.teamID = b.teamID AND a.yearID = b.yearID
-WHERE a.yearID = ? AND a.teamID = ?
-  AND COALESCE(a.G_p, 0) < COALESCE(a.G_all, 0) - COALESCE(a.G_p, 0)
-ORDER BY a.G_all DESC`;
+) bat
+JOIN People p ON bat.playerID = p.playerID
+LEFT JOIN Appearances a ON a.playerID = bat.playerID
+  AND a.yearID = bat.yearID AND a.teamID = bat.teamID
+LEFT JOIN (
+  SELECT playerID, teamID, yearID, SUM(G) as G
+  FROM Pitching GROUP BY playerID, teamID, yearID
+) pit ON bat.playerID = pit.playerID
+  AND bat.teamID = pit.teamID AND bat.yearID = pit.yearID
+WHERE bat.yearID = ? AND bat.teamID = ?
+  AND COALESCE(pit.G, 0) < bat.G
+ORDER BY bat.G DESC`;
 
 const PITCHERS_QUERY = `SELECT
-  a.playerID, p.nameFirst, p.nameLast, a.G_all as G,
-  pi.GS, pi.ER, pi.IPouts, pi.SO, pi.SV
-FROM Appearances a
-JOIN People p ON a.playerID = p.playerID
-LEFT JOIN (
+  pit.playerID, p.nameFirst, p.nameLast, pit.G,
+  pit.GS, pit.ER, pit.IPouts, pit.SO, pit.SV
+FROM (
   SELECT playerID, teamID, yearID,
-    SUM(GS) as GS, SUM(ER) as ER, SUM(IPouts) as IPouts, SUM(SO) as SO, SUM(SV) as SV
+    SUM(G) as G, SUM(GS) as GS, SUM(ER) as ER,
+    SUM(IPouts) as IPouts, SUM(SO) as SO, SUM(SV) as SV
   FROM Pitching GROUP BY playerID, teamID, yearID
-) pi ON a.playerID = pi.playerID AND a.teamID = pi.teamID AND a.yearID = pi.yearID
-WHERE a.yearID = ? AND a.teamID = ?
-  AND COALESCE(a.G_p, 0) >= COALESCE(a.G_all, 0) - COALESCE(a.G_p, 0)
-  AND COALESCE(a.G_p, 0) > 0
-ORDER BY a.G_all DESC`;
+) pit
+JOIN People p ON pit.playerID = p.playerID
+LEFT JOIN (
+  SELECT playerID, teamID, yearID, SUM(G) as G
+  FROM Batting GROUP BY playerID, teamID, yearID
+) bat ON pit.playerID = bat.playerID
+  AND pit.teamID = bat.teamID AND pit.yearID = bat.yearID
+WHERE pit.yearID = ? AND pit.teamID = ?
+  AND pit.G >= COALESCE(bat.G, 0)
+ORDER BY pit.G DESC`;
 
 type TeamInfo = {
   W: number;
