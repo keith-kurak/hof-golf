@@ -161,45 +161,66 @@ export default function PlayerDetailScreen() {
   );
 
   const renderRow = (row: RowData) => {
-    const content = (
-      <ThemedView
-        type={row.isCareer ? "backgroundElement" : undefined}
-        style={[styles.tableRow, row.isCareer && styles.careerRow]}
-      >
-        <ThemedText
-          type={row.isCareer ? "smallBold" : "small"}
-          style={styles.labelCol}
+    if (row.isCareer) {
+      return (
+        <View>
+          <View style={styles.divider} />
+          <View style={styles.tableRow}>
+            <ThemedText
+              type="smallBold"
+              themeColor="textSecondary"
+              style={styles.labelCol}
+            >
+              {row.year}
+            </ThemedText>
+            <ThemedText
+              type="small"
+              themeColor="textSecondary"
+              style={styles.labelCol}
+            />
+            {row.cells.map((cell, i) => (
+              <ThemedText
+                key={i}
+                type="smallBold"
+                themeColor="textSecondary"
+                style={styles.statCol}
+              >
+                {cell}
+              </ThemedText>
+            ))}
+          </View>
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.tableRow}>
+        <Pressable
+          onPress={() => navigateToTeam(row)}
+          style={({ pressed }) => pressed && styles.pressed}
         >
-          {row.year}
-        </ThemedText>
-        <ThemedText
-          type="small"
-          themeColor="textSecondary"
-          style={styles.labelCol}
-        >
-          {row.teamID}
-        </ThemedText>
+          <ThemedView type="backgroundElement" style={styles.yearTeamButton}>
+            <ThemedText
+              type="small"
+              style={[styles.labelCol, { marginLeft: Spacing.one }]}
+            >
+              {row.year}
+            </ThemedText>
+            <ThemedText
+              type="small"
+              themeColor="textSecondary"
+              style={styles.labelCol}
+            >
+              {row.teamID}
+            </ThemedText>
+          </ThemedView>
+        </Pressable>
         {row.cells.map((cell, i) => (
-          <ThemedText
-            key={i}
-            type={row.isCareer ? "smallBold" : "small"}
-            style={styles.statCol}
-          >
+          <ThemedText key={i} type="small" style={styles.statCol}>
             {cell}
           </ThemedText>
         ))}
-      </ThemedView>
-    );
-
-    if (row.isCareer) return content;
-
-    return (
-      <Pressable
-        onPress={() => navigateToTeam(row)}
-        style={({ pressed }) => pressed && styles.pressed}
-      >
-        {content}
-      </Pressable>
+      </View>
     );
   };
 
@@ -303,9 +324,19 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.one,
     paddingHorizontal: Spacing.one,
   },
-  careerRow: {
+  yearTeamButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: Spacing.one,
+    paddingHorizontal: Spacing.one,
+    marginLeft: -Spacing.two,
     borderRadius: Spacing.two,
-    marginTop: Spacing.one,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: "#60646C",
+    marginTop: Spacing.two,
+    marginBottom: Spacing.one,
   },
   labelCol: {
     width: 36,
