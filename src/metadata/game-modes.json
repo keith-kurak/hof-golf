@@ -1,0 +1,54 @@
+[
+  {
+    "id": "hof-golf-2026",
+    "name": "HOF Golf (2026)",
+    "description": "Collect Hall of Famers across 9 rounds",
+    "active": true,
+    "rounds": 9,
+    "scoring": {
+      "type": "hof",
+      "targetSet": "hall-of-famers",
+      "pointsPer": 1,
+      "uniqueOnly": true
+    },
+    "start": {
+      "pool": "hof-free-teams",
+      "yearRange": [1947, 2025]
+    }
+  },
+  {
+    "id": "all-star-golf-2026",
+    "name": "All-Star Golf (2026)",
+    "description": "Start on a 2025 team with one All-Star and collect All-Star appearances",
+    "active": true,
+    "rounds": 9,
+    "scoring": {
+      "type": "all-star",
+      "targetSet": "all-stars",
+      "pointsPer": "selections",
+      "uniqueOnly": true
+    },
+    "start": {
+      "pool": "one-allstar-2025-teams",
+      "yearRange": [2025, 2025],
+      "freebie": true
+    }
+  },
+  {
+    "id": "manager-golf-2026",
+    "name": "Manager Golf (2026)",
+    "description": "Start on a 2025 team and collect players who became managers",
+    "active": true,
+    "rounds": 9,
+    "scoring": {
+      "type": "manager",
+      "targetSet": "managers-who-played",
+      "pointsPer": 1,
+      "uniqueOnly": true
+    },
+    "start": {
+      "pool": "all-2025-teams",
+      "yearRange": [2025, 2025]
+    }
+  }
+]
