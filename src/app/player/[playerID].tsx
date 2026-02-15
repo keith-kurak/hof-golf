@@ -1,11 +1,13 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 import {
   type BattingStats,
   type PitchingStats,
@@ -44,28 +46,15 @@ type RowData = {
   isCareer: boolean;
 };
 
-const battingCols = pickColumns(BATTING_STAT_COLUMNS, [
-  "G",
-  "AB",
-  "HR",
-  "RBI",
-  "SB",
-  "AVG",
-  "OBP",
-  "SLG",
+const battingColsCompact = pickColumns(BATTING_STAT_COLUMNS, [
+  "G", "AB", "HR", "RBI", "SB", "AVG", "OBP", "SLG",
 ]);
-const pitchingCols = pickColumns(PITCHING_STAT_COLUMNS, [
-  "W",
-  "L",
-  "ERA",
-  "G",
-  "IP",
-  "SO",
-  "SV",
+const pitchingColsCompact = pickColumns(PITCHING_STAT_COLUMNS, [
+  "W", "L", "ERA", "G", "IP", "SO", "SV",
 ]);
 
-const BATTING_HEADERS = ["Year", "Team", ...columnHeaders(battingCols)];
-const PITCHING_HEADERS = ["Year", "Team", ...columnHeaders(pitchingCols)];
+const STAT_COL_WIDTH = 38;
+const LABEL_COL_WIDTH = 36;
 
 function buildRows<T>(
   seasons: (T & { yearID: number; teamID: string })[],
@@ -101,10 +90,15 @@ export default function PlayerDetailScreen() {
   }>();
   const db = useSQLiteContext();
   const router = useRouter();
+  const theme = useTheme();
   const [bio, setBio] = useState<Bio | null>(null);
   const [hofStatus, setHofStatus] = useState<HofStatus | null>(null);
-  const [battingRows, setBattingRows] = useState<RowData[]>([]);
-  const [pitchingRows, setPitchingRows] = useState<RowData[]>([]);
+  const [battingSeasons, setBattingSeasons] = useState<SeasonBatting[]>([]);
+  const [battingCareer, setBattingCareer] = useState<BattingStats | null>(null);
+  const [pitchingSeasons, setPitchingSeasons] = useState<SeasonPitching[]>([]);
+  const [pitchingCareer, setPitchingCareer] = useState<PitchingStats | null>(null);
+  const [battingExpanded, setBattingExpanded] = useState(false);
+  const [pitchingExpanded, setPitchingExpanded] = useState(false);
 
   useEffect(() => {
     db.getFirstAsync<Bio>(
@@ -120,17 +114,31 @@ export default function PlayerDetailScreen() {
     Promise.all([
       db.getAllAsync<SeasonBatting>(SEASON_BATTING_QUERY, [playerID]),
       db.getFirstAsync<BattingStats>(battingQuery(), [playerID]),
-    ]).then(([seasons, career]) =>
-      setBattingRows(buildRows(seasons, career, battingCols)),
-    );
+    ]).then(([seasons, career]) => {
+      setBattingSeasons(seasons);
+      setBattingCareer(hasData(career) ? career : null);
+    });
 
     Promise.all([
       db.getAllAsync<SeasonPitching>(SEASON_PITCHING_QUERY, [playerID]),
       db.getFirstAsync<PitchingStats>(pitchingQuery(), [playerID]),
-    ]).then(([seasons, career]) =>
-      setPitchingRows(buildRows(seasons, career, pitchingCols)),
-    );
+    ]).then(([seasons, career]) => {
+      setPitchingSeasons(seasons);
+      setPitchingCareer(hasData(career) ? career : null);
+    });
   }, [db, playerID]);
+
+  const activeBattingCols = battingExpanded ? BATTING_STAT_COLUMNS : battingColsCompact;
+  const activePitchingCols = pitchingExpanded ? PITCHING_STAT_COLUMNS : pitchingColsCompact;
+
+  const battingRows = useMemo(
+    () => buildRows(battingSeasons, battingCareer, activeBattingCols),
+    [battingSeasons, battingCareer, activeBattingCols],
+  );
+  const pitchingRows = useMemo(
+    () => buildRows(pitchingSeasons, pitchingCareer, activePitchingCols),
+    [pitchingSeasons, pitchingCareer, activePitchingCols],
+  );
 
   const displayName =
     playerName ?? (bio ? `${bio.nameFirst} ${bio.nameLast}` : playerID);
@@ -143,158 +151,166 @@ export default function PlayerDetailScreen() {
     });
   };
 
-  const renderHeader = (headers: string[]) => (
-    <View style={styles.tableRow}>
-      {headers.map((h) => (
-        <ThemedText
-          key={h}
-          type="smallBold"
-          themeColor="textSecondary"
-          style={
-            h === "Year" || h === "Team" ? styles.labelCol : styles.statCol
-          }
-        >
-          {h}
-        </ThemedText>
-      ))}
-    </View>
-  );
+  const renderStatSection = (
+    title: string,
+    expanded: boolean,
+    onToggle: () => void,
+    columns: readonly StatColumn<unknown>[],
+    rows: RowData[],
+  ) => {
+    if (rows.length === 0) return null;
 
-  const renderRow = (row: RowData) => {
-    if (row.isCareer) {
-      return (
-        <View>
-          <View style={styles.divider} />
-          <View style={styles.tableRow}>
-            <ThemedText
-              type="smallBold"
-              themeColor="textSecondary"
-              style={styles.labelCol}
-            >
-              {row.year}
-            </ThemedText>
-            <ThemedText
-              type="small"
-              themeColor="textSecondary"
-              style={styles.labelCol}
-            />
-            {row.cells.map((cell, i) => (
-              <ThemedText
-                key={i}
-                type="smallBold"
-                themeColor="textSecondary"
-                style={styles.statCol}
-              >
-                {cell}
-              </ThemedText>
-            ))}
-          </View>
+    const statHeaders = columnHeaders(columns as StatColumn<unknown>[]);
+    const statsWidth = columns.length * STAT_COL_WIDTH;
+    const statStyle = expanded ? styles.statColFixed : styles.statCol;
+
+    // Fixed left column: Year + Team labels for each row
+    const fixedColumn = (
+      <View>
+        {/* Header labels */}
+        <View style={styles.rowLeft}>
+          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.labelCol}>
+            Year
+          </ThemedText>
+          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.labelCol}>
+            Team
+          </ThemedText>
         </View>
-      );
-    }
+        {/* Data rows */}
+        {rows.map((row) =>
+          row.isCareer ? (
+            <View key={row.key}>
+              <View style={styles.divider} />
+              <View style={styles.rowLeftData}>
+                <ThemedText type="smallBold" themeColor="textSecondary" style={styles.labelCol}>
+                  {row.year}
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary" style={styles.labelCol} />
+              </View>
+            </View>
+          ) : (
+            <View key={row.key} style={styles.rowLeft}>
+              <Pressable
+                onPress={() => navigateToTeam(row)}
+                style={({ pressed }) => pressed && styles.pressed}
+              >
+                <ThemedView type="backgroundElement" style={styles.yearTeamButton}>
+                  <ThemedText type="small" style={[styles.labelCol, { marginLeft: Spacing.one }]}>
+                    {row.year}
+                  </ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary" style={styles.labelCol}>
+                    {row.teamID}
+                  </ThemedText>
+                </ThemedView>
+              </Pressable>
+            </View>
+          ),
+        )}
+      </View>
+    );
+
+    // Right column: stat values
+    const statsColumn = (
+      <View style={expanded ? { width: statsWidth } : undefined}>
+        {/* Header labels */}
+        <View style={styles.rowRight}>
+          {statHeaders.map((h) => (
+            <ThemedText key={h} type="smallBold" themeColor="textSecondary" style={statStyle}>
+              {h}
+            </ThemedText>
+          ))}
+        </View>
+        {/* Data rows */}
+        {rows.map((row) =>
+          row.isCareer ? (
+            <View key={row.key}>
+              <View style={styles.divider} />
+              <View style={styles.rowRightData}>
+                {row.cells.map((cell, i) => (
+                  <ThemedText key={i} type="smallBold" themeColor="textSecondary" style={statStyle}>
+                    {cell}
+                  </ThemedText>
+                ))}
+              </View>
+            </View>
+          ) : (
+            <View key={row.key} style={styles.rowRightData}>
+              {row.cells.map((cell, i) => (
+                <ThemedText key={i} type="small" style={statStyle}>
+                  {cell}
+                </ThemedText>
+              ))}
+            </View>
+          ),
+        )}
+      </View>
+    );
 
     return (
-      <View style={styles.tableRow}>
-        <Pressable
-          onPress={() => navigateToTeam(row)}
-          style={({ pressed }) => pressed && styles.pressed}
-        >
-          <ThemedView type="backgroundElement" style={styles.yearTeamButton}>
-            <ThemedText
-              type="small"
-              style={[styles.labelCol, { marginLeft: Spacing.one }]}
+      <View style={styles.sectionContainer}>
+        <View style={styles.sectionTitleRow}>
+          <ThemedText type="smallBold">{title}</ThemedText>
+          <Pressable onPress={onToggle} hitSlop={8}>
+            <MaterialCommunityIcons
+              name={expanded ? "arrow-collapse-horizontal" : "arrow-expand-horizontal"}
+              size={20}
+              color={theme.textSecondary}
+            />
+          </Pressable>
+        </View>
+        <View style={styles.tableContainer}>
+          {fixedColumn}
+          {expanded ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={true}
+              style={styles.statsScroll}
             >
-              {row.year}
-            </ThemedText>
-            <ThemedText
-              type="small"
-              themeColor="textSecondary"
-              style={styles.labelCol}
-            >
-              {row.teamID}
-            </ThemedText>
-          </ThemedView>
-        </Pressable>
-        {row.cells.map((cell, i) => (
-          <ThemedText key={i} type="small" style={styles.statCol}>
-            {cell}
-          </ThemedText>
-        ))}
+              {statsColumn}
+            </ScrollView>
+          ) : (
+            <View style={styles.statsScroll}>{statsColumn}</View>
+          )}
+        </View>
       </View>
     );
   };
 
-  type ListItem =
-    | { type: "bio" }
-    | { type: "sectionHeader"; title: string; headers: string[] }
-    | { type: "row"; row: RowData };
-
-  const listData: ListItem[] = [];
-  listData.push({ type: "bio" });
-
-  if (battingRows.length > 0) {
-    listData.push({
-      type: "sectionHeader",
-      title: "Batting",
-      headers: BATTING_HEADERS,
-    });
-    for (const row of battingRows) {
-      listData.push({ type: "row", row });
-    }
-  }
-
-  if (pitchingRows.length > 0) {
-    listData.push({
-      type: "sectionHeader",
-      title: "Pitching",
-      headers: PITCHING_HEADERS,
-    });
-    for (const row of pitchingRows) {
-      listData.push({ type: "row", row });
-    }
-  }
-
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: displayName }} />
-      <FlatList
-        data={listData}
-        keyExtractor={(item, index) => {
-          if (item.type === "bio") return "bio";
-          if (item.type === "sectionHeader") return `header-${item.title}`;
-          return `${item.row.key}-${index}`;
-        }}
-        contentContainerStyle={styles.content}
-        renderItem={({ item }) => {
-          if (item.type === "bio") {
-            return bio ? (
-              <View style={styles.bioSection}>
-                {hofStatus && (
-                  <ThemedText type="default">
-                    Hall of Fame, elected in {hofStatus.yearid}
-                  </ThemedText>
-                )}
-                <ThemedText type="small" themeColor="textSecondary">
-                  B/T: {bio.bats ?? "—"}/{bio.throws ?? "—"}
-                  {"  "}Debut: {bio.debut ?? "—"}
-                  {"  "}Final: {bio.finalGame ?? "—"}
-                </ThemedText>
-              </View>
-            ) : null;
-          }
-          if (item.type === "sectionHeader") {
-            return (
-              <View style={styles.sectionHeaderContainer}>
-                <ThemedText type="smallBold" style={styles.sectionTitle}>
-                  {item.title}
-                </ThemedText>
-                {renderHeader(item.headers)}
-              </View>
-            );
-          }
-          return renderRow(item.row);
-        }}
-      />
+      <ScrollView contentContainerStyle={styles.content}>
+        {bio && (
+          <View style={styles.bioSection}>
+            {hofStatus && (
+              <ThemedText type="default">
+                Hall of Fame, elected in {hofStatus.yearid}
+              </ThemedText>
+            )}
+            <ThemedText type="small" themeColor="textSecondary">
+              B/T: {bio.bats ?? "—"}/{bio.throws ?? "—"}
+              {"  "}Debut: {bio.debut ?? "—"}
+              {"  "}Final: {bio.finalGame ?? "—"}
+            </ThemedText>
+          </View>
+        )}
+
+        {renderStatSection(
+          "Batting",
+          battingExpanded,
+          () => setBattingExpanded((v) => !v),
+          activeBattingCols,
+          battingRows,
+        )}
+
+        {renderStatSection(
+          "Pitching",
+          pitchingExpanded,
+          () => setPitchingExpanded((v) => !v),
+          activePitchingCols,
+          pitchingRows,
+        )}
+      </ScrollView>
     </ThemedView>
   );
 }
@@ -311,18 +327,40 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
     marginBottom: Spacing.three,
   },
-  sectionHeaderContainer: {
+  sectionContainer: {
     marginTop: Spacing.three,
-    marginBottom: Spacing.one,
   },
-  sectionTitle: {
+  sectionTitleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: Spacing.two,
   },
-  tableRow: {
+  tableContainer: {
+    flexDirection: "row",
+  },
+  rowLeft: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.one,
+  },
+  rowLeftData: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: Spacing.two,
+  },
+  rowRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: Spacing.one,
+  },
+  rowRightData: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: Spacing.two,
+  },
+  statsScroll: {
+    flex: 1,
   },
   yearTeamButton: {
     flexDirection: "row",
@@ -339,10 +377,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.one,
   },
   labelCol: {
-    width: 36,
+    width: LABEL_COL_WIDTH,
   },
   statCol: {
     flex: 1,
+    textAlign: "center",
+  },
+  statColFixed: {
+    width: STAT_COL_WIDTH,
     textAlign: "center",
   },
   pressed: {
