@@ -9,6 +9,8 @@ export type ThemedTextProps = TextProps & {
     | "title"
     | "small"
     | "smallBold"
+    | "tiny"
+    | "tinyBold"
     | "subtitle"
     | "link"
     | "linkPrimary"
@@ -34,6 +36,8 @@ export function ThemedText({
         type === "title" && styles.title,
         type === "small" && styles.small,
         type === "smallBold" && styles.smallBold,
+        type === "tiny" && styles.tiny,
+        type === "tinyBold" && styles.tinyBold,
         type === "mediumBold" && styles.mediumBold,
         type === "medium" && styles.medium,
         type === "subtitle" && styles.subtitle,
@@ -56,6 +60,16 @@ const styles = StyleSheet.create({
   smallBold: {
     fontSize: 14,
     lineHeight: 20,
+    fontWeight: 700,
+  },
+  tiny: {
+    fontSize: 11,
+    lineHeight: 16,
+    fontWeight: 500,
+  },
+  tinyBold: {
+    fontSize: 11,
+    lineHeight: 16,
     fontWeight: 700,
   },
   mediumBold: {

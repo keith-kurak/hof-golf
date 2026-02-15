@@ -48,6 +48,21 @@ export const YEAR_RANGE_QUERY = `SELECT MIN(yearID) as minYear, MAX(yearID) as m
   SELECT yearID FROM Pitching WHERE playerID = ?
 )`;
 
+/** Per-season batting stats grouped by year+team. Returns all stat columns. */
+export const SEASON_BATTING_QUERY = `
+  SELECT yearID, teamID, ${sumSelect(BATTING_COLUMNS)}
+  FROM Batting WHERE playerID = ?
+  GROUP BY yearID, teamID ORDER BY yearID`;
+
+/** Per-season pitching stats grouped by year+team. Returns all stat columns. */
+export const SEASON_PITCHING_QUERY = `
+  SELECT yearID, teamID, ${sumSelect(PITCHING_COLUMNS)}
+  FROM Pitching WHERE playerID = ?
+  GROUP BY yearID, teamID ORDER BY yearID`;
+
+export type SeasonBatting = BattingStats & { yearID: number; teamID: string };
+export type SeasonPitching = PitchingStats & { yearID: number; teamID: string };
+
 // ---------------------------------------------------------------------------
 // Formatting helpers
 // ---------------------------------------------------------------------------
@@ -101,8 +116,71 @@ export function formatIP(ipouts: number | null | undefined): string {
 }
 
 // ---------------------------------------------------------------------------
-// Formatted stat rows — { label, value } for a single data set, or
-// { label, year, career } when comparing two.
+// Stat column definitions — declarative formatters that can be selected from.
+// Each column knows its header label and how to format a value from the full
+// stats row. Use `pickColumns` to extract formatted cells from a stats object.
+// ---------------------------------------------------------------------------
+
+export type StatColumn<T> = {
+  label: string;
+  format: (s: T) => string;
+};
+
+/** All available batting columns. */
+export const BATTING_STAT_COLUMNS: StatColumn<BattingStats>[] = [
+  { label: "G",   format: (s) => statVal(s.G) },
+  { label: "AB",  format: (s) => statVal(s.AB) },
+  { label: "R",   format: (s) => statVal(s.R) },
+  { label: "H",   format: (s) => statVal(s.H) },
+  { label: "2B",  format: (s) => statVal(s["2B"]) },
+  { label: "3B",  format: (s) => statVal(s["3B"]) },
+  { label: "HR",  format: (s) => statVal(s.HR) },
+  { label: "RBI", format: (s) => statVal(s.RBI) },
+  { label: "BB",  format: (s) => statVal(s.BB) },
+  { label: "SO",  format: (s) => statVal(s.SO) },
+  { label: "SB",  format: (s) => statVal(s.SB) },
+  { label: "AVG", format: (s) => formatAvg(s.H, s.AB) },
+  { label: "OBP", format: (s) => formatObp(s) },
+  { label: "SLG", format: (s) => formatSlg(s) },
+  { label: "OPS", format: (s) => formatOps(s) },
+];
+
+/** All available pitching columns. */
+export const PITCHING_STAT_COLUMNS: StatColumn<PitchingStats>[] = [
+  { label: "W",   format: (s) => statVal(s.W) },
+  { label: "L",   format: (s) => statVal(s.L) },
+  { label: "ERA", format: (s) => formatEra(s.ER, s.IPouts) },
+  { label: "G",   format: (s) => statVal(s.G) },
+  { label: "GS",  format: (s) => statVal(s.GS) },
+  { label: "SV",  format: (s) => statVal(s.SV) },
+  { label: "IP",  format: (s) => formatIP(s.IPouts) },
+  { label: "SO",  format: (s) => statVal(s.SO) },
+  { label: "BB",  format: (s) => statVal(s.BB) },
+  { label: "H",   format: (s) => statVal(s.H) },
+  { label: "HR",  format: (s) => statVal(s.HR) },
+];
+
+/** Pick a subset of columns by label. */
+export function pickColumns<T>(
+  all: StatColumn<T>[],
+  labels: string[],
+): StatColumn<T>[] {
+  return labels.map((l) => all.find((c) => c.label === l)!);
+}
+
+/** Format a stats row through a set of columns into string cells. */
+export function formatCells<T>(columns: StatColumn<T>[], stats: T): string[] {
+  return columns.map((c) => c.format(stats));
+}
+
+/** Extract just the header labels from a set of columns. */
+export function columnHeaders<T>(columns: StatColumn<T>[]): string[] {
+  return columns.map((c) => c.label);
+}
+
+// ---------------------------------------------------------------------------
+// Formatted stat rows — { label, year, career } for comparing two data sets.
+// Used by the PlayerSeasonCard component.
 // ---------------------------------------------------------------------------
 
 export type StatRow = { label: string; year: string; career: string };
@@ -111,42 +189,22 @@ export function formatBattingRows(
   year: BattingStats | null | undefined,
   career: BattingStats | null | undefined,
 ): StatRow[] {
-  return [
-    { label: "G",   year: statVal(year?.G),   career: statVal(career?.G) },
-    { label: "AB",  year: statVal(year?.AB),  career: statVal(career?.AB) },
-    { label: "R",   year: statVal(year?.R),   career: statVal(career?.R) },
-    { label: "H",   year: statVal(year?.H),   career: statVal(career?.H) },
-    { label: "2B",  year: statVal(year?.["2B"]),  career: statVal(career?.["2B"]) },
-    { label: "3B",  year: statVal(year?.["3B"]),  career: statVal(career?.["3B"]) },
-    { label: "HR",  year: statVal(year?.HR),  career: statVal(career?.HR) },
-    { label: "RBI", year: statVal(year?.RBI), career: statVal(career?.RBI) },
-    { label: "BB",  year: statVal(year?.BB),  career: statVal(career?.BB) },
-    { label: "SO",  year: statVal(year?.SO),  career: statVal(career?.SO) },
-    { label: "SB",  year: statVal(year?.SB),  career: statVal(career?.SB) },
-    { label: "AVG", year: formatAvg(year?.H, year?.AB), career: formatAvg(career?.H, career?.AB) },
-    { label: "OBP", year: formatObp(year),    career: formatObp(career) },
-    { label: "SLG", year: formatSlg(year),    career: formatSlg(career) },
-    { label: "OPS", year: formatOps(year),    career: formatOps(career) },
-  ];
+  return BATTING_STAT_COLUMNS.map((col) => ({
+    label: col.label,
+    year: year ? col.format(year) : "—",
+    career: career ? col.format(career) : "—",
+  }));
 }
 
 export function formatPitchingRows(
   year: PitchingStats | null | undefined,
   career: PitchingStats | null | undefined,
 ): StatRow[] {
-  return [
-    { label: "W",   year: statVal(year?.W),   career: statVal(career?.W) },
-    { label: "L",   year: statVal(year?.L),   career: statVal(career?.L) },
-    { label: "ERA", year: formatEra(year?.ER, year?.IPouts), career: formatEra(career?.ER, career?.IPouts) },
-    { label: "G",   year: statVal(year?.G),   career: statVal(career?.G) },
-    { label: "GS",  year: statVal(year?.GS),  career: statVal(career?.GS) },
-    { label: "SV",  year: statVal(year?.SV),  career: statVal(career?.SV) },
-    { label: "IP",  year: formatIP(year?.IPouts), career: formatIP(career?.IPouts) },
-    { label: "SO",  year: statVal(year?.SO),  career: statVal(career?.SO) },
-    { label: "BB",  year: statVal(year?.BB),  career: statVal(career?.BB) },
-    { label: "H",   year: statVal(year?.H),   career: statVal(career?.H) },
-    { label: "HR",  year: statVal(year?.HR),  career: statVal(career?.HR) },
-  ];
+  return PITCHING_STAT_COLUMNS.map((col) => ({
+    label: col.label,
+    year: year ? col.format(year) : "—",
+    career: career ? col.format(career) : "—",
+  }));
 }
 
 // ---------------------------------------------------------------------------
