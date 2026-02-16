@@ -29,7 +29,9 @@ export default function GameCompleteScreen() {
   if (!game) {
     return (
       <ThemedView style={styles.container}>
-        <Stack.Screen options={{ title: "Game Complete", headerBackVisible: false }} />
+        <Stack.Screen
+          options={{ title: "Game Complete", headerBackVisible: false }}
+        />
         <ThemedText style={styles.empty}>No game data.</ThemedText>
       </ThemedView>
     );
@@ -41,7 +43,9 @@ export default function GameCompleteScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: "Game Complete", headerBackVisible: false }} />
+      <Stack.Screen
+        options={{ title: "Game Complete", headerBackVisible: false }}
+      />
       <View style={styles.content}>
         <ThemedText style={styles.emoji}>{mode?.emoji}</ThemedText>
         <ThemedText type="subtitle">{mode?.name ?? "Game"}</ThemedText>
@@ -114,6 +118,7 @@ const styles = StyleSheet.create({
   scoreValue: {
     fontSize: 64,
     fontWeight: "800",
+    marginBottom: Spacing.three,
   },
   newBest: {
     color: "#22C55E",

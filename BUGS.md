@@ -7,6 +7,7 @@
 - add missing 2026 hall of famers
 - pitcher/batter check is clumsy (See Tom Housegame)
 - "finished" error
+- check manager logic - didn't pick up dusty baker in hof mode
 
 ## changes
 

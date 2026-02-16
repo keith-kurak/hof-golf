@@ -228,8 +228,6 @@ export function endGame() {
   const active = game$.active.get();
   if (!active) return;
 
-  game$.active.finished.set(true);
-
   // Evaluate game bonus
   const mode = (gameModes as GameMode[]).find((m) => m.id === active.modeId);
   let bonusPoints = 0;
