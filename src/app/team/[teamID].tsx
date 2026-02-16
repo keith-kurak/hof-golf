@@ -17,6 +17,7 @@ import { endGame, game$ } from "@/store/game-store";
 import type { GameMode } from "@/store/starting-pools";
 import { divisionName } from "@/util/divisions";
 import { formatAvg, formatEra, formatIP, statVal } from "@/util/stats";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const TWO_WAY_SET = new Set(twoWayPlayers);
 const activeModes = gameModes as GameMode[];
@@ -282,6 +283,8 @@ export default function TeamRosterScreen() {
   const [teamInfo, setTeamInfo] = useState<TeamInfo | null>(null);
   const [rawBatters, setRawBatters] = useState<RawBatter[]>([]);
   const [rawPitchers, setRawPitchers] = useState<Pitcher[]>([]);
+
+  const insets = useSafeAreaInsets();
 
   // Game state
   const active = useSelector(() => game$.active.get());
@@ -656,7 +659,9 @@ export default function TeamRosterScreen() {
         }}
       />
       {isFinalRound ? (
-        <View style={styles.continueSection}>
+        <View
+          style={[styles.continueSection, { paddingBottom: insets.bottom }]}
+        >
           <Pressable
             onPress={handleContinue}
             style={({ pressed }) => [

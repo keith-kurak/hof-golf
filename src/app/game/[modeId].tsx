@@ -68,6 +68,8 @@ export default function ModeDetailScreen() {
     return () => clearTimeout(timer);
   }, [countdown, router]);
 
+  const insets = useSafeAreaInsets();
+
   const handlePlay = useCallback(async () => {
     if (loading || !mode) return;
     setLoading(true);
@@ -303,6 +305,7 @@ export default function ModeDetailScreen() {
           styles.playButton,
           { backgroundColor: theme.text },
           pressed && styles.pressed,
+          { marginBottom: insets.bottom },
         ]}
       >
         {loading && countdown === null ? (

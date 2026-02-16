@@ -8,6 +8,7 @@ import { Spacing } from "@/constants/theme";
 import gameModes from "@/metadata/game-modes.json";
 import { game$, type SavedGame } from "@/store/game-store";
 import type { GameMode } from "@/store/starting-pools";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const activeModes = gameModes as GameMode[];
 
@@ -41,58 +42,58 @@ function GameCard({ game }: { game: SavedGame }) {
         })
       }
     >
-    <ThemedView type="backgroundElement" style={styles.card}>
-      <View style={styles.cardHeader}>
-        <ThemedText type="mediumBold">
-          {mode?.emoji} {mode?.name ?? game.modeId}
-        </ThemedText>
-        <View style={styles.badges}>
-          {game.timed && (
-            <ThemedView type="backgroundSelected" style={styles.badge}>
-              <ThemedText type="small">Timed</ThemedText>
-            </ThemedView>
-          )}
-          {!game.timed && (
-            <ThemedView type="backgroundSelected" style={styles.badge}>
-              <ThemedText type="small" themeColor="textSecondary">
-                Untimed
-              </ThemedText>
-            </ThemedView>
-          )}
-        </View>
-      </View>
-
-      <View style={styles.cardBody}>
-        <View style={styles.pointsRow}>
-          <ThemedText type="subtitle">{game.totalPoints}</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            {" "}
-            pts
-            {game.bonusPoints > 0 && (
-              <ThemedText type="small" themeColor="textSecondary">
-                {" "}
-                (includes +{game.bonusPoints} bonus)
-              </ThemedText>
+      <ThemedView type="backgroundElement" style={styles.card}>
+        <View style={styles.cardHeader}>
+          <ThemedText type="mediumBold">
+            {mode?.emoji} {mode?.name ?? game.modeId}
+          </ThemedText>
+          <View style={styles.badges}>
+            {game.timed && (
+              <ThemedView type="backgroundSelected" style={styles.badge}>
+                <ThemedText type="small">Timed</ThemedText>
+              </ThemedView>
             )}
-          </ThemedText>
+            {!game.timed && (
+              <ThemedView type="backgroundSelected" style={styles.badge}>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Untimed
+                </ThemedText>
+              </ThemedView>
+            )}
+          </View>
         </View>
 
-        {startingRound && (
-          <ThemedText type="small" themeColor="textSecondary">
-            Started: {startingRound.yearID} {startingRound.teamName}
-          </ThemedText>
-        )}
+        <View style={styles.cardBody}>
+          <View style={styles.pointsRow}>
+            <ThemedText type="subtitle">{game.totalPoints}</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              {" "}
+              pts
+              {game.bonusPoints > 0 && (
+                <ThemedText type="small" themeColor="textSecondary">
+                  {" "}
+                  (includes +{game.bonusPoints} bonus)
+                </ThemedText>
+              )}
+            </ThemedText>
+          </View>
 
-        <View style={styles.footerRow}>
-          <ThemedText type="small" themeColor="textSecondary">
-            {formatDate(game.finishedAt)}
-          </ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            {formatDuration(game.startedAt, game.finishedAt)}
-          </ThemedText>
+          {startingRound && (
+            <ThemedText type="small" themeColor="textSecondary">
+              Started: {startingRound.yearID} {startingRound.teamName}
+            </ThemedText>
+          )}
+
+          <View style={styles.footerRow}>
+            <ThemedText type="small" themeColor="textSecondary">
+              {formatDate(game.finishedAt)}
+            </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              {formatDuration(game.startedAt, game.finishedAt)}
+            </ThemedText>
+          </View>
         </View>
-      </View>
-    </ThemedView>
+      </ThemedView>
     </Pressable>
   );
 }
@@ -100,8 +101,10 @@ function GameCard({ game }: { game: SavedGame }) {
 export default function HistoryScreen() {
   const history = useSelector(() => game$.history.get() ?? []);
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <FlatList
         data={history}
         keyExtractor={(item) => item.id}
