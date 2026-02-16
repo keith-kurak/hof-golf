@@ -46,6 +46,10 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="game/history-detail"
+            options={{ title: "Game Details" }}
+          />
+          <Stack.Screen
             name="game/complete"
             options={{ title: "Game Complete", headerBackVisible: false }}
           />

@@ -1,5 +1,6 @@
 import { useSelector } from "@legendapp/state/react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -27,10 +28,19 @@ function formatDuration(startedAt: number, finishedAt: number): string {
 }
 
 function GameCard({ game }: { game: SavedGame }) {
+  const router = useRouter();
   const mode = activeModes.find((m) => m.id === game.modeId);
   const startingRound = game.rounds[0];
 
   return (
+    <Pressable
+      onPress={() =>
+        router.push({
+          pathname: "/game/history-detail",
+          params: { gameId: game.id },
+        })
+      }
+    >
     <ThemedView type="backgroundElement" style={styles.card}>
       <View style={styles.cardHeader}>
         <ThemedText type="mediumBold">
@@ -83,6 +93,7 @@ function GameCard({ game }: { game: SavedGame }) {
         </View>
       </View>
     </ThemedView>
+    </Pressable>
   );
 }
 
