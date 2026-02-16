@@ -1,18 +1,24 @@
 import { computed, observable } from "@legendapp/state";
-import { synced } from "@legendapp/state/sync";
-import { observablePersistSqlite } from "@legendapp/state/persist-plugins/expo-sqlite";
-import Storage from "expo-sqlite/kv-store";
+import { configureSynced, syncObservable } from "@legendapp/state/sync";
+//import { observablePersistSqlite  } from "@legendapp/state/persist-plugins/expo-sqlite";
+import { observablePersistAsyncStorage } from "@legendapp/state/persist-plugins/async-storage";
+//import Storage from "expo-sqlite/kv-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import gameModes from "@/metadata/game-modes.json";
 
-import type { GameMode, StartingTeam } from "./starting-pools";
 import type { RosterTarget } from "./roster-targets";
+import type { GameMode, StartingTeam } from "./starting-pools";
 
 // ---------------------------------------------------------------------------
 // Persistence setup
 // ---------------------------------------------------------------------------
 
-const plugin = observablePersistSqlite(Storage);
+const persistOptions = configureSynced({
+  persist: {
+    plugin: observablePersistAsyncStorage({ AsyncStorage }),
+  },
+});
 
 // ---------------------------------------------------------------------------
 // Types
@@ -59,19 +65,23 @@ export type SavedGame = {
 // ---------------------------------------------------------------------------
 
 export const game$ = observable({
-  active: synced<ActiveGame | null>({
-    initial: null,
-    persist: { name: "active-game", plugin },
-  }),
-  history: synced<SavedGame[]>({
-    initial: [],
-    persist: { name: "game-history", plugin },
-  }),
-  bestScores: synced<Record<string, number>>({
-    initial: {},
-    persist: { name: "best-scores", plugin },
-  }),
+  active: null as ActiveGame | null,
+  history: [] as SavedGame[],
+  bestScores: {} as Record<string, number>,
 });
+
+syncObservable(
+  game$.active,
+  persistOptions({ persist: { name: "active-game" } }),
+);
+syncObservable(
+  game$.history,
+  persistOptions({ persist: { name: "game-history" } }),
+);
+syncObservable(
+  game$.bestScores,
+  persistOptions({ persist: { name: "best-scores" } }),
+);
 
 // ---------------------------------------------------------------------------
 // Ephemeral observables (not persisted)
@@ -84,9 +94,15 @@ export const roundTimedOut$ = observable(false);
 // Computed helpers
 // ---------------------------------------------------------------------------
 
-export const isGameActive$ = computed(
-  () => game$.active.get() !== null && !game$.active.finished.get(),
-);
+export const isGameActive$ = computed(() => {
+  const active = game$.active.get();
+  return (
+    active !== null &&
+    !active.finished &&
+    Array.isArray(active.rounds) &&
+    active.rounds.length > 0
+  );
+});
 
 export const currentRound$ = computed(
   () => (game$.active.rounds.get()?.length ?? 0) - 1,
@@ -184,10 +200,7 @@ export function navigateToTeam(
     // Only score targets not already seen
     const newTargets = targets.filter((t) => !seenSet.has(t.playerID));
     pointsEarned = newTargets.reduce((sum, t) => sum + t.points, 0);
-    updatedSeen = [
-      ...active.seenTargets,
-      ...newTargets.map((t) => t.playerID),
-    ];
+    updatedSeen = [...active.seenTargets, ...newTargets.map((t) => t.playerID)];
   }
 
   const newRound: GameRound = {

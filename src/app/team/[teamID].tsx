@@ -2,8 +2,9 @@ import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, SectionList, StyleSheet, View } from "react-native";
+import { Pressable, SectionList, StyleSheet, Text, View } from "react-native";
 
+import { GameStatusBar } from "@/components/game-status-bar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
@@ -352,9 +353,31 @@ export default function TeamRosterScreen() {
       params: { playerID, playerName: name, year: String(year) },
     });
 
+  // Build game status bar content
+  const isActiveGame = active && !active.finished;
+  const gameHint = (() => {
+    if (!isActiveGame) return "";
+    if (timeLeft === 0 && isTimed) return "Time's up! Pick a player to continue.";
+    const cumLabel = showCumWL ? `  W-L: ${cumWL.w}-${cumWL.l}` : "";
+    return `Pick a player from this roster.${cumLabel}`;
+  })();
+
+  const timerTrailing =
+    isTimed && isActiveGame ? (
+      <Text
+        style={[
+          styles.timerBadge,
+          timeLeft <= 10 && styles.timerBadgeRed,
+        ]}
+      >
+        {timeLeft === 0 ? "0:00" : `0:${String(timeLeft).padStart(2, "0")}`}
+      </Text>
+    ) : null;
+
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: teamName ?? teamID }} />
+      <GameStatusBar hint={gameHint} trailing={timerTrailing} />
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.playerID}
@@ -362,28 +385,6 @@ export default function TeamRosterScreen() {
         stickySectionHeadersEnabled={true}
         ListHeaderComponent={
           <>
-            {/* Timer + cumulative W-L for active game */}
-            {isTimed && (
-              <View style={styles.timerRow}>
-                <ThemedText
-                  type="mediumBold"
-                  style={[
-                    styles.timerText,
-                    timeLeft <= 10 && styles.timerRed,
-                    timeLeft === 0 && styles.timerExpired,
-                  ]}
-                >
-                  {timeLeft === 0 ? "TIME'S UP" : `${timeLeft}s`}
-                </ThemedText>
-              </View>
-            )}
-            {showCumWL && active && !active.finished && (
-              <View style={styles.cumWLRow}>
-                <ThemedText type="small" themeColor="textSecondary">
-                  Cumulative W-L: {cumWL.w}-{cumWL.l}
-                </ThemedText>
-              </View>
-            )}
             <YearPicker year={year} onYearChange={setYear} />
             {teamInfo && (
               <View style={styles.teamInfo}>
@@ -541,23 +542,18 @@ const styles = StyleSheet.create({
     padding: Spacing.three,
     paddingBottom: Spacing.six,
   },
-  timerRow: {
-    alignItems: "center",
-    paddingVertical: Spacing.two,
+  timerBadge: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "700",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: "hidden",
   },
-  timerText: {
-    fontSize: 28,
-  },
-  timerRed: {
-    color: "#E53935",
-  },
-  timerExpired: {
-    color: "#E53935",
-    opacity: 0.7,
-  },
-  cumWLRow: {
-    alignItems: "center",
-    paddingBottom: Spacing.two,
+  timerBadgeRed: {
+    backgroundColor: "#E53935",
   },
   teamInfo: {
     gap: Spacing.one,

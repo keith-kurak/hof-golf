@@ -20,12 +20,13 @@ export default function GameScreen() {
   const bestScores = useSelector(() => game$.bestScores.get() ?? {});
 
   // When this tab gains focus, check for an active game and show resume modal
+  const hasActiveGame = useSelector(isGameActive$);
   useFocusEffect(
     useCallback(() => {
-      if (isGameActive$.get()) {
+      if (hasActiveGame) {
         router.push("/game/resume");
       }
-    }, [router]),
+    }, [router, hasActiveGame]),
   );
 
   return (

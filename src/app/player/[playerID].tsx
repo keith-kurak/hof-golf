@@ -5,6 +5,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
+import { GameStatusBar } from "@/components/game-status-bar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
@@ -328,6 +329,7 @@ export default function PlayerDetailScreen() {
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: displayName }} />
+      <GameStatusBar hint="Pick a team-year to navigate to next." />
       <ScrollView contentContainerStyle={styles.content}>
         {bio && (
           <View style={styles.bioSection}>

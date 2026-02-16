@@ -6,11 +6,7 @@ import { ThemedText } from "@/components/themed-text";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import gameModes from "@/metadata/game-modes.json";
-import {
-  game$,
-  currentRound$,
-  abandonGame,
-} from "@/store/game-store";
+import { abandonGame, currentRound$, game$ } from "@/store/game-store";
 import type { GameMode } from "@/store/starting-pools";
 
 const activeModes = (gameModes as GameMode[]).filter((m) => m.active);
@@ -22,6 +18,10 @@ export default function ResumeModal() {
   const roundIdx = useSelector(currentRound$);
 
   if (!active) {
+    return null;
+  }
+
+  if (!active.rounds) {
     return null;
   }
 
