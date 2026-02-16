@@ -5,6 +5,8 @@
 - sort sp by ip
 - on a timeout, show why you got zero points / don't show +1's
 - add missing 2026 hall of famers
+- pitcher/batter check is clumsy (See Tom Housegame)
+- "finished" error
 
 ## changes
 
@@ -12,3 +14,4 @@
 - show detail when tapping on status
 - message/ toast area
 - don't show cumulative record
+- show detail on history

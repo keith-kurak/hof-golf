@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import gameModes from "@/metadata/game-modes.json";
-import { cumulativeWL$, currentRound$, game$ } from "@/store/game-store";
+import { currentRound$, game$ } from "@/store/game-store";
 import type { GameMode } from "@/store/starting-pools";
 
 const activeModes = gameModes as GameMode[];
@@ -19,14 +19,11 @@ type Props = {
 export function GameStatusBar({ hint, trailing }: Props) {
   const active = useSelector(() => game$.active.get());
   const roundIdx = useSelector(currentRound$);
-  const cumWL = useSelector(cumulativeWL$);
   const router = useRouter();
 
   if (!active || active.finished) return null;
 
   const mode = activeModes.find((m) => m.id === active.modeId);
-  const showWL =
-    mode?.bonuses?.gameBonus?.condition === "cumulative-losing-record";
 
   return (
     <Pressable
@@ -40,18 +37,10 @@ export function GameStatusBar({ hint, trailing }: Props) {
         </View>
         <View style={styles.right}>
           <Text style={styles.stat}>
-            Rd {roundIdx + 1}/{mode?.rounds ?? 9}
+            Rd {Math.min(roundIdx + 1, mode?.rounds ?? 9)}/{mode?.rounds ?? 9}
           </Text>
           <View style={styles.divider} />
           <Text style={styles.stat}>{active.totalPoints} pts</Text>
-          {showWL && (
-            <>
-              <View style={styles.divider} />
-              <Text style={[styles.stat, cumWL.l > cumWL.w && styles.bonusActive]}>
-                {cumWL.w}-{cumWL.l}
-              </Text>
-            </>
-          )}
           {trailing}
         </View>
       </View>

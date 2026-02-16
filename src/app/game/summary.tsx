@@ -58,9 +58,15 @@ export default function GameSummaryScreen() {
         </View>
 
         <View style={styles.metaRow}>
-          <ThemedText type="small" themeColor="textSecondary">
-            Rd {active.rounds.length}/{mode?.rounds ?? 9}
-          </ThemedText>
+          {active.rounds.length <= (mode?.rounds ?? 9) ? (
+            <ThemedText type="small" themeColor="textSecondary">
+              Rd {active.rounds.length}/{mode?.rounds ?? 9}
+            </ThemedText>
+          ) : (
+            <ThemedText type="small" themeColor="textSecondary">
+              Final team
+            </ThemedText>
+          )}
           <ThemedText type="small" themeColor="textSecondary">
             {formatDuration(elapsed)}
           </ThemedText>

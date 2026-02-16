@@ -9,13 +9,17 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
-import twoWayPlayers from "@/metadata/two-way-players.json";
 import { useRoundTimer } from "@/hooks/use-round-timer";
-import { game$ } from "@/store/game-store";
+import { useTheme } from "@/hooks/use-theme";
+import gameModes from "@/metadata/game-modes.json";
+import twoWayPlayers from "@/metadata/two-way-players.json";
+import { endGame, game$ } from "@/store/game-store";
+import type { GameMode } from "@/store/starting-pools";
 import { divisionName } from "@/util/divisions";
 import { formatAvg, formatEra, formatIP, statVal } from "@/util/stats";
 
 const TWO_WAY_SET = new Set(twoWayPlayers);
+const activeModes = gameModes as GameMode[];
 
 // ---------------------------------------------------------------------------
 // Types
@@ -281,7 +285,18 @@ export default function TeamRosterScreen() {
 
   // Game state
   const active = useSelector(() => game$.active.get());
+  const theme = useTheme();
   const { timeLeft, isTimed } = useRoundTimer();
+  const mode =
+    active && !active.finished
+      ? activeModes.find((m) => m.id === active.modeId)
+      : null;
+  const isFinalRound = !!(
+    active &&
+    !active.finished &&
+    mode &&
+    active.rounds.length > mode.rounds
+  );
 
   useEffect(() => {
     db.getFirstAsync<TeamInfo>(TEAM_INFO_QUERY, [year, teamID]).then(
@@ -312,11 +327,18 @@ export default function TeamRosterScreen() {
     return result;
   }, [rawBatters, rawPitchers]);
 
-  const navigateToPlayer = (playerID: string, name: string) =>
+  const navigateToPlayer = (playerID: string, name: string) => {
+    if (isFinalRound) return;
     router.push({
       pathname: "/player/[playerID]",
       params: { playerID, playerName: name, year: String(year) },
     });
+  };
+
+  const handleContinue = () => {
+    endGame();
+    router.push("/game/complete");
+  };
 
   // Build target sets for highlighting
   const isActiveGame = active && !active.finished;
@@ -352,10 +374,33 @@ export default function TeamRosterScreen() {
   // Build game status bar hint with player names
   const gameHint = useMemo(() => {
     if (!isActiveGame) return "";
+
+    const allTargets = currentRound?.targetsFound ?? [];
+
+    if (isFinalRound) {
+      const pts = currentRound?.pointsEarned ?? 0;
+      if (allTargets.length > 0) {
+        const names = allTargets.map((t) =>
+          seenBeforeIDs.has(t.playerID)
+            ? `${t.name} (+0)`
+            : `${t.name} +${t.points}`,
+        );
+        return (
+          <>
+            <Text style={hintStyles.action}>
+              +{pts} pts.{" "}
+              <Text style={hintStyles.names}>({names.join(", ")})</Text>
+            </Text>
+            <Text style={hintStyles.action}>Game complete!</Text>
+          </>
+        );
+      }
+      return <Text style={hintStyles.action}>Game complete!</Text>;
+    }
+
     if (timeLeft === 0 && isTimed)
       return "Time's up! Pick a player to continue.";
 
-    const allTargets = currentRound?.targetsFound ?? [];
     if (allTargets.length > 0) {
       const names = allTargets.map((t) =>
         seenBeforeIDs.has(t.playerID)
@@ -373,10 +418,17 @@ export default function TeamRosterScreen() {
       );
     }
     return "No targets on this roster. Pick a player.";
-  }, [isActiveGame, isTimed, timeLeft, currentRound, seenBeforeIDs]);
+  }, [
+    isActiveGame,
+    isFinalRound,
+    isTimed,
+    timeLeft,
+    currentRound,
+    seenBeforeIDs,
+  ]);
 
   const timerTrailing =
-    isTimed && isActiveGame ? (
+    isTimed && isActiveGame && !isFinalRound ? (
       <Text style={[styles.timerBadge, timeLeft <= 10 && styles.timerBadgeRed]}>
         {timeLeft === 0 ? "0:00" : `0:${String(timeLeft).padStart(2, "0")}`}
       </Text>
@@ -603,6 +655,22 @@ export default function TeamRosterScreen() {
           );
         }}
       />
+      {isFinalRound ? (
+        <View style={styles.continueSection}>
+          <Pressable
+            onPress={handleContinue}
+            style={({ pressed }) => [
+              styles.continueButton,
+              { backgroundColor: theme.text },
+              pressed && styles.pressed,
+            ]}
+          >
+            <ThemedText type="mediumBold" style={{ color: theme.background }}>
+              Continue
+            </ThemedText>
+          </Pressable>
+        </View>
+      ) : null}
     </ThemedView>
   );
 }
@@ -705,5 +773,20 @@ const styles = StyleSheet.create({
   statCol: {
     width: 40,
     textAlign: "center",
+  },
+  continueSection: {
+    paddingTop: Spacing.three,
+    paddingBottom: Spacing.three,
+    alignItems: "center",
+    marginHorizontal: Spacing.three,
+  },
+  continueButton: {
+    width: "100%",
+    paddingVertical: Spacing.three,
+    borderRadius: Spacing.two,
+    alignItems: "center",
+  },
+  pressed: {
+    opacity: 0.7,
   },
 });

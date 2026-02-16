@@ -13,7 +13,6 @@ import { useRoundTimer } from "@/hooks/use-round-timer";
 import { useTheme } from "@/hooks/use-theme";
 import {
   currentMode,
-  endGame,
   game$,
   pickPlayer,
   roundTimedOut$,
@@ -177,11 +176,16 @@ export default function PlayerDetailScreen() {
     playerName ?? (bio ? `${bio.nameFirst} ${bio.nameLast}` : playerID);
 
   const active = useSelector(() => game$.active.get());
-  const isActiveGame = active && !active.finished;
+  const gameMode = currentMode();
+  const isFinalRound = !!(
+    active &&
+    !active.finished &&
+    gameMode &&
+    active.rounds.length > gameMode.rounds
+  );
+  const isActiveGame = active && !active.finished && !isFinalRound;
   const currentTeamID =
-    active && !active.finished
-      ? active.rounds[active.rounds.length - 1]?.teamID
-      : null;
+    isActiveGame ? active.rounds[active.rounds.length - 1]?.teamID : null;
 
   const isRowDisabled = (row: RowData) =>
     active && !active.finished && row.teamID === currentTeamID;
@@ -193,13 +197,6 @@ export default function PlayerDetailScreen() {
     if (active && !active.finished) {
       // During an active game: wire through the game store
       pickPlayer(playerID, displayName);
-
-      // If pickPlayer auto-finished the game (last round), end it
-      if (game$.active.finished.get()) {
-        endGame();
-        router.dismissAll();
-        return;
-      }
 
       const mode = currentMode();
       if (mode) {
