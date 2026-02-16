@@ -9,10 +9,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
-import {
-  game$,
-  roundTimedOut$,
-} from "@/store/game-store";
+import { game$, roundTimedOut$ } from "@/store/game-store";
 import { divisionName } from "@/util/divisions";
 import { formatAvg, formatEra, formatIP, statVal } from "@/util/stats";
 
@@ -349,8 +346,9 @@ export default function TeamRosterScreen() {
 
   // Build target sets for highlighting
   const isActiveGame = active && !active.finished;
-  const currentRound =
-    isActiveGame ? active.rounds[active.rounds.length - 1] : null;
+  const currentRound = isActiveGame
+    ? active.rounds[active.rounds.length - 1]
+    : null;
   const targetIDs = useMemo(() => {
     if (!currentRound?.targetsFound) return new Set<string>();
     return new Set(currentRound.targetsFound.map((t) => t.playerID));
@@ -361,9 +359,7 @@ export default function TeamRosterScreen() {
     const thisRoundIDs = new Set(
       (currentRound?.targetsFound ?? []).map((t) => t.playerID),
     );
-    return new Set(
-      active.seenTargets.filter((id) => !thisRoundIDs.has(id)),
-    );
+    return new Set(active.seenTargets.filter((id) => !thisRoundIDs.has(id)));
   }, [isActiveGame, active?.seenTargets, currentRound?.targetsFound]);
 
   const isNewTarget = (playerID: string) =>
@@ -385,18 +381,20 @@ export default function TeamRosterScreen() {
     if (timeLeft === 0 && isTimed)
       return "Time's up! Pick a player to continue.";
 
-    const newTargets = (currentRound?.targetsFound ?? []).filter(
-      (t) => !seenBeforeIDs.has(t.playerID),
-    );
-
-    if (newTargets.length > 0) {
-      const names = newTargets.map((t) => `${t.name} (+${t.points})`);
+    const allTargets = currentRound?.targetsFound ?? [];
+    if (allTargets.length > 0) {
+      const names = allTargets.map((t) =>
+        seenBeforeIDs.has(t.playerID)
+          ? `${t.name} (+0)`
+          : `${t.name} +${t.points}`,
+      );
       return (
         <>
           <Text style={hintStyles.action}>
-            +{currentRound?.pointsEarned ?? 0} pts. Pick a player.
+            +{currentRound?.pointsEarned ?? 0} pts.{" "}
+            <Text style={hintStyles.names}>({names.join(", ")})</Text>
           </Text>
-          <Text style={hintStyles.names}>{names.join(", ")}</Text>
+          <Text style={hintStyles.action}>Pick your next player</Text>
         </>
       );
     }
@@ -405,12 +403,7 @@ export default function TeamRosterScreen() {
 
   const timerTrailing =
     isTimed && isActiveGame ? (
-      <Text
-        style={[
-          styles.timerBadge,
-          timeLeft <= 10 && styles.timerBadgeRed,
-        ]}
-      >
+      <Text style={[styles.timerBadge, timeLeft <= 10 && styles.timerBadgeRed]}>
         {timeLeft === 0 ? "0:00" : `0:${String(timeLeft).padStart(2, "0")}`}
       </Text>
     ) : null;
@@ -497,7 +490,9 @@ export default function TeamRosterScreen() {
                         seenTarget && styles.pointsBadgeSeen,
                       ]}
                     >
-                      <Text style={styles.pointsBadgeText}>+{pts}</Text>
+                      <Text style={styles.pointsBadgeText}>
+                        +{seenTarget ? 0 : pts}
+                      </Text>
                     </View>
                   )}
                   <ThemedText
@@ -508,7 +503,11 @@ export default function TeamRosterScreen() {
                     {b.position}
                   </ThemedText>
                   <ThemedText
-                    style={[styles.nameCol, newTarget && styles.targetName]}
+                    style={[
+                      styles.nameCol,
+                      newTarget && styles.targetName,
+                      seenTarget && styles.seenTargetName,
+                    ]}
                   >
                     {name}
                   </ThemedText>
@@ -569,7 +568,9 @@ export default function TeamRosterScreen() {
                       seenTarget && styles.pointsBadgeSeen,
                     ]}
                   >
-                    <Text style={styles.pointsBadgeText}>+{pts}</Text>
+                    <Text style={styles.pointsBadgeText}>
+                      +{seenTarget ? 0 : pts}
+                    </Text>
                   </View>
                 )}
                 <ThemedText
@@ -580,7 +581,11 @@ export default function TeamRosterScreen() {
                   P
                 </ThemedText>
                 <ThemedText
-                  style={[styles.nameCol, newTarget && styles.targetName]}
+                  style={[
+                    styles.nameCol,
+                    newTarget && styles.targetName,
+                    seenTarget && styles.seenTargetName,
+                  ]}
                 >
                   {name}
                 </ThemedText>
@@ -692,8 +697,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   seenTargetRow: {
-    borderLeftColor: "rgba(34, 197, 94, 0.3)",
-    opacity: 0.5,
+    borderLeftColor: "#EAB308",
+    backgroundColor: "rgba(234, 179, 8, 0.08)",
+  },
+  seenTargetName: {
+    color: "#EAB308",
+    fontWeight: "700",
   },
   pointsBadge: {
     position: "absolute",
@@ -706,7 +715,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   pointsBadgeSeen: {
-    backgroundColor: "rgba(34, 197, 94, 0.35)",
+    backgroundColor: "#EAB308",
   },
   pointsBadgeText: {
     color: "#ffffff",

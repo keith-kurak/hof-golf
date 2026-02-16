@@ -1,5 +1,5 @@
-import { useSelector } from "@legendapp/state/react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useMemo, useState } from "react";
@@ -11,11 +11,11 @@ import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import {
-  game$,
   currentMode,
+  game$,
   pickPlayer,
-  navigateToTeam as storeNavigateToTeam,
   roundTimedOut$,
+  navigateToTeam as storeNavigateToTeam,
 } from "@/store/game-store";
 import { getTargetsOnRoster } from "@/store/roster-targets";
 import { getLookupForMode } from "@/store/target-lookups";
@@ -58,10 +58,23 @@ type RowData = {
 };
 
 const battingColsCompact = pickColumns(BATTING_STAT_COLUMNS, [
-  "G", "AB", "HR", "RBI", "SB", "AVG", "OBP", "SLG",
+  "G",
+  "AB",
+  "HR",
+  "RBI",
+  "SB",
+  "AVG",
+  "OBP",
+  "SLG",
 ]);
 const pitchingColsCompact = pickColumns(PITCHING_STAT_COLUMNS, [
-  "W", "L", "ERA", "G", "IP", "SO", "SV",
+  "W",
+  "L",
+  "ERA",
+  "G",
+  "IP",
+  "SO",
+  "SV",
 ]);
 
 const STAT_COL_WIDTH = 38;
@@ -107,7 +120,9 @@ export default function PlayerDetailScreen() {
   const [battingSeasons, setBattingSeasons] = useState<SeasonBatting[]>([]);
   const [battingCareer, setBattingCareer] = useState<BattingStats | null>(null);
   const [pitchingSeasons, setPitchingSeasons] = useState<SeasonPitching[]>([]);
-  const [pitchingCareer, setPitchingCareer] = useState<PitchingStats | null>(null);
+  const [pitchingCareer, setPitchingCareer] = useState<PitchingStats | null>(
+    null,
+  );
   const [battingExpanded, setBattingExpanded] = useState(false);
   const [pitchingExpanded, setPitchingExpanded] = useState(false);
 
@@ -139,8 +154,12 @@ export default function PlayerDetailScreen() {
     });
   }, [db, playerID]);
 
-  const activeBattingCols = battingExpanded ? BATTING_STAT_COLUMNS : battingColsCompact;
-  const activePitchingCols = pitchingExpanded ? PITCHING_STAT_COLUMNS : pitchingColsCompact;
+  const activeBattingCols = battingExpanded
+    ? BATTING_STAT_COLUMNS
+    : battingColsCompact;
+  const activePitchingCols = pitchingExpanded
+    ? PITCHING_STAT_COLUMNS
+    : pitchingColsCompact;
 
   const battingRows = useMemo(
     () => buildRows(battingSeasons, battingCareer, activeBattingCols),
@@ -155,6 +174,7 @@ export default function PlayerDetailScreen() {
     playerName ?? (bio ? `${bio.nameFirst} ${bio.nameLast}` : playerID);
 
   const active = useSelector(() => game$.active.get());
+  const isActiveGame = active && !active.finished;
   const currentTeamID =
     active && !active.finished
       ? active.rounds[active.rounds.length - 1]?.teamID
@@ -188,17 +208,23 @@ export default function PlayerDetailScreen() {
           W: number;
           L: number;
           name: string;
-        }>(
-          `SELECT W, L, name FROM Teams WHERE yearID = ? AND teamID = ?`,
-          [row.yearID, row.teamID],
-        );
+        }>(`SELECT W, L, name FROM Teams WHERE yearID = ? AND teamID = ?`, [
+          row.yearID,
+          row.teamID,
+        ]);
 
         const timedOut = roundTimedOut$.get();
-        storeNavigateToTeam(row.teamID, row.yearID, teamInfo?.name ?? row.teamID, targets, {
-          teamW: teamInfo?.W ?? 0,
-          teamL: teamInfo?.L ?? 0,
-          timedOut,
-        });
+        storeNavigateToTeam(
+          row.teamID,
+          row.yearID,
+          teamInfo?.name ?? row.teamID,
+          targets,
+          {
+            teamW: teamInfo?.W ?? 0,
+            teamL: teamInfo?.L ?? 0,
+            timedOut,
+          },
+        );
         roundTimedOut$.set(false);
       }
     }
@@ -227,10 +253,18 @@ export default function PlayerDetailScreen() {
       <View>
         {/* Header labels */}
         <View style={styles.rowLeft}>
-          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.labelCol}>
+          <ThemedText
+            type="smallBold"
+            themeColor="textSecondary"
+            style={styles.labelCol}
+          >
             Year
           </ThemedText>
-          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.labelCol}>
+          <ThemedText
+            type="smallBold"
+            themeColor="textSecondary"
+            style={styles.labelCol}
+          >
             Team
           </ThemedText>
         </View>
@@ -240,10 +274,18 @@ export default function PlayerDetailScreen() {
             <View key={row.key}>
               <View style={styles.divider} />
               <View style={styles.rowLeftData}>
-                <ThemedText type="smallBold" themeColor="textSecondary" style={styles.labelCol}>
+                <ThemedText
+                  type="smallBold"
+                  themeColor="textSecondary"
+                  style={styles.labelCol}
+                >
                   {row.year}
                 </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary" style={styles.labelCol} />
+                <ThemedText
+                  type="small"
+                  themeColor="textSecondary"
+                  style={styles.labelCol}
+                />
               </View>
             </View>
           ) : (
@@ -294,7 +336,12 @@ export default function PlayerDetailScreen() {
         {/* Header labels */}
         <View style={styles.rowRight}>
           {statHeaders.map((h) => (
-            <ThemedText key={h} type="smallBold" themeColor="textSecondary" style={statStyle}>
+            <ThemedText
+              key={h}
+              type="smallBold"
+              themeColor="textSecondary"
+              style={statStyle}
+            >
               {h}
             </ThemedText>
           ))}
@@ -306,7 +353,12 @@ export default function PlayerDetailScreen() {
               <View style={styles.divider} />
               <View style={styles.rowRightData}>
                 {row.cells.map((cell, i) => (
-                  <ThemedText key={i} type="smallBold" themeColor="textSecondary" style={statStyle}>
+                  <ThemedText
+                    key={i}
+                    type="smallBold"
+                    themeColor="textSecondary"
+                    style={statStyle}
+                  >
                     {cell}
                   </ThemedText>
                 ))}
@@ -331,7 +383,11 @@ export default function PlayerDetailScreen() {
           <ThemedText type="smallBold">{title}</ThemedText>
           <Pressable onPress={onToggle} hitSlop={8}>
             <MaterialCommunityIcons
-              name={expanded ? "arrow-collapse-horizontal" : "arrow-expand-horizontal"}
+              name={
+                expanded
+                  ? "arrow-collapse-horizontal"
+                  : "arrow-expand-horizontal"
+              }
               size={20}
               color={theme.textSecondary}
             />
@@ -358,9 +414,9 @@ export default function PlayerDetailScreen() {
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: displayName }} />
-      <GameStatusBar hint="Pick a team-year to navigate to next." />
+      <GameStatusBar hint="Pick your next team." />
       <ScrollView contentContainerStyle={styles.content}>
-        {bio && (
+        {bio && !isActiveGame ? (
           <View style={styles.bioSection}>
             {hofStatus && (
               <ThemedText type="default">
@@ -373,7 +429,7 @@ export default function PlayerDetailScreen() {
               {"  "}Final: {bio.finalGame ?? "—"}
             </ThemedText>
           </View>
-        )}
+        ) : null}
 
         {renderStatSection(
           "Batting",

@@ -2,7 +2,7 @@ import { useSelector } from "@legendapp/state/react";
 import { StyleSheet, Text, View } from "react-native";
 
 import gameModes from "@/metadata/game-modes.json";
-import { game$, currentRound$ } from "@/store/game-store";
+import { currentRound$, game$ } from "@/store/game-store";
 import type { GameMode } from "@/store/starting-pools";
 
 const activeModes = gameModes as GameMode[];
@@ -28,7 +28,7 @@ export function GameStatusBar({ hint, trailing }: Props) {
       <View style={styles.topRow}>
         <View style={styles.left}>
           <Text style={styles.emoji}>{mode?.emoji}</Text>
-          <Text style={styles.label}>{mode?.label ?? "Game"}</Text>
+          <Text style={styles.label}>{mode?.name ?? "Game"}</Text>
         </View>
         <View style={styles.right}>
           <Text style={styles.stat}>
