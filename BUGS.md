@@ -4,6 +4,7 @@
 - shouldn't have back buttons during game
 - sort sp by ip
 - on a timeout, show why you got zero points / don't show +1's
+- add missing 2026 hall of famers
 
 ## changes
 

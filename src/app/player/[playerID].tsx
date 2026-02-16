@@ -228,6 +228,17 @@ export default function PlayerDetailScreen() {
           },
         );
         roundTimedOut$.set(false);
+
+        router.dismissAll();
+        router.push({
+          pathname: "/team/[teamID]",
+          params: {
+            teamID: row.teamID,
+            teamName: teamInfo?.name ?? row.teamID,
+            year: String(row.yearID),
+          },
+        });
+        return;
       }
     }
 
