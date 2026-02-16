@@ -6,7 +6,7 @@
     "emoji": "🏆",
     "label": "HOF",
     "active": true,
-    "rounds": 9,
+    "rounds": 3,
     "scoring": {
       "type": "hof",
       "targetSet": "hall-of-famers",

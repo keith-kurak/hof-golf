@@ -58,9 +58,9 @@ export default function GameSummaryScreen() {
         </View>
 
         <View style={styles.metaRow}>
-          {active.rounds.length <= (mode?.rounds ?? 9) ? (
+          {active.rounds.length <= (mode?.rounds ?? 0) ? (
             <ThemedText type="small" themeColor="textSecondary">
-              Rd {active.rounds.length}/{mode?.rounds ?? 9}
+              Rd {active.rounds.length}/{mode?.rounds ?? 0}
             </ThemedText>
           ) : (
             <ThemedText type="small" themeColor="textSecondary">

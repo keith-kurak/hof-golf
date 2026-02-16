@@ -37,7 +37,7 @@ export function GameStatusBar({ hint, trailing }: Props) {
         </View>
         <View style={styles.right}>
           <Text style={styles.stat}>
-            Rd {Math.min(roundIdx + 1, mode?.rounds ?? 9)}/{mode?.rounds ?? 9}
+            Rd {Math.min(roundIdx + 1, mode?.rounds ?? 0)}/{mode?.rounds ?? 0}
           </Text>
           <View style={styles.divider} />
           <Text style={styles.stat}>{active.totalPoints} pts</Text>

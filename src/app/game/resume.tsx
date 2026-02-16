@@ -64,7 +64,7 @@ export default function ResumeModal() {
           <View style={styles.stat}>
             <ThemedText type="subtitle">{roundIdx + 1}</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              of {mode?.rounds ?? 9}
+              of {mode?.rounds ?? 0}
             </ThemedText>
           </View>
           <View style={styles.divider} />
