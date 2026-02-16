@@ -9,9 +9,12 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
+import twoWayPlayers from "@/metadata/two-way-players.json";
 import { game$, roundTimedOut$ } from "@/store/game-store";
 import { divisionName } from "@/util/divisions";
 import { formatAvg, formatEra, formatIP, statVal } from "@/util/stats";
+
+const TWO_WAY_SET = new Set(twoWayPlayers);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -76,13 +79,7 @@ FROM (
 JOIN People p ON bat.playerID = p.playerID
 LEFT JOIN Appearances a ON a.playerID = bat.playerID
   AND a.yearID = bat.yearID AND a.teamID = bat.teamID
-LEFT JOIN (
-  SELECT playerID, teamID, yearID, SUM(G) as G
-  FROM Pitching GROUP BY playerID, teamID, yearID
-) pit ON bat.playerID = pit.playerID
-  AND bat.teamID = pit.teamID AND bat.yearID = pit.yearID
 WHERE bat.yearID = ? AND bat.teamID = ?
-  AND COALESCE(pit.G, 0) < bat.G
 ORDER BY bat.G DESC`;
 
 const PITCHERS_QUERY = `SELECT
@@ -95,13 +92,7 @@ FROM (
   FROM Pitching GROUP BY playerID, teamID, yearID
 ) pit
 JOIN People p ON pit.playerID = p.playerID
-LEFT JOIN (
-  SELECT playerID, teamID, yearID, SUM(G) as G
-  FROM Batting GROUP BY playerID, teamID, yearID
-) bat ON pit.playerID = bat.playerID
-  AND pit.teamID = bat.teamID AND pit.yearID = bat.yearID
 WHERE pit.yearID = ? AND pit.teamID = ?
-  AND pit.G >= COALESCE(bat.G, 0)
 ORDER BY pit.G DESC`;
 
 type TeamInfo = {
@@ -328,7 +319,13 @@ export default function TeamRosterScreen() {
   }, [db, teamID, year]);
 
   const sections: Section[] = useMemo(() => {
-    const { starters, bench } = groupBatters(rawBatters);
+    // Pitchers always go in the pitchers group; exclude them from batters
+    // unless they're on the two-way players list
+    const pitcherIDs = new Set(rawPitchers.map((p) => p.playerID));
+    const filteredBatters = rawBatters.filter(
+      (b) => !pitcherIDs.has(b.playerID) || TWO_WAY_SET.has(b.playerID),
+    );
+    const { starters, bench } = groupBatters(filteredBatters);
     const { sp, rp } = groupPitchers(rawPitchers);
     const result: Section[] = [];
     if (starters.length > 0) result.push({ title: "Lineup", data: starters });

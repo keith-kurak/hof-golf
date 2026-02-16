@@ -432,19 +432,19 @@ export default function PlayerDetailScreen() {
         ) : null}
 
         {renderStatSection(
-          "Batting",
-          battingExpanded,
-          () => setBattingExpanded((v) => !v),
-          activeBattingCols,
-          battingRows,
-        )}
-
-        {renderStatSection(
           "Pitching",
           pitchingExpanded,
           () => setPitchingExpanded((v) => !v),
           activePitchingCols,
           pitchingRows,
+        )}
+
+        {renderStatSection(
+          "Batting",
+          battingExpanded,
+          () => setBattingExpanded((v) => !v),
+          activeBattingCols,
+          battingRows,
         )}
       </ScrollView>
     </ThemedView>
