@@ -1,13 +1,25 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
+import { GameStatusBar } from "@/components/game-status-bar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
+import { useRoundTimer } from "@/hooks/use-round-timer";
 import { useTheme } from "@/hooks/use-theme";
+import {
+  currentMode,
+  game$,
+  pickPlayer,
+  roundTimedOut$,
+  navigateToTeam as storeNavigateToTeam,
+} from "@/store/game-store";
+import { getTargetsOnRoster } from "@/store/roster-targets";
+import { getLookupForMode } from "@/store/target-lookups";
 import {
   type BattingStats,
   type PitchingStats,
@@ -47,10 +59,23 @@ type RowData = {
 };
 
 const battingColsCompact = pickColumns(BATTING_STAT_COLUMNS, [
-  "G", "AB", "HR", "RBI", "SB", "AVG", "OBP", "SLG",
+  "G",
+  "AB",
+  "HR",
+  "RBI",
+  "SB",
+  "AVG",
+  "OBP",
+  "SLG",
 ]);
 const pitchingColsCompact = pickColumns(PITCHING_STAT_COLUMNS, [
-  "W", "L", "ERA", "G", "IP", "SO", "SV",
+  "W",
+  "L",
+  "ERA",
+  "G",
+  "IP",
+  "SO",
+  "SV",
 ]);
 
 const STAT_COL_WIDTH = 38;
@@ -91,12 +116,15 @@ export default function PlayerDetailScreen() {
   const db = useSQLiteContext();
   const router = useRouter();
   const theme = useTheme();
+  const { timeLeft, isTimed } = useRoundTimer();
   const [bio, setBio] = useState<Bio | null>(null);
   const [hofStatus, setHofStatus] = useState<HofStatus | null>(null);
   const [battingSeasons, setBattingSeasons] = useState<SeasonBatting[]>([]);
   const [battingCareer, setBattingCareer] = useState<BattingStats | null>(null);
   const [pitchingSeasons, setPitchingSeasons] = useState<SeasonPitching[]>([]);
-  const [pitchingCareer, setPitchingCareer] = useState<PitchingStats | null>(null);
+  const [pitchingCareer, setPitchingCareer] = useState<PitchingStats | null>(
+    null,
+  );
   const [battingExpanded, setBattingExpanded] = useState(false);
   const [pitchingExpanded, setPitchingExpanded] = useState(false);
 
@@ -128,8 +156,12 @@ export default function PlayerDetailScreen() {
     });
   }, [db, playerID]);
 
-  const activeBattingCols = battingExpanded ? BATTING_STAT_COLUMNS : battingColsCompact;
-  const activePitchingCols = pitchingExpanded ? PITCHING_STAT_COLUMNS : pitchingColsCompact;
+  const activeBattingCols = battingExpanded
+    ? BATTING_STAT_COLUMNS
+    : battingColsCompact;
+  const activePitchingCols = pitchingExpanded
+    ? PITCHING_STAT_COLUMNS
+    : pitchingColsCompact;
 
   const battingRows = useMemo(
     () => buildRows(battingSeasons, battingCareer, activeBattingCols),
@@ -143,8 +175,78 @@ export default function PlayerDetailScreen() {
   const displayName =
     playerName ?? (bio ? `${bio.nameFirst} ${bio.nameLast}` : playerID);
 
-  const navigateToTeam = (row: RowData) => {
-    if (row.isCareer) return;
+  const active = useSelector(() => game$.active.get());
+  const gameMode = currentMode();
+  const isFinalRound = !!(
+    active &&
+    !active.finished &&
+    gameMode &&
+    active.rounds.length > gameMode.rounds
+  );
+  const isActiveGame = active && !active.finished && !isFinalRound;
+  const currentTeamID =
+    isActiveGame ? active.rounds[active.rounds.length - 1]?.teamID : null;
+
+  const isRowDisabled = (row: RowData) =>
+    active && !active.finished && row.teamID === currentTeamID;
+
+  const navigateToTeam = async (row: RowData) => {
+    if (row.isCareer || row.yearID == null) return;
+    if (isRowDisabled(row)) return;
+
+    if (active && !active.finished) {
+      // During an active game: wire through the game store
+      pickPlayer(playerID, displayName);
+
+      const mode = currentMode();
+      if (mode) {
+        const lookup = getLookupForMode(mode.scoring.type);
+        const overrides = mode.bonuses?.scoringOverrides;
+        const targets = await getTargetsOnRoster(
+          db,
+          row.teamID,
+          row.yearID,
+          lookup,
+          overrides?.length ? overrides : undefined,
+        );
+
+        // Query team W/L and name
+        const teamInfo = await db.getFirstAsync<{
+          W: number;
+          L: number;
+          name: string;
+        }>(`SELECT W, L, name FROM Teams WHERE yearID = ? AND teamID = ?`, [
+          row.yearID,
+          row.teamID,
+        ]);
+
+        const timedOut = roundTimedOut$.get();
+        storeNavigateToTeam(
+          row.teamID,
+          row.yearID,
+          teamInfo?.name ?? row.teamID,
+          targets,
+          {
+            teamW: teamInfo?.W ?? 0,
+            teamL: teamInfo?.L ?? 0,
+            timedOut,
+          },
+        );
+        roundTimedOut$.set(false);
+
+        router.dismissAll();
+        router.push({
+          pathname: "/team/[teamID]",
+          params: {
+            teamID: row.teamID,
+            teamName: teamInfo?.name ?? row.teamID,
+            year: String(row.yearID),
+          },
+        });
+        return;
+      }
+    }
+
     router.push({
       pathname: "/team/[teamID]",
       params: { teamID: row.teamID, year: String(row.yearID) },
@@ -169,10 +271,18 @@ export default function PlayerDetailScreen() {
       <View>
         {/* Header labels */}
         <View style={styles.rowLeft}>
-          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.labelCol}>
+          <ThemedText
+            type="smallBold"
+            themeColor="textSecondary"
+            style={styles.labelCol}
+          >
             Year
           </ThemedText>
-          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.labelCol}>
+          <ThemedText
+            type="smallBold"
+            themeColor="textSecondary"
+            style={styles.labelCol}
+          >
             Team
           </ThemedText>
         </View>
@@ -182,23 +292,52 @@ export default function PlayerDetailScreen() {
             <View key={row.key}>
               <View style={styles.divider} />
               <View style={styles.rowLeftData}>
-                <ThemedText type="smallBold" themeColor="textSecondary" style={styles.labelCol}>
+                <ThemedText
+                  type="smallBold"
+                  themeColor="textSecondary"
+                  style={styles.labelCol}
+                >
                   {row.year}
                 </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary" style={styles.labelCol} />
+                <ThemedText
+                  type="small"
+                  themeColor="textSecondary"
+                  style={styles.labelCol}
+                />
               </View>
             </View>
           ) : (
             <View key={row.key} style={styles.rowLeft}>
               <Pressable
                 onPress={() => navigateToTeam(row)}
+                disabled={isRowDisabled(row)}
                 style={({ pressed }) => pressed && styles.pressed}
               >
-                <ThemedView type="backgroundElement" style={styles.yearTeamButton}>
-                  <ThemedText type="small" style={[styles.labelCol, { marginLeft: Spacing.one }]}>
+                <ThemedView
+                  type="backgroundElement"
+                  style={[
+                    styles.yearTeamButton,
+                    isRowDisabled(row) && styles.disabledRow,
+                  ]}
+                >
+                  <ThemedText
+                    type="small"
+                    style={[
+                      styles.labelCol,
+                      { marginLeft: Spacing.one },
+                      isRowDisabled(row) && styles.disabledText,
+                    ]}
+                  >
                     {row.year}
                   </ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary" style={styles.labelCol}>
+                  <ThemedText
+                    type="small"
+                    themeColor="textSecondary"
+                    style={[
+                      styles.labelCol,
+                      isRowDisabled(row) && styles.disabledText,
+                    ]}
+                  >
                     {row.teamID}
                   </ThemedText>
                 </ThemedView>
@@ -215,7 +354,12 @@ export default function PlayerDetailScreen() {
         {/* Header labels */}
         <View style={styles.rowRight}>
           {statHeaders.map((h) => (
-            <ThemedText key={h} type="smallBold" themeColor="textSecondary" style={statStyle}>
+            <ThemedText
+              key={h}
+              type="smallBold"
+              themeColor="textSecondary"
+              style={statStyle}
+            >
               {h}
             </ThemedText>
           ))}
@@ -227,7 +371,12 @@ export default function PlayerDetailScreen() {
               <View style={styles.divider} />
               <View style={styles.rowRightData}>
                 {row.cells.map((cell, i) => (
-                  <ThemedText key={i} type="smallBold" themeColor="textSecondary" style={statStyle}>
+                  <ThemedText
+                    key={i}
+                    type="smallBold"
+                    themeColor="textSecondary"
+                    style={statStyle}
+                  >
                     {cell}
                   </ThemedText>
                 ))}
@@ -252,7 +401,11 @@ export default function PlayerDetailScreen() {
           <ThemedText type="smallBold">{title}</ThemedText>
           <Pressable onPress={onToggle} hitSlop={8}>
             <MaterialCommunityIcons
-              name={expanded ? "arrow-collapse-horizontal" : "arrow-expand-horizontal"}
+              name={
+                expanded
+                  ? "arrow-collapse-horizontal"
+                  : "arrow-expand-horizontal"
+              }
               size={20}
               color={theme.textSecondary}
             />
@@ -279,8 +432,32 @@ export default function PlayerDetailScreen() {
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: displayName }} />
+      <GameStatusBar
+        hint={
+          <>
+            <Text style={hintStyles.action}>
+              {`Pick your next team to collect more ${currentMode()?.scoring.targetSet}.`}
+            </Text>
+            <Text style={hintStyles.sub}>You must pick a different franchise!</Text>
+          </>
+        }
+        trailing={
+          isTimed ? (
+            <Text
+              style={[
+                hintStyles.timerBadge,
+                timeLeft <= 10 && hintStyles.timerBadgeRed,
+              ]}
+            >
+              {timeLeft === 0
+                ? "0:00"
+                : `0:${String(timeLeft).padStart(2, "0")}`}
+            </Text>
+          ) : undefined
+        }
+      />
       <ScrollView contentContainerStyle={styles.content}>
-        {bio && (
+        {bio && !isActiveGame ? (
           <View style={styles.bioSection}>
             {hofStatus && (
               <ThemedText type="default">
@@ -293,27 +470,74 @@ export default function PlayerDetailScreen() {
               {"  "}Final: {bio.finalGame ?? "—"}
             </ThemedText>
           </View>
-        )}
+        ) : null}
 
-        {renderStatSection(
-          "Batting",
-          battingExpanded,
-          () => setBattingExpanded((v) => !v),
-          activeBattingCols,
-          battingRows,
-        )}
-
-        {renderStatSection(
-          "Pitching",
-          pitchingExpanded,
-          () => setPitchingExpanded((v) => !v),
-          activePitchingCols,
-          pitchingRows,
+        {/* Show primary stat section first based on career games */}
+        {(pitchingCareer?.G ?? 0) > (battingCareer?.G ?? 0) ? (
+          <>
+            {renderStatSection(
+              "Pitching",
+              pitchingExpanded,
+              () => setPitchingExpanded((v) => !v),
+              activePitchingCols,
+              pitchingRows,
+            )}
+            {renderStatSection(
+              "Batting",
+              battingExpanded,
+              () => setBattingExpanded((v) => !v),
+              activeBattingCols,
+              battingRows,
+            )}
+          </>
+        ) : (
+          <>
+            {renderStatSection(
+              "Batting",
+              battingExpanded,
+              () => setBattingExpanded((v) => !v),
+              activeBattingCols,
+              battingRows,
+            )}
+            {renderStatSection(
+              "Pitching",
+              pitchingExpanded,
+              () => setPitchingExpanded((v) => !v),
+              activePitchingCols,
+              pitchingRows,
+            )}
+          </>
         )}
       </ScrollView>
     </ThemedView>
   );
 }
+
+const hintStyles = StyleSheet.create({
+  action: {
+    color: "#ffffff",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  sub: {
+    color: "rgba(255, 255, 255, 0.65)",
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  timerBadge: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "700",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  timerBadgeRed: {
+    backgroundColor: "#E53935",
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -389,5 +613,11 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.7,
+  },
+  disabledRow: {
+    opacity: 0.35,
+  },
+  disabledText: {
+    textDecorationLine: "line-through",
   },
 });

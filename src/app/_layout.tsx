@@ -27,6 +27,40 @@ export default function RootLayout() {
             name="player/[playerID]"
             options={{ title: "Player" }}
           />
+          <Stack.Screen
+            name="game/[modeId]"
+            options={{ title: "Mode Details" }}
+          />
+          <Stack.Screen
+            name="game/pick-team"
+            options={{
+              presentation: "modal",
+              title: "Choose Starting Team",
+            }}
+          />
+          <Stack.Screen
+            name="game/summary"
+            options={{
+              presentation: "modal",
+              title: "Game Summary",
+            }}
+          />
+          <Stack.Screen
+            name="game/history-detail"
+            options={{ title: "Game Details" }}
+          />
+          <Stack.Screen
+            name="game/complete"
+            options={{ title: "Game Complete", headerBackVisible: false }}
+          />
+          <Stack.Screen
+            name="game/resume"
+            options={{
+              presentation: "transparentModal",
+              headerShown: false,
+              animation: "fade",
+            }}
+          />
         </Stack>
       </ThemeProvider>
     </SQLiteProvider>

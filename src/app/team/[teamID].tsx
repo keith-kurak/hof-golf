@@ -1,14 +1,25 @@
+import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, SectionList, StyleSheet, View } from "react-native";
+import { Pressable, SectionList, StyleSheet, Text, View } from "react-native";
 
+import { GameStatusBar } from "@/components/game-status-bar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
+import { useRoundTimer } from "@/hooks/use-round-timer";
+import { useTheme } from "@/hooks/use-theme";
+import gameModes from "@/metadata/game-modes.json";
+import twoWayPlayers from "@/metadata/two-way-players.json";
+import { endGame, game$ } from "@/store/game-store";
+import type { GameMode } from "@/store/starting-pools";
 import { divisionName } from "@/util/divisions";
 import { formatAvg, formatEra, formatIP, statVal } from "@/util/stats";
+
+const TWO_WAY_SET = new Set(twoWayPlayers);
+const activeModes = gameModes as GameMode[];
 
 // ---------------------------------------------------------------------------
 // Types
@@ -73,13 +84,7 @@ FROM (
 JOIN People p ON bat.playerID = p.playerID
 LEFT JOIN Appearances a ON a.playerID = bat.playerID
   AND a.yearID = bat.yearID AND a.teamID = bat.teamID
-LEFT JOIN (
-  SELECT playerID, teamID, yearID, SUM(G) as G
-  FROM Pitching GROUP BY playerID, teamID, yearID
-) pit ON bat.playerID = pit.playerID
-  AND bat.teamID = pit.teamID AND bat.yearID = pit.yearID
 WHERE bat.yearID = ? AND bat.teamID = ?
-  AND COALESCE(pit.G, 0) < bat.G
 ORDER BY bat.G DESC`;
 
 const PITCHERS_QUERY = `SELECT
@@ -92,13 +97,7 @@ FROM (
   FROM Pitching GROUP BY playerID, teamID, yearID
 ) pit
 JOIN People p ON pit.playerID = p.playerID
-LEFT JOIN (
-  SELECT playerID, teamID, yearID, SUM(G) as G
-  FROM Batting GROUP BY playerID, teamID, yearID
-) bat ON pit.playerID = bat.playerID
-  AND pit.teamID = bat.teamID AND pit.yearID = bat.yearID
 WHERE pit.yearID = ? AND pit.teamID = ?
-  AND pit.G >= COALESCE(bat.G, 0)
 ORDER BY pit.G DESC`;
 
 type TeamInfo = {
@@ -284,6 +283,21 @@ export default function TeamRosterScreen() {
   const [rawBatters, setRawBatters] = useState<RawBatter[]>([]);
   const [rawPitchers, setRawPitchers] = useState<Pitcher[]>([]);
 
+  // Game state
+  const active = useSelector(() => game$.active.get());
+  const theme = useTheme();
+  const { timeLeft, isTimed } = useRoundTimer();
+  const mode =
+    active && !active.finished
+      ? activeModes.find((m) => m.id === active.modeId)
+      : null;
+  const isFinalRound = !!(
+    active &&
+    !active.finished &&
+    mode &&
+    active.rounds.length > mode.rounds
+  );
+
   useEffect(() => {
     db.getFirstAsync<TeamInfo>(TEAM_INFO_QUERY, [year, teamID]).then(
       setTeamInfo,
@@ -297,7 +311,13 @@ export default function TeamRosterScreen() {
   }, [db, teamID, year]);
 
   const sections: Section[] = useMemo(() => {
-    const { starters, bench } = groupBatters(rawBatters);
+    // Pitchers always go in the pitchers group; exclude them from batters
+    // unless they're on the two-way players list
+    const pitcherIDs = new Set(rawPitchers.map((p) => p.playerID));
+    const filteredBatters = rawBatters.filter(
+      (b) => !pitcherIDs.has(b.playerID) || TWO_WAY_SET.has(b.playerID),
+    );
+    const { starters, bench } = groupBatters(filteredBatters);
     const { sp, rp } = groupPitchers(rawPitchers);
     const result: Section[] = [];
     if (starters.length > 0) result.push({ title: "Lineup", data: starters });
@@ -307,44 +327,154 @@ export default function TeamRosterScreen() {
     return result;
   }, [rawBatters, rawPitchers]);
 
-  const navigateToPlayer = (playerID: string, name: string) =>
+  const navigateToPlayer = (playerID: string, name: string) => {
+    if (isFinalRound) return;
     router.push({
       pathname: "/player/[playerID]",
       params: { playerID, playerName: name, year: String(year) },
     });
+  };
+
+  const handleContinue = () => {
+    endGame();
+    router.push("/game/complete");
+  };
+
+  // Build target sets for highlighting
+  const isActiveGame = active && !active.finished;
+  const currentRound = isActiveGame
+    ? active.rounds[active.rounds.length - 1]
+    : null;
+  const targetIDs = useMemo(() => {
+    if (!currentRound?.targetsFound) return new Set<string>();
+    return new Set(currentRound.targetsFound.map((t) => t.playerID));
+  }, [currentRound?.targetsFound]);
+  const seenBeforeIDs = useMemo(() => {
+    if (!isActiveGame) return new Set<string>();
+    // seenTargets minus targets found this round = previously collected
+    const thisRoundIDs = new Set(
+      (currentRound?.targetsFound ?? []).map((t) => t.playerID),
+    );
+    return new Set(active.seenTargets.filter((id) => !thisRoundIDs.has(id)));
+  }, [isActiveGame, active?.seenTargets, currentRound?.targetsFound]);
+
+  const isNewTarget = (playerID: string) =>
+    targetIDs.has(playerID) && !seenBeforeIDs.has(playerID);
+  const isSeenTarget = (playerID: string) =>
+    targetIDs.has(playerID) && seenBeforeIDs.has(playerID);
+
+  // Points lookup for badges
+  const targetPoints = useMemo(() => {
+    if (!currentRound?.targetsFound) return new Map<string, number>();
+    return new Map(
+      currentRound.targetsFound.map((t) => [t.playerID, t.points]),
+    );
+  }, [currentRound?.targetsFound]);
+
+  // Build game status bar hint with player names
+  const gameHint = useMemo(() => {
+    if (!isActiveGame) return "";
+
+    const allTargets = currentRound?.targetsFound ?? [];
+
+    if (isFinalRound) {
+      const pts = currentRound?.pointsEarned ?? 0;
+      if (allTargets.length > 0) {
+        const names = allTargets.map((t) =>
+          seenBeforeIDs.has(t.playerID)
+            ? `${t.name} (+0)`
+            : `${t.name} +${t.points}`,
+        );
+        return (
+          <>
+            <Text style={hintStyles.action}>
+              +{pts} pts.{" "}
+              <Text style={hintStyles.names}>({names.join(", ")})</Text>
+            </Text>
+            <Text style={hintStyles.action}>Game complete!</Text>
+          </>
+        );
+      }
+      return <Text style={hintStyles.action}>Game complete!</Text>;
+    }
+
+    if (timeLeft === 0 && isTimed)
+      return "Time's up! Pick a player to continue.";
+
+    if (allTargets.length > 0) {
+      const names = allTargets.map((t) =>
+        seenBeforeIDs.has(t.playerID)
+          ? `${t.name} (+0)`
+          : `${t.name} +${t.points}`,
+      );
+      return (
+        <>
+          <Text style={hintStyles.action}>
+            +{currentRound?.pointsEarned ?? 0} pts.{" "}
+            <Text style={hintStyles.names}>({names.join(", ")})</Text>
+          </Text>
+          <Text style={hintStyles.action}>Pick your next player</Text>
+        </>
+      );
+    }
+    return "No targets on this roster. Pick a player.";
+  }, [
+    isActiveGame,
+    isFinalRound,
+    isTimed,
+    timeLeft,
+    currentRound,
+    seenBeforeIDs,
+  ]);
+
+  const timerTrailing =
+    isTimed && isActiveGame && !isFinalRound ? (
+      <Text style={[styles.timerBadge, timeLeft <= 10 && styles.timerBadgeRed]}>
+        {timeLeft === 0 ? "0:00" : `0:${String(timeLeft).padStart(2, "0")}`}
+      </Text>
+    ) : null;
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: teamName ?? teamID }} />
+      <Stack.Screen
+        options={{
+          title: isActiveGame
+            ? `${year} ${currentRound?.teamName ?? teamName ?? teamID}`
+            : (teamName ?? teamID),
+        }}
+      />
+      <GameStatusBar hint={gameHint} trailing={timerTrailing} />
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.playerID}
         contentContainerStyle={styles.list}
         stickySectionHeadersEnabled={true}
         ListHeaderComponent={
-          <>
-            <YearPicker year={year} onYearChange={setYear} />
-            {teamInfo && (
-              <View style={styles.teamInfo}>
-                <ThemedText type="default">
-                  {teamInfo.W}-{teamInfo.L}
-                  {"  "}
-                  <ThemedText type="small" themeColor="textSecondary">
-                    {formatStanding(teamInfo)}
+          isActiveGame ? null : (
+            <>
+              <YearPicker year={year} onYearChange={setYear} />
+              {teamInfo && (
+                <View style={styles.teamInfo}>
+                  <ThemedText type="default">
+                    {teamInfo.W}-{teamInfo.L}
+                    {"  "}
+                    <ThemedText type="small" themeColor="textSecondary">
+                      {formatStanding(teamInfo)}
+                    </ThemedText>
                   </ThemedText>
-                </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  Pythagorean W-L: {pythagWL(teamInfo.R, teamInfo.RA)},{" "}
-                  {teamInfo.R} RS / {teamInfo.RA} RA
-                </ThemedText>
-                {teamInfo.manager && (
                   <ThemedText type="small" themeColor="textSecondary">
-                    Manager: {teamInfo.manager}
+                    Pythagorean W-L: {pythagWL(teamInfo.R, teamInfo.RA)},{" "}
+                    {teamInfo.R} RS / {teamInfo.RA} RA
                   </ThemedText>
-                )}
-              </View>
-            )}
-          </>
+                  {teamInfo.manager && (
+                    <ThemedText type="small" themeColor="textSecondary">
+                      Manager: {teamInfo.manager}
+                    </ThemedText>
+                  )}
+                </View>
+              )}
+            </>
+          )
         }
         renderSectionHeader={({ section }) => (
           <ThemedView style={styles.headerRow}>
@@ -364,11 +494,33 @@ export default function TeamRosterScreen() {
         )}
         renderItem={({ item, section }) => {
           const name = `${item.nameFirst} ${item.nameLast}`;
+          const newTarget = isNewTarget(item.playerID);
+          const seenTarget = isSeenTarget(item.playerID);
+          const pts = targetPoints.get(item.playerID);
           if (isBatterSection(section.title)) {
             const b = item as Batter;
             return (
               <Pressable onPress={() => navigateToPlayer(b.playerID, name)}>
-                <ThemedView type="backgroundElement" style={styles.playerRow}>
+                <ThemedView
+                  type="backgroundElement"
+                  style={[
+                    styles.playerRow,
+                    newTarget && styles.targetRow,
+                    seenTarget && styles.seenTargetRow,
+                  ]}
+                >
+                  {pts != null && (
+                    <View
+                      style={[
+                        styles.pointsBadge,
+                        seenTarget && styles.pointsBadgeSeen,
+                      ]}
+                    >
+                      <Text style={styles.pointsBadgeText}>
+                        +{seenTarget ? 0 : pts}
+                      </Text>
+                    </View>
+                  )}
                   <ThemedText
                     type="code"
                     themeColor="textSecondary"
@@ -376,7 +528,15 @@ export default function TeamRosterScreen() {
                   >
                     {b.position}
                   </ThemedText>
-                  <ThemedText style={styles.nameCol}>{name}</ThemedText>
+                  <ThemedText
+                    style={[
+                      styles.nameCol,
+                      newTarget && styles.targetName,
+                      seenTarget && styles.seenTargetName,
+                    ]}
+                  >
+                    {name}
+                  </ThemedText>
                   <ThemedText
                     themeColor="textSecondary"
                     type="small"
@@ -419,7 +579,26 @@ export default function TeamRosterScreen() {
           const p = item as Pitcher;
           return (
             <Pressable onPress={() => navigateToPlayer(p.playerID, name)}>
-              <ThemedView type="backgroundElement" style={styles.playerRow}>
+              <ThemedView
+                type="backgroundElement"
+                style={[
+                  styles.playerRow,
+                  newTarget && styles.targetRow,
+                  seenTarget && styles.seenTargetRow,
+                ]}
+              >
+                {pts != null && (
+                  <View
+                    style={[
+                      styles.pointsBadge,
+                      seenTarget && styles.pointsBadgeSeen,
+                    ]}
+                  >
+                    <Text style={styles.pointsBadgeText}>
+                      +{seenTarget ? 0 : pts}
+                    </Text>
+                  </View>
+                )}
                 <ThemedText
                   type="code"
                   themeColor="textSecondary"
@@ -427,7 +606,15 @@ export default function TeamRosterScreen() {
                 >
                   P
                 </ThemedText>
-                <ThemedText style={styles.nameCol}>{name}</ThemedText>
+                <ThemedText
+                  style={[
+                    styles.nameCol,
+                    newTarget && styles.targetName,
+                    seenTarget && styles.seenTargetName,
+                  ]}
+                >
+                  {name}
+                </ThemedText>
                 <ThemedText
                   themeColor="textSecondary"
                   type="small"
@@ -468,9 +655,38 @@ export default function TeamRosterScreen() {
           );
         }}
       />
+      {isFinalRound ? (
+        <View style={styles.continueSection}>
+          <Pressable
+            onPress={handleContinue}
+            style={({ pressed }) => [
+              styles.continueButton,
+              { backgroundColor: theme.text },
+              pressed && styles.pressed,
+            ]}
+          >
+            <ThemedText type="mediumBold" style={{ color: theme.background }}>
+              Continue
+            </ThemedText>
+          </Pressable>
+        </View>
+      ) : null}
     </ThemedView>
   );
 }
+
+const hintStyles = StyleSheet.create({
+  action: {
+    color: "#ffffff",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  names: {
+    color: "rgba(255, 255, 255, 0.65)",
+    fontSize: 12,
+    fontWeight: "500",
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -479,6 +695,19 @@ const styles = StyleSheet.create({
   list: {
     padding: Spacing.three,
     paddingBottom: Spacing.six,
+  },
+  timerBadge: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "700",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  timerBadgeRed: {
+    backgroundColor: "#E53935",
   },
   teamInfo: {
     gap: Spacing.one,
@@ -498,6 +727,42 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     borderRadius: Spacing.two,
     marginVertical: Spacing.half,
+    borderLeftWidth: 3,
+    borderLeftColor: "transparent",
+  },
+  targetRow: {
+    borderLeftColor: "#22C55E",
+    backgroundColor: "rgba(34, 197, 94, 0.1)",
+  },
+  targetName: {
+    color: "#22C55E",
+    fontWeight: "700",
+  },
+  seenTargetRow: {
+    borderLeftColor: "#EAB308",
+    backgroundColor: "rgba(234, 179, 8, 0.08)",
+  },
+  seenTargetName: {
+    color: "#EAB308",
+    fontWeight: "700",
+  },
+  pointsBadge: {
+    position: "absolute",
+    top: 2,
+    right: 4,
+    backgroundColor: "#22C55E",
+    borderRadius: 8,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    zIndex: 1,
+  },
+  pointsBadgeSeen: {
+    backgroundColor: "#EAB308",
+  },
+  pointsBadgeText: {
+    color: "#ffffff",
+    fontSize: 10,
+    fontWeight: "800",
   },
   posCol: {
     width: 36,
@@ -508,5 +773,20 @@ const styles = StyleSheet.create({
   statCol: {
     width: 40,
     textAlign: "center",
+  },
+  continueSection: {
+    paddingTop: Spacing.three,
+    paddingBottom: Spacing.three,
+    alignItems: "center",
+    marginHorizontal: Spacing.three,
+  },
+  continueButton: {
+    width: "100%",
+    paddingVertical: Spacing.three,
+    borderRadius: Spacing.two,
+    alignItems: "center",
+  },
+  pressed: {
+    opacity: 0.7,
   },
 });

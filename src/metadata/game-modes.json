@@ -1,0 +1,119 @@
+[
+  {
+    "id": "hof-golf-2026",
+    "name": "HOF Golf",
+    "version": "2026",
+    "emoji": "🏆",
+    "label": "HOF",
+    "active": true,
+    "rounds": 9,
+    "scoring": {
+      "type": "hof",
+      "targetSet": "hall-of-famers",
+      "pointsPer": 1,
+      "uniqueOnly": true
+    },
+    "start": {
+      "pool": "hof-free-teams",
+      "yearRange": [1947, 2025]
+    },
+    "bonuses": {
+      "scoringOverrides": [],
+      "gameBonus": {
+        "label": "+5 for losing record",
+        "description": "Earn 5 bonus points if the cumulative W-L of all visited teams is below .500",
+        "points": 5,
+        "condition": "cumulative-losing-record"
+      }
+    },
+    "info": {
+      "overviewBrief": "Navigate baseball history to collect Hall of Famers across 9 rounds.",
+      "overview": "The OG 'Six Degrees of Goose Gossage'. How many Hall of Famers can you uncover in an 9-team chain of teammates? Pick a player, then pick a team they played for and collect all of their hall-of-fame teammates. Then do it 8 more times to see how many inductees you can collect in your chain. Bonus points for picking bad teams!",
+      "howToPlay": [
+        "You start on a random team+year that has zero Hall of Famers on its roster.",
+        "Pick any player on the roster, then choose a different team that player also played for.",
+        "You land on the new roster and score 1 point for each Hall of Famer there.",
+        "Repeat for 9 rounds. Each Hall of Famer only counts once per game."
+      ],
+      "bullets": [
+        "301 collectible Hall of Famers (players inducted as Player).",
+        "Starting rosters span 1947 to 2025."
+      ]
+    }
+  },
+  {
+    "id": "all-star-golf-2026",
+    "name": "All-Star Golf",
+    "version": "2026",
+    "emoji": "⭐",
+    "label": "All-Star",
+    "active": true,
+    "rounds": 9,
+    "scoring": {
+      "type": "all-star",
+      "targetSet": "all-stars",
+      "pointsPer": "selections",
+      "uniqueOnly": true
+    },
+    "start": {
+      "pool": "one-allstar-2025-teams",
+      "yearRange": [2025, 2025],
+      "freebie": true
+    },
+    "bonuses": {
+      "scoringOverrides": [
+        { "when": "gte", "threshold": 10, "points": 0 },
+        { "when": "eq", "threshold": 1, "points": 5 }
+      ],
+      "gameBonus": null
+    },
+    "info": {
+      "overviewBrief": "Chase All-Star appearances for big point totals.",
+      "overview": "It's HOF-Golf but for all-stars! Each all-star appearance is worth 1 point...except players with 10+ appearances are worth zero (sorry, Cal Ripken)! And...players who have made the midsummer classic just once are worth five (hello, Grant Balfour ... oops, said too much)!",
+      "howToPlay": [
+        "You start on a random 2025 team with exactly one All-Star — that one's a freebie.",
+        "Pick any player on the roster, then choose a different team that player also played for.",
+        "Points equal each player's career All-Star selections (e.g. a 12-time All-Star is worth 12 points).",
+        "Repeat for 9 rounds. Each All-Star only counts once per game."
+      ],
+      "bullets": [
+        "2,308 collectible All-Stars across baseball history.",
+        "Target players with lots of selections for big scores."
+      ]
+    }
+  },
+  {
+    "id": "manager-golf-2026",
+    "name": "Manager Golf",
+    "version": "2026",
+    "emoji": "⚾",
+    "label": "Manager",
+    "active": true,
+    "rounds": 9,
+    "scoring": {
+      "type": "manager",
+      "targetSet": "managers-who-played",
+      "pointsPer": 1,
+      "uniqueOnly": true
+    },
+    "start": {
+      "pool": "all-2025-teams",
+      "yearRange": [2025, 2025]
+    },
+    "bonuses": null,
+    "info": {
+      "overviewBrief": "Find the players who went on to manage.",
+      "overview": "Those who can't play, coach, amirite? Troll those rosters nine times to find those obsure bench players who went onto greatness of a more strategic variety.",
+      "howToPlay": [
+        "You start on a random 2025 team.",
+        "Pick any player on the roster, then choose a different team that player also played for.",
+        "Score 1 point for each player on the roster who later became a manager.",
+        "Repeat for 9 rounds. Each manager-player only counts once per game."
+      ],
+      "bullets": [
+        "766 collectible players who became managers.",
+        "Players count if they appear on the roster as a player, not as a manager."
+      ]
+    }
+  }
+]
