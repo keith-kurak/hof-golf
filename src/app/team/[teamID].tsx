@@ -11,8 +11,6 @@ import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
 import {
   game$,
-  currentMode,
-  cumulativeWL$,
   roundTimedOut$,
 } from "@/store/game-store";
 import { divisionName } from "@/util/divisions";
@@ -294,11 +292,7 @@ export default function TeamRosterScreen() {
 
   // Game state for timer and W-L
   const active = useSelector(() => game$.active.get());
-  const cumWL = useSelector(cumulativeWL$);
   const isTimed = active && !active.finished && active.timed;
-  const mode = active && !active.finished ? currentMode() : undefined;
-  const showCumWL =
-    mode?.bonuses?.gameBonus?.condition === "cumulative-losing-record";
 
   // 60-second countdown timer
   const [timeLeft, setTimeLeft] = useState(60);
@@ -353,14 +347,61 @@ export default function TeamRosterScreen() {
       params: { playerID, playerName: name, year: String(year) },
     });
 
-  // Build game status bar content
+  // Build target sets for highlighting
   const isActiveGame = active && !active.finished;
-  const gameHint = (() => {
+  const currentRound =
+    isActiveGame ? active.rounds[active.rounds.length - 1] : null;
+  const targetIDs = useMemo(() => {
+    if (!currentRound?.targetsFound) return new Set<string>();
+    return new Set(currentRound.targetsFound.map((t) => t.playerID));
+  }, [currentRound?.targetsFound]);
+  const seenBeforeIDs = useMemo(() => {
+    if (!isActiveGame) return new Set<string>();
+    // seenTargets minus targets found this round = previously collected
+    const thisRoundIDs = new Set(
+      (currentRound?.targetsFound ?? []).map((t) => t.playerID),
+    );
+    return new Set(
+      active.seenTargets.filter((id) => !thisRoundIDs.has(id)),
+    );
+  }, [isActiveGame, active?.seenTargets, currentRound?.targetsFound]);
+
+  const isNewTarget = (playerID: string) =>
+    targetIDs.has(playerID) && !seenBeforeIDs.has(playerID);
+  const isSeenTarget = (playerID: string) =>
+    targetIDs.has(playerID) && seenBeforeIDs.has(playerID);
+
+  // Points lookup for badges
+  const targetPoints = useMemo(() => {
+    if (!currentRound?.targetsFound) return new Map<string, number>();
+    return new Map(
+      currentRound.targetsFound.map((t) => [t.playerID, t.points]),
+    );
+  }, [currentRound?.targetsFound]);
+
+  // Build game status bar hint with player names
+  const gameHint = useMemo(() => {
     if (!isActiveGame) return "";
-    if (timeLeft === 0 && isTimed) return "Time's up! Pick a player to continue.";
-    const cumLabel = showCumWL ? `  W-L: ${cumWL.w}-${cumWL.l}` : "";
-    return `Pick a player from this roster.${cumLabel}`;
-  })();
+    if (timeLeft === 0 && isTimed)
+      return "Time's up! Pick a player to continue.";
+
+    const newTargets = (currentRound?.targetsFound ?? []).filter(
+      (t) => !seenBeforeIDs.has(t.playerID),
+    );
+
+    if (newTargets.length > 0) {
+      const names = newTargets.map((t) => `${t.name} (+${t.points})`);
+      return (
+        <>
+          <Text style={hintStyles.action}>
+            +{currentRound?.pointsEarned ?? 0} pts. Pick a player.
+          </Text>
+          <Text style={hintStyles.names}>{names.join(", ")}</Text>
+        </>
+      );
+    }
+    return "No targets on this roster. Pick a player.";
+  }, [isActiveGame, isTimed, timeLeft, currentRound, seenBeforeIDs]);
 
   const timerTrailing =
     isTimed && isActiveGame ? (
@@ -376,7 +417,13 @@ export default function TeamRosterScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: teamName ?? teamID }} />
+      <Stack.Screen
+        options={{
+          title: isActiveGame
+            ? `${year} ${currentRound?.teamName ?? teamName ?? teamID}`
+            : (teamName ?? teamID),
+        }}
+      />
       <GameStatusBar hint={gameHint} trailing={timerTrailing} />
       <SectionList
         sections={sections}
@@ -384,29 +431,31 @@ export default function TeamRosterScreen() {
         contentContainerStyle={styles.list}
         stickySectionHeadersEnabled={true}
         ListHeaderComponent={
-          <>
-            <YearPicker year={year} onYearChange={setYear} />
-            {teamInfo && (
-              <View style={styles.teamInfo}>
-                <ThemedText type="default">
-                  {teamInfo.W}-{teamInfo.L}
-                  {"  "}
-                  <ThemedText type="small" themeColor="textSecondary">
-                    {formatStanding(teamInfo)}
+          isActiveGame ? null : (
+            <>
+              <YearPicker year={year} onYearChange={setYear} />
+              {teamInfo && (
+                <View style={styles.teamInfo}>
+                  <ThemedText type="default">
+                    {teamInfo.W}-{teamInfo.L}
+                    {"  "}
+                    <ThemedText type="small" themeColor="textSecondary">
+                      {formatStanding(teamInfo)}
+                    </ThemedText>
                   </ThemedText>
-                </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  Pythagorean W-L: {pythagWL(teamInfo.R, teamInfo.RA)},{" "}
-                  {teamInfo.R} RS / {teamInfo.RA} RA
-                </ThemedText>
-                {teamInfo.manager && (
                   <ThemedText type="small" themeColor="textSecondary">
-                    Manager: {teamInfo.manager}
+                    Pythagorean W-L: {pythagWL(teamInfo.R, teamInfo.RA)},{" "}
+                    {teamInfo.R} RS / {teamInfo.RA} RA
                   </ThemedText>
-                )}
-              </View>
-            )}
-          </>
+                  {teamInfo.manager && (
+                    <ThemedText type="small" themeColor="textSecondary">
+                      Manager: {teamInfo.manager}
+                    </ThemedText>
+                  )}
+                </View>
+              )}
+            </>
+          )
         }
         renderSectionHeader={({ section }) => (
           <ThemedView style={styles.headerRow}>
@@ -426,11 +475,31 @@ export default function TeamRosterScreen() {
         )}
         renderItem={({ item, section }) => {
           const name = `${item.nameFirst} ${item.nameLast}`;
+          const newTarget = isNewTarget(item.playerID);
+          const seenTarget = isSeenTarget(item.playerID);
+          const pts = targetPoints.get(item.playerID);
           if (isBatterSection(section.title)) {
             const b = item as Batter;
             return (
               <Pressable onPress={() => navigateToPlayer(b.playerID, name)}>
-                <ThemedView type="backgroundElement" style={styles.playerRow}>
+                <ThemedView
+                  type="backgroundElement"
+                  style={[
+                    styles.playerRow,
+                    newTarget && styles.targetRow,
+                    seenTarget && styles.seenTargetRow,
+                  ]}
+                >
+                  {pts != null && (
+                    <View
+                      style={[
+                        styles.pointsBadge,
+                        seenTarget && styles.pointsBadgeSeen,
+                      ]}
+                    >
+                      <Text style={styles.pointsBadgeText}>+{pts}</Text>
+                    </View>
+                  )}
                   <ThemedText
                     type="code"
                     themeColor="textSecondary"
@@ -438,7 +507,11 @@ export default function TeamRosterScreen() {
                   >
                     {b.position}
                   </ThemedText>
-                  <ThemedText style={styles.nameCol}>{name}</ThemedText>
+                  <ThemedText
+                    style={[styles.nameCol, newTarget && styles.targetName]}
+                  >
+                    {name}
+                  </ThemedText>
                   <ThemedText
                     themeColor="textSecondary"
                     type="small"
@@ -481,7 +554,24 @@ export default function TeamRosterScreen() {
           const p = item as Pitcher;
           return (
             <Pressable onPress={() => navigateToPlayer(p.playerID, name)}>
-              <ThemedView type="backgroundElement" style={styles.playerRow}>
+              <ThemedView
+                type="backgroundElement"
+                style={[
+                  styles.playerRow,
+                  newTarget && styles.targetRow,
+                  seenTarget && styles.seenTargetRow,
+                ]}
+              >
+                {pts != null && (
+                  <View
+                    style={[
+                      styles.pointsBadge,
+                      seenTarget && styles.pointsBadgeSeen,
+                    ]}
+                  >
+                    <Text style={styles.pointsBadgeText}>+{pts}</Text>
+                  </View>
+                )}
                 <ThemedText
                   type="code"
                   themeColor="textSecondary"
@@ -489,7 +579,11 @@ export default function TeamRosterScreen() {
                 >
                   P
                 </ThemedText>
-                <ThemedText style={styles.nameCol}>{name}</ThemedText>
+                <ThemedText
+                  style={[styles.nameCol, newTarget && styles.targetName]}
+                >
+                  {name}
+                </ThemedText>
                 <ThemedText
                   themeColor="textSecondary"
                   type="small"
@@ -534,6 +628,19 @@ export default function TeamRosterScreen() {
   );
 }
 
+const hintStyles = StyleSheet.create({
+  action: {
+    color: "#ffffff",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  names: {
+    color: "rgba(255, 255, 255, 0.65)",
+    fontSize: 12,
+    fontWeight: "500",
+  },
+});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -573,6 +680,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     borderRadius: Spacing.two,
     marginVertical: Spacing.half,
+    borderLeftWidth: 3,
+    borderLeftColor: "transparent",
+  },
+  targetRow: {
+    borderLeftColor: "#22C55E",
+    backgroundColor: "rgba(34, 197, 94, 0.1)",
+  },
+  targetName: {
+    color: "#22C55E",
+    fontWeight: "700",
+  },
+  seenTargetRow: {
+    borderLeftColor: "rgba(34, 197, 94, 0.3)",
+    opacity: 0.5,
+  },
+  pointsBadge: {
+    position: "absolute",
+    top: 2,
+    right: 4,
+    backgroundColor: "#22C55E",
+    borderRadius: 8,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    zIndex: 1,
+  },
+  pointsBadgeSeen: {
+    backgroundColor: "rgba(34, 197, 94, 0.35)",
+  },
+  pointsBadgeText: {
+    color: "#ffffff",
+    fontSize: 10,
+    fontWeight: "800",
   },
   posCol: {
     width: 36,

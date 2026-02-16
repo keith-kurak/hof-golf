@@ -10,7 +10,7 @@ const activeModes = gameModes as GameMode[];
 const BAR_BG = "#2563EB";
 
 type Props = {
-  hint: string;
+  hint: React.ReactNode;
   /** Optional right-side content (e.g. timer) rendered after the stats */
   trailing?: React.ReactNode;
 };
@@ -39,7 +39,11 @@ export function GameStatusBar({ hint, trailing }: Props) {
           {trailing}
         </View>
       </View>
-      <Text style={styles.hint}>{hint}</Text>
+      {typeof hint === "string" ? (
+        <Text style={styles.hint}>{hint}</Text>
+      ) : (
+        <View style={styles.hintRow}>{hint}</View>
+      )}
     </View>
   );
 }
@@ -89,5 +93,8 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.75)",
     fontSize: 13,
     fontWeight: "500",
+  },
+  hintRow: {
+    gap: 2,
   },
 });

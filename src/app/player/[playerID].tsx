@@ -155,9 +155,17 @@ export default function PlayerDetailScreen() {
     playerName ?? (bio ? `${bio.nameFirst} ${bio.nameLast}` : playerID);
 
   const active = useSelector(() => game$.active.get());
+  const currentTeamID =
+    active && !active.finished
+      ? active.rounds[active.rounds.length - 1]?.teamID
+      : null;
+
+  const isRowDisabled = (row: RowData) =>
+    active && !active.finished && row.teamID === currentTeamID;
 
   const navigateToTeam = async (row: RowData) => {
     if (row.isCareer || row.yearID == null) return;
+    if (isRowDisabled(row)) return;
 
     if (active && !active.finished) {
       // During an active game: wire through the game store
@@ -242,13 +250,34 @@ export default function PlayerDetailScreen() {
             <View key={row.key} style={styles.rowLeft}>
               <Pressable
                 onPress={() => navigateToTeam(row)}
+                disabled={isRowDisabled(row)}
                 style={({ pressed }) => pressed && styles.pressed}
               >
-                <ThemedView type="backgroundElement" style={styles.yearTeamButton}>
-                  <ThemedText type="small" style={[styles.labelCol, { marginLeft: Spacing.one }]}>
+                <ThemedView
+                  type="backgroundElement"
+                  style={[
+                    styles.yearTeamButton,
+                    isRowDisabled(row) && styles.disabledRow,
+                  ]}
+                >
+                  <ThemedText
+                    type="small"
+                    style={[
+                      styles.labelCol,
+                      { marginLeft: Spacing.one },
+                      isRowDisabled(row) && styles.disabledText,
+                    ]}
+                  >
                     {row.year}
                   </ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary" style={styles.labelCol}>
+                  <ThemedText
+                    type="small"
+                    themeColor="textSecondary"
+                    style={[
+                      styles.labelCol,
+                      isRowDisabled(row) && styles.disabledText,
+                    ]}
+                  >
                     {row.teamID}
                   </ThemedText>
                 </ThemedView>
@@ -440,5 +469,11 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.7,
+  },
+  disabledRow: {
+    opacity: 0.35,
+  },
+  disabledText: {
+    textDecorationLine: "line-through",
   },
 });

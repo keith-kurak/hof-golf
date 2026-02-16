@@ -36,7 +36,7 @@ export default function ModeDetailScreen() {
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [chooseTeam, setChooseTeam] = useState(false);
-  const [timed, setTimed] = useState(true);
+  const [timed, setTimed] = useState(false);
 
   // Clear pending team pick on unmount or when switching to Random
   useEffect(() => {
