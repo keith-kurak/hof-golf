@@ -1,5 +1,5 @@
 import { useSelector } from "@legendapp/state/react";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -90,6 +90,7 @@ export default function ModeDetailScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <Stack.Screen options={{ headerTitle: mode.name }} />
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
@@ -98,7 +99,6 @@ export default function ModeDetailScreen() {
       >
         {/* Overview */}
         <ThemedView type="backgroundSelected" style={styles.card}>
-          <ThemedText type="mediumBold">{mode.name}</ThemedText>
           <ThemedText style={styles.overviewText}>
             {info.overviewBrief}
           </ThemedText>
@@ -148,26 +148,26 @@ export default function ModeDetailScreen() {
             ))}
           </ThemedView>
         )}
-
-        {/* Play button */}
-        <Pressable
-          onPress={handlePlay}
-          disabled={loading || countdown !== null}
-          style={({ pressed }) => [
-            styles.playButton,
-            { backgroundColor: theme.text },
-            pressed && styles.pressed,
-          ]}
-        >
-          {loading && countdown === null ? (
-            <ActivityIndicator size="small" color={theme.background} />
-          ) : (
-            <ThemedText type="mediumBold" style={{ color: theme.background }}>
-              Play
-            </ThemedText>
-          )}
-        </Pressable>
       </ScrollView>
+
+      {/* Play button */}
+      <Pressable
+        onPress={handlePlay}
+        disabled={loading || countdown !== null}
+        style={({ pressed }) => [
+          styles.playButton,
+          { backgroundColor: theme.text },
+          pressed && styles.pressed,
+        ]}
+      >
+        {loading && countdown === null ? (
+          <ActivityIndicator size="small" color={theme.background} />
+        ) : (
+          <ThemedText type="mediumBold" style={{ color: theme.background }}>
+            Play
+          </ThemedText>
+        )}
+      </Pressable>
 
       {/* Countdown overlay */}
       {countdown !== null && countdown > 0 && (
@@ -233,6 +233,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.three,
     borderRadius: Spacing.two,
     alignItems: "center",
+    margin: Spacing.three,
   },
   pressed: {
     opacity: 0.7,
