@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import gameModes from "@/metadata/game-modes.json";
-import { currentRound$, game$ } from "@/store/game-store";
+import { cumulativeWL$, currentRound$, game$ } from "@/store/game-store";
 import type { GameMode } from "@/store/starting-pools";
 
 const activeModes = gameModes as GameMode[];
@@ -19,11 +19,14 @@ type Props = {
 export function GameStatusBar({ hint, trailing }: Props) {
   const active = useSelector(() => game$.active.get());
   const roundIdx = useSelector(currentRound$);
+  const cumWL = useSelector(cumulativeWL$);
   const router = useRouter();
 
   if (!active || active.finished) return null;
 
   const mode = activeModes.find((m) => m.id === active.modeId);
+  const showWL =
+    mode?.bonuses?.gameBonus?.condition === "cumulative-losing-record";
 
   return (
     <Pressable
@@ -41,6 +44,14 @@ export function GameStatusBar({ hint, trailing }: Props) {
           </Text>
           <View style={styles.divider} />
           <Text style={styles.stat}>{active.totalPoints} pts</Text>
+          {showWL && (
+            <>
+              <View style={styles.divider} />
+              <Text style={[styles.stat, cumWL.l > cumWL.w && styles.bonusActive]}>
+                {cumWL.w}-{cumWL.l}
+              </Text>
+            </>
+          )}
           {trailing}
         </View>
       </View>
@@ -101,6 +112,9 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.75)",
     fontSize: 13,
     fontWeight: "500",
+  },
+  bonusActive: {
+    color: "#4ADE80",
   },
   hintRow: {
     gap: 2,
