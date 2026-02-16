@@ -207,7 +207,7 @@ function classifyBenchPosition(b: RawBatter): string {
 
   if (allIF) return "IF";
   if (allOF) return "OF";
-  if (hasIF && hasOF) return "IF/OF";
+  if (hasIF && hasOF) return "UT";
 
   return "";
 }

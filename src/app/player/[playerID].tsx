@@ -184,8 +184,9 @@ export default function PlayerDetailScreen() {
     active.rounds.length > gameMode.rounds
   );
   const isActiveGame = active && !active.finished && !isFinalRound;
-  const currentTeamID =
-    isActiveGame ? active.rounds[active.rounds.length - 1]?.teamID : null;
+  const currentTeamID = isActiveGame
+    ? active.rounds[active.rounds.length - 1]?.teamID
+    : null;
 
   const isRowDisabled = (row: RowData) =>
     active && !active.finished && row.teamID === currentTeamID;
@@ -234,7 +235,7 @@ export default function PlayerDetailScreen() {
         );
         roundTimedOut$.set(false);
 
-        router.dismissAll();
+        //router.dismissAll();
         router.push({
           pathname: "/team/[teamID]",
           params: {
@@ -438,7 +439,9 @@ export default function PlayerDetailScreen() {
             <Text style={hintStyles.action}>
               {`Pick your next team to collect more ${currentMode()?.scoring.targetSet}.`}
             </Text>
-            <Text style={hintStyles.sub}>You must pick a different franchise!</Text>
+            <Text style={hintStyles.sub}>
+              You must pick a different franchise!
+            </Text>
           </>
         }
         trailing={

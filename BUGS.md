@@ -9,6 +9,10 @@
 - "finished" error
 - check manager logic - didn't pick up dusty baker in hof mode
 - not obvious when a player doesn't count
+- bottom button safe area
+- history safe area
+- nav bug (probably just need to suppress)
+- cut off big text
 
 ## changes
 
@@ -17,3 +21,5 @@
 - message/ toast area
 - don't show cumulative record
 - show detail on history
+- filter for history/results
+- haptics
