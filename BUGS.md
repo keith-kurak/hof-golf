@@ -8,6 +8,7 @@
 - pitcher/batter check is clumsy (See Tom Housegame)
 - "finished" error
 - check manager logic - didn't pick up dusty baker in hof mode
+- not obvious when a player doesn't count
 
 ## changes
 
