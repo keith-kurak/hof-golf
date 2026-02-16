@@ -51,6 +51,12 @@
         "projectId": "b4b5b473-8c41-43da-a8ac-773e0bf35423"
       }
     },
-    "owner": "expo-production"
+    "owner": "expo-production",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b4b5b473-8c41-43da-a8ac-773e0bf35423"
+    }
   }
 }
