@@ -1,7 +1,7 @@
 import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, SectionList, StyleSheet, Text, View } from "react-native";
 
 import { GameStatusBar } from "@/components/game-status-bar";
@@ -10,7 +10,8 @@ import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
 import twoWayPlayers from "@/metadata/two-way-players.json";
-import { game$, roundTimedOut$ } from "@/store/game-store";
+import { useRoundTimer } from "@/hooks/use-round-timer";
+import { game$ } from "@/store/game-store";
 import { divisionName } from "@/util/divisions";
 import { formatAvg, formatEra, formatIP, statVal } from "@/util/stats";
 
@@ -278,33 +279,9 @@ export default function TeamRosterScreen() {
   const [rawBatters, setRawBatters] = useState<RawBatter[]>([]);
   const [rawPitchers, setRawPitchers] = useState<Pitcher[]>([]);
 
-  // Game state for timer and W-L
+  // Game state
   const active = useSelector(() => game$.active.get());
-  const isTimed = active && !active.finished && active.timed;
-
-  // 60-second countdown timer
-  const [timeLeft, setTimeLeft] = useState(60);
-  const timerExpired = useRef(false);
-
-  useEffect(() => {
-    if (!isTimed) return;
-    setTimeLeft(60);
-    timerExpired.current = false;
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          if (!timerExpired.current) {
-            timerExpired.current = true;
-            roundTimedOut$.set(true);
-          }
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [isTimed]);
+  const { timeLeft, isTimed } = useRoundTimer();
 
   useEffect(() => {
     db.getFirstAsync<TeamInfo>(TEAM_INFO_QUERY, [year, teamID]).then(

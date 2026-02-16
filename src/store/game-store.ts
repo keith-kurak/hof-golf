@@ -89,6 +89,7 @@ syncObservable(
 
 export const pendingTeamPick$ = observable<StartingTeam | null>(null);
 export const roundTimedOut$ = observable(false);
+export const roundStartedAt$ = observable(0);
 
 // ---------------------------------------------------------------------------
 // Computed helpers
@@ -165,6 +166,7 @@ export function startGame(
   };
 
   game$.active.set(active);
+  roundStartedAt$.set(Date.now());
 }
 
 export function pickPlayer(playerID: string, playerName: string) {
@@ -219,6 +221,7 @@ export function navigateToTeam(
   game$.active.rounds.push(newRound);
   game$.active.seenTargets.set(updatedSeen);
   game$.active.totalPoints.set(active.totalPoints + pointsEarned);
+  roundStartedAt$.set(Date.now());
 
   // Auto-finish if we've completed all rounds
   const mode = currentMode();

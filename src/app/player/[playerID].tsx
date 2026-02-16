@@ -9,6 +9,7 @@ import { GameStatusBar } from "@/components/game-status-bar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
+import { useRoundTimer } from "@/hooks/use-round-timer";
 import { useTheme } from "@/hooks/use-theme";
 import {
   currentMode,
@@ -115,6 +116,7 @@ export default function PlayerDetailScreen() {
   const db = useSQLiteContext();
   const router = useRouter();
   const theme = useTheme();
+  const { timeLeft, isTimed } = useRoundTimer();
   const [bio, setBio] = useState<Bio | null>(null);
   const [hofStatus, setHofStatus] = useState<HofStatus | null>(null);
   const [battingSeasons, setBattingSeasons] = useState<SeasonBatting[]>([]);
@@ -423,6 +425,20 @@ export default function PlayerDetailScreen() {
             <Text style={hintStyles.sub}>You must pick a different franchise!</Text>
           </>
         }
+        trailing={
+          isTimed ? (
+            <Text
+              style={[
+                hintStyles.timerBadge,
+                timeLeft <= 10 && hintStyles.timerBadgeRed,
+              ]}
+            >
+              {timeLeft === 0
+                ? "0:00"
+                : `0:${String(timeLeft).padStart(2, "0")}`}
+            </Text>
+          ) : undefined
+        }
       />
       <ScrollView contentContainerStyle={styles.content}>
         {bio && !isActiveGame ? (
@@ -491,6 +507,19 @@ const hintStyles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.65)",
     fontSize: 12,
     fontWeight: "500",
+  },
+  timerBadge: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "700",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  timerBadgeRed: {
+    backgroundColor: "#E53935",
   },
 });
 

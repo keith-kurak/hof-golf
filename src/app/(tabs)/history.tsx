@@ -19,6 +19,13 @@ function formatDate(ts: number): string {
   });
 }
 
+function formatDuration(startedAt: number, finishedAt: number): string {
+  const totalSec = Math.floor((finishedAt - startedAt) / 1000);
+  const min = Math.floor(totalSec / 60);
+  const sec = totalSec % 60;
+  return `${min}:${String(sec).padStart(2, "0")}`;
+}
+
 function GameCard({ game }: { game: SavedGame }) {
   const mode = activeModes.find((m) => m.id === game.modeId);
   const startingRound = game.rounds[0];
@@ -66,9 +73,14 @@ function GameCard({ game }: { game: SavedGame }) {
           </ThemedText>
         )}
 
-        <ThemedText type="small" themeColor="textSecondary">
-          {formatDate(game.finishedAt)}
-        </ThemedText>
+        <View style={styles.footerRow}>
+          <ThemedText type="small" themeColor="textSecondary">
+            {formatDate(game.finishedAt)}
+          </ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            {formatDuration(game.startedAt, game.finishedAt)}
+          </ThemedText>
+        </View>
       </View>
     </ThemedView>
   );
@@ -128,6 +140,11 @@ const styles = StyleSheet.create({
   },
   cardBody: {
     gap: Spacing.one,
+  },
+  footerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   pointsRow: {
     flexDirection: "row",
