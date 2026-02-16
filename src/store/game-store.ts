@@ -176,6 +176,12 @@ export function pickPlayer(playerID: string, playerName: string) {
   const roundIdx = active.rounds.length - 1;
   game$.active.rounds[roundIdx].pickedPlayerID.set(playerID);
   game$.active.rounds[roundIdx].pickedPlayerName.set(playerName);
+
+  // Auto-finish if this is the last round
+  const mode = currentMode();
+  if (mode && active.rounds.length >= mode.rounds) {
+    game$.active.finished.set(true);
+  }
 }
 
 export function navigateToTeam(
@@ -222,12 +228,6 @@ export function navigateToTeam(
   game$.active.seenTargets.set(updatedSeen);
   game$.active.totalPoints.set(active.totalPoints + pointsEarned);
   roundStartedAt$.set(Date.now());
-
-  // Auto-finish if we've completed all rounds
-  const mode = currentMode();
-  if (mode && active.rounds.length + 1 >= mode.rounds) {
-    game$.active.finished.set(true);
-  }
 }
 
 export function endGame() {

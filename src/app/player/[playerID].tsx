@@ -13,6 +13,7 @@ import { useRoundTimer } from "@/hooks/use-round-timer";
 import { useTheme } from "@/hooks/use-theme";
 import {
   currentMode,
+  endGame,
   game$,
   pickPlayer,
   roundTimedOut$,
@@ -192,6 +193,13 @@ export default function PlayerDetailScreen() {
     if (active && !active.finished) {
       // During an active game: wire through the game store
       pickPlayer(playerID, displayName);
+
+      // If pickPlayer auto-finished the game (last round), end it
+      if (game$.active.finished.get()) {
+        endGame();
+        router.dismissAll();
+        return;
+      }
 
       const mode = currentMode();
       if (mode) {
