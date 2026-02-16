@@ -2,6 +2,7 @@
 
 - doesn't show team name in header after going from player to team
 - shouldn't have back buttons during game
+- sort sp by ip
 
 ## changes
 

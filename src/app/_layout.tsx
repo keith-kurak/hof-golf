@@ -39,6 +39,13 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="game/summary"
+            options={{
+              presentation: "modal",
+              title: "Game Summary",
+            }}
+          />
+          <Stack.Screen
             name="game/resume"
             options={{
               presentation: "transparentModal",

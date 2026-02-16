@@ -3,7 +3,7 @@ import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { GameStatusBar } from "@/components/game-status-bar";
 import { ThemedText } from "@/components/themed-text";
@@ -414,7 +414,16 @@ export default function PlayerDetailScreen() {
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: displayName }} />
-      <GameStatusBar hint="Pick your next team." />
+      <GameStatusBar
+        hint={
+          <>
+            <Text style={hintStyles.action}>
+              {`Pick your next team to collect more ${currentMode()?.scoring.targetSet}.`}
+            </Text>
+            <Text style={hintStyles.sub}>You must pick a different franchise!</Text>
+          </>
+        }
+      />
       <ScrollView contentContainerStyle={styles.content}>
         {bio && !isActiveGame ? (
           <View style={styles.bioSection}>
@@ -431,25 +440,59 @@ export default function PlayerDetailScreen() {
           </View>
         ) : null}
 
-        {renderStatSection(
-          "Pitching",
-          pitchingExpanded,
-          () => setPitchingExpanded((v) => !v),
-          activePitchingCols,
-          pitchingRows,
-        )}
-
-        {renderStatSection(
-          "Batting",
-          battingExpanded,
-          () => setBattingExpanded((v) => !v),
-          activeBattingCols,
-          battingRows,
+        {/* Show primary stat section first based on career games */}
+        {(pitchingCareer?.G ?? 0) > (battingCareer?.G ?? 0) ? (
+          <>
+            {renderStatSection(
+              "Pitching",
+              pitchingExpanded,
+              () => setPitchingExpanded((v) => !v),
+              activePitchingCols,
+              pitchingRows,
+            )}
+            {renderStatSection(
+              "Batting",
+              battingExpanded,
+              () => setBattingExpanded((v) => !v),
+              activeBattingCols,
+              battingRows,
+            )}
+          </>
+        ) : (
+          <>
+            {renderStatSection(
+              "Batting",
+              battingExpanded,
+              () => setBattingExpanded((v) => !v),
+              activeBattingCols,
+              battingRows,
+            )}
+            {renderStatSection(
+              "Pitching",
+              pitchingExpanded,
+              () => setPitchingExpanded((v) => !v),
+              activePitchingCols,
+              pitchingRows,
+            )}
+          </>
         )}
       </ScrollView>
     </ThemedView>
   );
 }
+
+const hintStyles = StyleSheet.create({
+  action: {
+    color: "#ffffff",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  sub: {
+    color: "rgba(255, 255, 255, 0.65)",
+    fontSize: 12,
+    fontWeight: "500",
+  },
+});
 
 const styles = StyleSheet.create({
   container: {

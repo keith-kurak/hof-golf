@@ -1,5 +1,6 @@
 import { useSelector } from "@legendapp/state/react";
-import { StyleSheet, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import gameModes from "@/metadata/game-modes.json";
 import { currentRound$, game$ } from "@/store/game-store";
@@ -18,13 +19,17 @@ type Props = {
 export function GameStatusBar({ hint, trailing }: Props) {
   const active = useSelector(() => game$.active.get());
   const roundIdx = useSelector(currentRound$);
+  const router = useRouter();
 
   if (!active || active.finished) return null;
 
   const mode = activeModes.find((m) => m.id === active.modeId);
 
   return (
-    <View style={styles.bar}>
+    <Pressable
+      onPress={() => router.push("/game/summary")}
+      style={({ pressed }) => [styles.bar, pressed && styles.barPressed]}
+    >
       <View style={styles.topRow}>
         <View style={styles.left}>
           <Text style={styles.emoji}>{mode?.emoji}</Text>
@@ -44,7 +49,7 @@ export function GameStatusBar({ hint, trailing }: Props) {
       ) : (
         <View style={styles.hintRow}>{hint}</View>
       )}
-    </View>
+    </Pressable>
   );
 }
 
@@ -55,6 +60,9 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     gap: 4,
+  },
+  barPressed: {
+    opacity: 0.85,
   },
   topRow: {
     flexDirection: "row",
