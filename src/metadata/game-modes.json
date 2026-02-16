@@ -1,7 +1,9 @@
 [
   {
     "id": "hof-golf-2026",
-    "name": "HOF Golf (2026)",
+    "name": "HOF Golf",
+    "version": "2026",
+    "emoji": "🏆",
     "label": "HOF",
     "active": true,
     "rounds": 9,
@@ -16,7 +18,8 @@
       "yearRange": [1947, 2025]
     },
     "info": {
-      "overview": "Navigate baseball history to collect Hall of Famers across 9 rounds.",
+      "overviewBrief": "Navigate baseball history to collect Hall of Famers across 9 rounds.",
+      "overview": "The OG 'Six Degrees of Goose Gossage'. How many Hall of Famers can you uncover in an 9-team chain of teammates? Pick a player, then pick a team they played for and collect all of their hall-of-fame teammates. Then do it 8 more times to see how many inductees you can collect in your chain. Bonus points for picking bad teams!",
       "howToPlay": [
         "You start on a random team+year that has zero Hall of Famers on its roster.",
         "Pick any player on the roster, then choose a different team that player also played for.",
@@ -31,7 +34,9 @@
   },
   {
     "id": "all-star-golf-2026",
-    "name": "All-Star Golf (2026)",
+    "name": "All-Star Golf",
+    "version": "2026",
+    "emoji": "⭐",
     "label": "All-Star",
     "active": true,
     "rounds": 9,
@@ -47,7 +52,8 @@
       "freebie": true
     },
     "info": {
-      "overview": "Chase All-Star appearances for big point totals.",
+      "overviewBrief": "Chase All-Star appearances for big point totals.",
+      "overview": "It's HOF-Golf but for all-stars! Each all-star appearance is worth 1 point...except players with 10+ appearances are worth zero (sorry, Cal Ripken)! And...players who have made the midsummer classic just once are worth five (hello, Grant Balfour ... oops, said too much)!",
       "howToPlay": [
         "You start on a random 2025 team with exactly one All-Star — that one's a freebie.",
         "Pick any player on the roster, then choose a different team that player also played for.",
@@ -62,7 +68,9 @@
   },
   {
     "id": "manager-golf-2026",
-    "name": "Manager Golf (2026)",
+    "name": "Manager Golf",
+    "version": "2026",
+    "emoji": "⚾",
     "label": "Manager",
     "active": true,
     "rounds": 9,
@@ -77,7 +85,8 @@
       "yearRange": [2025, 2025]
     },
     "info": {
-      "overview": "Find the players who went on to manage.",
+      "overviewBrief": "Find the players who went on to manage.",
+      "overview": "Those who can't play, coach, amirite? Troll those rosters nine times to find those obsure bench players who went onto greatness of a more strategic variety.",
       "howToPlay": [
         "You start on a random 2025 team.",
         "Pick any player on the roster, then choose a different team that player also played for.",

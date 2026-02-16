@@ -2,8 +2,8 @@ import type { SQLiteDatabase } from "expo-sqlite";
 
 import hofFreeTeams from "@/metadata/hof-free-teams.json";
 
-import type { TargetLookup } from "./target-lookups";
 import { getTargetsOnRoster } from "./roster-targets";
+import type { TargetLookup } from "./target-lookups";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -13,6 +13,8 @@ export type GameMode = {
   id: string;
   name: string;
   label: string;
+  emoji: string;
+  version: string;
   active: boolean;
   rounds: number;
   scoring: {
@@ -28,6 +30,7 @@ export type GameMode = {
   };
   info: {
     overview: string;
+    overviewBrief: string;
     howToPlay: string[];
     bullets: string[];
   };

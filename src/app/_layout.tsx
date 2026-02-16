@@ -27,6 +27,18 @@ export default function RootLayout() {
             name="player/[playerID]"
             options={{ title: "Player" }}
           />
+          <Stack.Screen
+            name="game/[modeId]"
+            options={{ title: "Mode Details" }}
+          />
+          <Stack.Screen
+            name="game/resume"
+            options={{
+              presentation: "transparentModal",
+              headerShown: false,
+              animation: "fade",
+            }}
+          />
         </Stack>
       </ThemeProvider>
     </SQLiteProvider>
