@@ -1,3 +1,4 @@
+import { useSelector } from "@legendapp/state/react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
@@ -8,6 +9,15 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
+import {
+  game$,
+  currentMode,
+  pickPlayer,
+  navigateToTeam as storeNavigateToTeam,
+  roundTimedOut$,
+} from "@/store/game-store";
+import { getTargetsOnRoster } from "@/store/roster-targets";
+import { getLookupForMode } from "@/store/target-lookups";
 import {
   type BattingStats,
   type PitchingStats,
@@ -143,8 +153,47 @@ export default function PlayerDetailScreen() {
   const displayName =
     playerName ?? (bio ? `${bio.nameFirst} ${bio.nameLast}` : playerID);
 
-  const navigateToTeam = (row: RowData) => {
-    if (row.isCareer) return;
+  const active = useSelector(() => game$.active.get());
+
+  const navigateToTeam = async (row: RowData) => {
+    if (row.isCareer || row.yearID == null) return;
+
+    if (active && !active.finished) {
+      // During an active game: wire through the game store
+      pickPlayer(playerID, displayName);
+
+      const mode = currentMode();
+      if (mode) {
+        const lookup = getLookupForMode(mode.scoring.type);
+        const overrides = mode.bonuses?.scoringOverrides;
+        const targets = await getTargetsOnRoster(
+          db,
+          row.teamID,
+          row.yearID,
+          lookup,
+          overrides?.length ? overrides : undefined,
+        );
+
+        // Query team W/L and name
+        const teamInfo = await db.getFirstAsync<{
+          W: number;
+          L: number;
+          name: string;
+        }>(
+          `SELECT W, L, name FROM Teams WHERE yearID = ? AND teamID = ?`,
+          [row.yearID, row.teamID],
+        );
+
+        const timedOut = roundTimedOut$.get();
+        storeNavigateToTeam(row.teamID, row.yearID, teamInfo?.name ?? row.teamID, targets, {
+          teamW: teamInfo?.W ?? 0,
+          teamL: teamInfo?.L ?? 0,
+          timedOut,
+        });
+        roundTimedOut$.set(false);
+      }
+    }
+
     router.push({
       pathname: "/team/[teamID]",
       params: { teamID: row.teamID, year: String(row.yearID) },

@@ -57,6 +57,7 @@ export default function ResumeModal() {
 
         <ThemedText type="smallBold" themeColor="textSecondary">
           {mode?.name ?? "Game"}
+          {active.timed ? " (Timed)" : ""}
         </ThemedText>
 
         <View style={styles.statsRow}>

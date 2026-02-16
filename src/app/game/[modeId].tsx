@@ -17,7 +17,7 @@ import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import gameModes from "@/metadata/game-modes.json";
-import { game$, startGame } from "@/store/game-store";
+import { game$, pendingTeamPick$, startGame } from "@/store/game-store";
 import { getTargetsOnRoster } from "@/store/roster-targets";
 import { getRandomStart, type GameMode } from "@/store/starting-pools";
 import { getLookupForMode } from "@/store/target-lookups";
@@ -32,8 +32,19 @@ export default function ModeDetailScreen() {
   const db = useSQLiteContext();
   const router = useRouter();
   const bestScores = useSelector(() => game$.bestScores.get() ?? {});
+  const pendingPick = useSelector(() => pendingTeamPick$.get());
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [chooseTeam, setChooseTeam] = useState(false);
+  const [timed, setTimed] = useState(true);
+
+  // Clear pending team pick on unmount or when switching to Random
+  useEffect(() => {
+    if (!chooseTeam) pendingTeamPick$.set(null);
+    return () => {
+      pendingTeamPick$.set(null);
+    };
+  }, [chooseTeam]);
 
   // Countdown timer: 3 → 2 → 1 → 0 → navigate
   useEffect(() => {
@@ -62,20 +73,40 @@ export default function ModeDetailScreen() {
     setLoading(true);
     try {
       const lookup = getLookupForMode(mode.scoring.type);
-      const startingTeam = await getRandomStart(db, mode, lookup);
+      const overrides = mode.bonuses?.scoringOverrides;
+
+      // Use chosen team or random
+      const startingTeam =
+        chooseTeam && pendingPick
+          ? pendingPick
+          : await getRandomStart(db, mode, lookup);
+
       const targets = await getTargetsOnRoster(
         db,
         startingTeam.teamID,
         startingTeam.yearID,
         lookup,
+        overrides?.length ? overrides : undefined,
       );
-      startGame(mode, startingTeam, targets);
+
+      // Query team W/L
+      const teamWL = await db.getFirstAsync<{ W: number; L: number }>(
+        `SELECT W, L FROM Teams WHERE yearID = ? AND teamID = ?`,
+        [startingTeam.yearID, startingTeam.teamID],
+      );
+
+      startGame(mode, startingTeam, targets, {
+        timed,
+        teamW: teamWL?.W ?? 0,
+        teamL: teamWL?.L ?? 0,
+      });
+      pendingTeamPick$.set(null);
       setCountdown(3);
     } catch (e) {
       console.error("Failed to start game:", e);
       setLoading(false);
     }
-  }, [db, mode, loading]);
+  }, [db, mode, loading, chooseTeam, pendingPick, timed]);
 
   if (!mode) {
     return (
@@ -148,6 +179,120 @@ export default function ModeDetailScreen() {
             ))}
           </ThemedView>
         )}
+        {/* Game options */}
+        <ThemedView type="backgroundElement" style={styles.card}>
+          <ThemedText type="smallBold" style={styles.sectionLabel}>
+            Options
+          </ThemedText>
+
+          {/* Starting team toggle */}
+          <View style={styles.optionRow}>
+            <ThemedText themeColor="textSecondary">Starting team</ThemedText>
+            <View style={styles.toggleGroup}>
+              <Pressable
+                onPress={() => setChooseTeam(false)}
+                style={[
+                  styles.toggleButton,
+                  chooseTeam
+                    ? { borderColor: theme.textSecondary }
+                    : { backgroundColor: theme.text },
+                ]}
+              >
+                <ThemedText
+                  type="small"
+                  allowFontScaling={false}
+                  style={!chooseTeam ? { color: theme.background } : undefined}
+                >
+                  Random
+                </ThemedText>
+              </Pressable>
+              <Pressable
+                onPress={() => setChooseTeam(true)}
+                style={[
+                  styles.toggleButton,
+                  chooseTeam
+                    ? { backgroundColor: theme.text }
+                    : { borderColor: theme.textSecondary },
+                ]}
+              >
+                <ThemedText
+                  allowFontScaling={false}
+                  type="small"
+                  style={chooseTeam ? { color: theme.background } : undefined}
+                >
+                  Choose
+                </ThemedText>
+              </Pressable>
+            </View>
+          </View>
+
+          {chooseTeam && (
+            <View style={styles.pickTeamRow}>
+              <Pressable
+                onPress={() =>
+                  router.push({
+                    pathname: "/game/pick-team",
+                    params: { modeId: mode.id },
+                  })
+                }
+                style={[
+                  styles.selectTeamButton,
+                  { borderColor: theme.textSecondary },
+                ]}
+              >
+                <ThemedText
+                  type="small"
+                  allowFontScaling={false}
+                  themeColor="textSecondary"
+                >
+                  {pendingPick
+                    ? `${pendingPick.yearID} ${pendingPick.teamName}`
+                    : "Select Team..."}
+                </ThemedText>
+              </Pressable>
+            </View>
+          )}
+
+          {/* Timed toggle */}
+          <View style={styles.optionRow}>
+            <ThemedText themeColor="textSecondary">Timer</ThemedText>
+            <View style={styles.toggleGroup}>
+              <Pressable
+                onPress={() => setTimed(false)}
+                style={[
+                  styles.toggleButton,
+                  timed
+                    ? { borderColor: theme.textSecondary }
+                    : { backgroundColor: theme.text },
+                ]}
+              >
+                <ThemedText
+                  type="small"
+                  allowFontScaling={false}
+                  style={!timed ? { color: theme.background } : undefined}
+                >
+                  Untimed
+                </ThemedText>
+              </Pressable>
+              <Pressable
+                onPress={() => setTimed(true)}
+                style={[
+                  styles.toggleButton,
+                  timed
+                    ? { backgroundColor: theme.text }
+                    : { borderColor: theme.textSecondary },
+                ]}
+              >
+                <ThemedText
+                  type="small"
+                  style={timed ? { color: theme.background } : undefined}
+                >
+                  Timed
+                </ThemedText>
+              </Pressable>
+            </View>
+          </View>
+        </ThemedView>
       </ScrollView>
 
       {/* Play button */}
@@ -228,6 +373,37 @@ const styles = StyleSheet.create({
   bulletText: {
     flex: 1,
     lineHeight: 22,
+  },
+  optionRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  toggleGroup: {
+    flexDirection: "row",
+    borderRadius: Spacing.two,
+    overflow: "hidden",
+    gap: Spacing.two,
+  },
+  toggleButton: {
+    paddingVertical: Spacing.one,
+    paddingHorizontal: Spacing.three,
+    borderRadius: Spacing.two,
+    borderWidth: 1,
+    borderColor: "transparent",
+    width: 100,
+    alignItems: "center",
+  },
+  pickTeamRow: {
+    marginTop: Spacing.one,
+    marginBottom: Spacing.one,
+  },
+  selectTeamButton: {
+    paddingVertical: Spacing.two,
+    paddingHorizontal: Spacing.three,
+    borderRadius: Spacing.two,
+    borderWidth: 1,
+    alignItems: "center",
   },
   playButton: {
     paddingVertical: Spacing.three,

@@ -17,6 +17,15 @@
       "pool": "hof-free-teams",
       "yearRange": [1947, 2025]
     },
+    "bonuses": {
+      "scoringOverrides": [],
+      "gameBonus": {
+        "label": "+5 for losing record",
+        "description": "Earn 5 bonus points if the cumulative W-L of all visited teams is below .500",
+        "points": 5,
+        "condition": "cumulative-losing-record"
+      }
+    },
     "info": {
       "overviewBrief": "Navigate baseball history to collect Hall of Famers across 9 rounds.",
       "overview": "The OG 'Six Degrees of Goose Gossage'. How many Hall of Famers can you uncover in an 9-team chain of teammates? Pick a player, then pick a team they played for and collect all of their hall-of-fame teammates. Then do it 8 more times to see how many inductees you can collect in your chain. Bonus points for picking bad teams!",
@@ -51,6 +60,13 @@
       "yearRange": [2025, 2025],
       "freebie": true
     },
+    "bonuses": {
+      "scoringOverrides": [
+        { "when": "gte", "threshold": 10, "points": 0 },
+        { "when": "eq", "threshold": 1, "points": 5 }
+      ],
+      "gameBonus": null
+    },
     "info": {
       "overviewBrief": "Chase All-Star appearances for big point totals.",
       "overview": "It's HOF-Golf but for all-stars! Each all-star appearance is worth 1 point...except players with 10+ appearances are worth zero (sorry, Cal Ripken)! And...players who have made the midsummer classic just once are worth five (hello, Grant Balfour ... oops, said too much)!",
@@ -84,6 +100,7 @@
       "pool": "all-2025-teams",
       "yearRange": [2025, 2025]
     },
+    "bonuses": null,
     "info": {
       "overviewBrief": "Find the players who went on to manage.",
       "overview": "Those who can't play, coach, amirite? Troll those rosters nine times to find those obsure bench players who went onto greatness of a more strategic variety.",

@@ -32,6 +32,13 @@ export default function RootLayout() {
             options={{ title: "Mode Details" }}
           />
           <Stack.Screen
+            name="game/pick-team"
+            options={{
+              presentation: "modal",
+              title: "Choose Starting Team",
+            }}
+          />
+          <Stack.Screen
             name="game/resume"
             options={{
               presentation: "transparentModal",

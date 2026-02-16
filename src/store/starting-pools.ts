@@ -9,6 +9,19 @@ import type { TargetLookup } from "./target-lookups";
 // Types
 // ---------------------------------------------------------------------------
 
+export type ScoringOverride = {
+  when: "gte" | "eq" | "lte";
+  threshold: number;
+  points: number;
+};
+
+export type GameBonus = {
+  label: string;
+  description: string;
+  points: number;
+  condition: string;
+};
+
 export type GameMode = {
   id: string;
   name: string;
@@ -28,6 +41,10 @@ export type GameMode = {
     yearRange: [number, number];
     freebie?: boolean;
   };
+  bonuses: {
+    scoringOverrides: ScoringOverride[];
+    gameBonus: GameBonus | null;
+  } | null;
   info: {
     overview: string;
     overviewBrief: string;
@@ -63,32 +80,26 @@ function randomPick<T>(arr: T[]): T {
 }
 
 // ---------------------------------------------------------------------------
-// HOF Golf — pick from hof-free-teams.json (filtered by yearRange)
-// ---------------------------------------------------------------------------
-
-function getHofStart(mode: GameMode): StartingTeam {
-  const [minYear, maxYear] = mode.start.yearRange;
-  const pool = (hofFreeTeams as HofFreeEntry[]).filter(
-    (t) => t.yearID >= minYear && t.yearID <= maxYear,
-  );
-  const pick = randomPick(pool);
-  return { teamID: pick.teamID, yearID: pick.yearID, teamName: pick.name };
-}
-
-// ---------------------------------------------------------------------------
-// All-Star Golf — 2025 teams with exactly 1 All-Star on roster
+// Pool builders — return full list of eligible starting teams
 // ---------------------------------------------------------------------------
 
 const TEAMS_QUERY = `
 SELECT teamID, yearID, name FROM Teams WHERE yearID = ?
 `;
 
-async function getAllStarStart(
+function getHofPool(mode: GameMode): StartingTeam[] {
+  const [minYear, maxYear] = mode.start.yearRange;
+  return (hofFreeTeams as HofFreeEntry[])
+    .filter((t) => t.yearID >= minYear && t.yearID <= maxYear)
+    .map((t) => ({ teamID: t.teamID, yearID: t.yearID, teamName: t.name }));
+}
+
+async function getAllStarPool(
   db: SQLiteDatabase,
   lookup: TargetLookup,
-): Promise<StartingTeam> {
+): Promise<StartingTeam[]> {
   const teams = await db.getAllAsync<TeamRow>(TEAMS_QUERY, [2025]);
-  const oneAllStarTeams: StartingTeam[] = [];
+  const pool: StartingTeam[] = [];
 
   for (const team of teams) {
     const targets = await getTargetsOnRoster(
@@ -98,7 +109,7 @@ async function getAllStarStart(
       lookup,
     );
     if (targets.length === 1) {
-      oneAllStarTeams.push({
+      pool.push({
         teamID: team.teamID,
         yearID: team.yearID,
         teamName: team.name,
@@ -106,43 +117,50 @@ async function getAllStarStart(
     }
   }
 
-  if (oneAllStarTeams.length === 0) {
+  if (pool.length === 0) {
     throw new Error("No 2025 teams found with exactly 1 All-Star");
   }
-
-  return randomPick(oneAllStarTeams);
+  return pool;
 }
 
-// ---------------------------------------------------------------------------
-// Manager Golf — any 2025 team
-// ---------------------------------------------------------------------------
-
-async function getManagerStart(db: SQLiteDatabase): Promise<StartingTeam> {
+async function getManagerPool(db: SQLiteDatabase): Promise<StartingTeam[]> {
   const teams = await db.getAllAsync<TeamRow>(TEAMS_QUERY, [2025]);
   if (teams.length === 0) {
     throw new Error("No 2025 teams found");
   }
-  const pick = randomPick(teams);
-  return { teamID: pick.teamID, yearID: pick.yearID, teamName: pick.name };
+  return teams.map((t) => ({
+    teamID: t.teamID,
+    yearID: t.yearID,
+    teamName: t.name,
+  }));
 }
 
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
+export async function getEligibleTeams(
+  db: SQLiteDatabase,
+  mode: GameMode,
+  lookup: TargetLookup,
+): Promise<StartingTeam[]> {
+  switch (mode.start.pool) {
+    case "hof-free-teams":
+      return getHofPool(mode);
+    case "one-allstar-2025-teams":
+      return getAllStarPool(db, lookup);
+    case "all-2025-teams":
+      return getManagerPool(db);
+    default:
+      throw new Error(`Unknown starting pool: ${mode.start.pool}`);
+  }
+}
+
 export async function getRandomStart(
   db: SQLiteDatabase,
   mode: GameMode,
   lookup: TargetLookup,
 ): Promise<StartingTeam> {
-  switch (mode.start.pool) {
-    case "hof-free-teams":
-      return getHofStart(mode);
-    case "one-allstar-2025-teams":
-      return getAllStarStart(db, lookup);
-    case "all-2025-teams":
-      return getManagerStart(db);
-    default:
-      throw new Error(`Unknown starting pool: ${mode.start.pool}`);
-  }
+  const pool = await getEligibleTeams(db, mode, lookup);
+  return randomPick(pool);
 }

@@ -1,5 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite";
 
+import type { ScoringOverride } from "./starting-pools";
 import type { TargetLookup } from "./target-lookups";
 
 // ---------------------------------------------------------------------------
@@ -35,6 +36,31 @@ WHERE pi.yearID = ? AND pi.teamID = ?
 `;
 
 // ---------------------------------------------------------------------------
+// Scoring overrides
+// ---------------------------------------------------------------------------
+
+function applyOverrides(
+  rawPoints: number,
+  overrides?: ScoringOverride[],
+): number {
+  if (!overrides || overrides.length === 0) return rawPoints;
+  for (const rule of overrides) {
+    switch (rule.when) {
+      case "gte":
+        if (rawPoints >= rule.threshold) return rule.points;
+        break;
+      case "eq":
+        if (rawPoints === rule.threshold) return rule.points;
+        break;
+      case "lte":
+        if (rawPoints <= rule.threshold) return rule.points;
+        break;
+    }
+  }
+  return rawPoints;
+}
+
+// ---------------------------------------------------------------------------
 // Main function
 // ---------------------------------------------------------------------------
 
@@ -43,6 +69,7 @@ export async function getTargetsOnRoster(
   teamID: string,
   yearID: number,
   lookup: TargetLookup,
+  scoringOverrides?: ScoringOverride[],
 ): Promise<RosterTarget[]> {
   const rows = await db.getAllAsync<RosterRow>(ROSTER_QUERY, [
     yearID,
@@ -54,10 +81,11 @@ export async function getTargetsOnRoster(
   const targets: RosterTarget[] = [];
   for (const row of rows) {
     if (lookup.has(row.playerID)) {
+      const rawPoints = lookup.pointsFor(row.playerID);
       targets.push({
         playerID: row.playerID,
         name: `${row.nameFirst} ${row.nameLast}`,
-        points: lookup.pointsFor(row.playerID),
+        points: applyOverrides(rawPoints, scoringOverrides),
       });
     }
   }

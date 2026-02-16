@@ -26,6 +26,9 @@ export type GameRound = {
   pickedPlayerName: string | null;
   targetsFound: RosterTarget[];
   pointsEarned: number;
+  teamW: number;
+  teamL: number;
+  timedOut: boolean;
 };
 
 export type ActiveGame = {
@@ -36,6 +39,8 @@ export type ActiveGame = {
   seenTargets: string[];
   totalPoints: number;
   finished: boolean;
+  timed: boolean;
+  bonusPoints: number;
 };
 
 export type SavedGame = {
@@ -45,6 +50,8 @@ export type SavedGame = {
   finishedAt: number;
   totalPoints: number;
   rounds: GameRound[];
+  timed: boolean;
+  bonusPoints: number;
 };
 
 // ---------------------------------------------------------------------------
@@ -67,6 +74,13 @@ export const game$ = observable({
 });
 
 // ---------------------------------------------------------------------------
+// Ephemeral observables (not persisted)
+// ---------------------------------------------------------------------------
+
+export const pendingTeamPick$ = observable<StartingTeam | null>(null);
+export const roundTimedOut$ = observable(false);
+
+// ---------------------------------------------------------------------------
 // Computed helpers
 // ---------------------------------------------------------------------------
 
@@ -77,6 +91,18 @@ export const isGameActive$ = computed(
 export const currentRound$ = computed(
   () => (game$.active.rounds.get()?.length ?? 0) - 1,
 );
+
+export const cumulativeWL$ = computed(() => {
+  const active = game$.active.get();
+  if (!active) return { w: 0, l: 0 };
+  let w = 0;
+  let l = 0;
+  for (const round of active.rounds) {
+    w += round.teamW ?? 0;
+    l += round.teamL ?? 0;
+  }
+  return { w, l };
+});
 
 export function currentMode(): GameMode | undefined {
   const active = game$.active.get();
@@ -92,6 +118,7 @@ export function startGame(
   mode: GameMode,
   startingTeam: StartingTeam,
   targets: RosterTarget[],
+  options: { timed: boolean; teamW: number; teamL: number },
 ) {
   const seenTargets = targets.map((t) => t.playerID);
   const pointsEarned = targets.reduce((sum, t) => sum + t.points, 0);
@@ -104,6 +131,9 @@ export function startGame(
     pickedPlayerName: null,
     targetsFound: targets,
     pointsEarned,
+    teamW: options.teamW,
+    teamL: options.teamL,
+    timedOut: false,
   };
 
   const active: ActiveGame = {
@@ -114,6 +144,8 @@ export function startGame(
     seenTargets,
     totalPoints: pointsEarned,
     finished: false,
+    timed: options.timed,
+    bonusPoints: 0,
   };
 
   game$.active.set(active);
@@ -133,15 +165,30 @@ export function navigateToTeam(
   yearID: number,
   teamName: string,
   targets: RosterTarget[],
+  options: { teamW: number; teamL: number; timedOut?: boolean },
 ) {
   const active = game$.active.get();
   if (!active || active.finished) return;
 
+  const timedOut = options.timedOut ?? false;
   const seenSet = new Set(active.seenTargets);
 
-  // Only score targets not already seen
-  const newTargets = targets.filter((t) => !seenSet.has(t.playerID));
-  const pointsEarned = newTargets.reduce((sum, t) => sum + t.points, 0);
+  let pointsEarned: number;
+  let updatedSeen: string[];
+
+  if (timedOut) {
+    // Timed out: score 0 and do NOT mark targets as seen (collectible later)
+    pointsEarned = 0;
+    updatedSeen = active.seenTargets;
+  } else {
+    // Only score targets not already seen
+    const newTargets = targets.filter((t) => !seenSet.has(t.playerID));
+    pointsEarned = newTargets.reduce((sum, t) => sum + t.points, 0);
+    updatedSeen = [
+      ...active.seenTargets,
+      ...newTargets.map((t) => t.playerID),
+    ];
+  }
 
   const newRound: GameRound = {
     teamID,
@@ -151,15 +198,10 @@ export function navigateToTeam(
     pickedPlayerName: null,
     targetsFound: targets, // all targets on roster (for display)
     pointsEarned, // only new ones count
+    teamW: options.teamW,
+    teamL: options.teamL,
+    timedOut,
   };
-
-  // Update seen targets with all targets on this roster
-  const updatedSeen = [
-    ...active.seenTargets,
-    ...targets
-      .filter((t) => !seenSet.has(t.playerID))
-      .map((t) => t.playerID),
-  ];
 
   game$.active.rounds.push(newRound);
   game$.active.seenTargets.set(updatedSeen);
@@ -178,13 +220,30 @@ export function endGame() {
 
   game$.active.finished.set(true);
 
+  // Evaluate game bonus
+  const mode = (gameModes as GameMode[]).find((m) => m.id === active.modeId);
+  let bonusPoints = 0;
+  if (mode?.bonuses?.gameBonus) {
+    const bonus = mode.bonuses.gameBonus;
+    if (bonus.condition === "cumulative-losing-record") {
+      const { w, l } = cumulativeWL$.get();
+      if (l > w) {
+        bonusPoints = bonus.points;
+      }
+    }
+  }
+
+  const finalTotal = active.totalPoints + bonusPoints;
+
   const saved: SavedGame = {
     id: active.id,
     modeId: active.modeId,
     startedAt: active.startedAt,
     finishedAt: Date.now(),
-    totalPoints: active.totalPoints,
+    totalPoints: finalTotal,
     rounds: active.rounds,
+    timed: active.timed,
+    bonusPoints,
   };
 
   // Add to history
@@ -194,8 +253,8 @@ export function endGame() {
   // Update best score
   const bestScores = game$.bestScores.get() ?? {};
   const prev = bestScores[active.modeId] ?? 0;
-  if (active.totalPoints > prev) {
-    game$.bestScores[active.modeId].set(active.totalPoints);
+  if (finalTotal > prev) {
+    game$.bestScores[active.modeId].set(finalTotal);
   }
 
   // Clear active game

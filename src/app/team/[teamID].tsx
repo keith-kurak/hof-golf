@@ -1,12 +1,19 @@
+import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, SectionList, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
+import {
+  game$,
+  currentMode,
+  cumulativeWL$,
+  roundTimedOut$,
+} from "@/store/game-store";
 import { divisionName } from "@/util/divisions";
 import { formatAvg, formatEra, formatIP, statVal } from "@/util/stats";
 
@@ -284,6 +291,38 @@ export default function TeamRosterScreen() {
   const [rawBatters, setRawBatters] = useState<RawBatter[]>([]);
   const [rawPitchers, setRawPitchers] = useState<Pitcher[]>([]);
 
+  // Game state for timer and W-L
+  const active = useSelector(() => game$.active.get());
+  const cumWL = useSelector(cumulativeWL$);
+  const isTimed = active && !active.finished && active.timed;
+  const mode = active && !active.finished ? currentMode() : undefined;
+  const showCumWL =
+    mode?.bonuses?.gameBonus?.condition === "cumulative-losing-record";
+
+  // 60-second countdown timer
+  const [timeLeft, setTimeLeft] = useState(60);
+  const timerExpired = useRef(false);
+
+  useEffect(() => {
+    if (!isTimed) return;
+    setTimeLeft(60);
+    timerExpired.current = false;
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          if (!timerExpired.current) {
+            timerExpired.current = true;
+            roundTimedOut$.set(true);
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isTimed]);
+
   useEffect(() => {
     db.getFirstAsync<TeamInfo>(TEAM_INFO_QUERY, [year, teamID]).then(
       setTeamInfo,
@@ -323,6 +362,28 @@ export default function TeamRosterScreen() {
         stickySectionHeadersEnabled={true}
         ListHeaderComponent={
           <>
+            {/* Timer + cumulative W-L for active game */}
+            {isTimed && (
+              <View style={styles.timerRow}>
+                <ThemedText
+                  type="mediumBold"
+                  style={[
+                    styles.timerText,
+                    timeLeft <= 10 && styles.timerRed,
+                    timeLeft === 0 && styles.timerExpired,
+                  ]}
+                >
+                  {timeLeft === 0 ? "TIME'S UP" : `${timeLeft}s`}
+                </ThemedText>
+              </View>
+            )}
+            {showCumWL && active && !active.finished && (
+              <View style={styles.cumWLRow}>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Cumulative W-L: {cumWL.w}-{cumWL.l}
+                </ThemedText>
+              </View>
+            )}
             <YearPicker year={year} onYearChange={setYear} />
             {teamInfo && (
               <View style={styles.teamInfo}>
@@ -479,6 +540,24 @@ const styles = StyleSheet.create({
   list: {
     padding: Spacing.three,
     paddingBottom: Spacing.six,
+  },
+  timerRow: {
+    alignItems: "center",
+    paddingVertical: Spacing.two,
+  },
+  timerText: {
+    fontSize: 28,
+  },
+  timerRed: {
+    color: "#E53935",
+  },
+  timerExpired: {
+    color: "#E53935",
+    opacity: 0.7,
+  },
+  cumWLRow: {
+    alignItems: "center",
+    paddingBottom: Spacing.two,
   },
   teamInfo: {
     gap: Spacing.one,
