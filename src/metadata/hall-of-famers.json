@@ -2200,6 +2200,28 @@
     "finalGame": "2008-09-27"
   },
   {
+    "playerID": "beltrca01",
+    "nameFirst": "Carlos",
+    "nameLast": "Beltran",
+    "nameGiven": "Carlos Ivan",
+    "inductedYear": 2026,
+    "category": "Player",
+    "birthYear": 1977,
+    "debut": "1998-09-14",
+    "finalGame": "2017-10-01"
+  },
+  {
+    "playerID": "jonesan01",
+    "nameFirst": "Andruw",
+    "nameLast": "Jones",
+    "nameGiven": "Andruw Rudolf",
+    "inductedYear": 2026,
+    "category": "Player",
+    "birthYear": 1977,
+    "debut": "1996-08-15",
+    "finalGame": "2012-10-03"
+  },
+  {
     "playerID": "killeha01",
     "nameFirst": "Harmon",
     "nameLast": "Killebrew",

@@ -298,6 +298,7 @@ export default function TeamRosterScreen() {
     active &&
     !active.finished &&
     mode &&
+    active.rounds &&
     active.rounds.length > mode.rounds
   );
 
@@ -346,7 +347,7 @@ export default function TeamRosterScreen() {
   // Build target sets for highlighting
   const isActiveGame = active && !active.finished;
   const currentRound = isActiveGame
-    ? active.rounds[active.rounds.length - 1]
+    ? active.rounds?.at(-1) ?? null
     : null;
   const targetIDs = useMemo(() => {
     if (!currentRound?.targetsFound) return new Set<string>();
@@ -358,7 +359,7 @@ export default function TeamRosterScreen() {
     const thisRoundIDs = new Set(
       (currentRound?.targetsFound ?? []).map((t) => t.playerID),
     );
-    return new Set(active.seenTargets.filter((id) => !thisRoundIDs.has(id)));
+    return new Set((active.seenTargets ?? []).filter((id) => !thisRoundIDs.has(id)));
   }, [isActiveGame, active?.seenTargets, currentRound?.targetsFound]);
 
   const isNewTarget = (playerID: string) =>

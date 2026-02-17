@@ -184,12 +184,15 @@ export default function PlayerDetailScreen() {
     active &&
     !active.finished &&
     gameMode &&
+    active.rounds &&
     active.rounds.length > gameMode.rounds
   );
   const isActiveGame = active && !active.finished && !isFinalRound;
   const currentTeamID = isActiveGame
-    ? active.rounds[active.rounds.length - 1]?.teamID
+    ? (active.rounds?.at(-1)?.teamID ?? null)
     : null;
+
+  console.log(active);
 
   const isRowDisabled = (row: RowData) => {
     if (!isActiveGame) return false;
@@ -208,7 +211,7 @@ export default function PlayerDetailScreen() {
     if (row.isCareer || row.yearID == null) return;
     if (isRowDisabled(row)) return;
 
-    if (active && !active.finished) {
+    if (isActiveGame) {
       // During an active game: wire through the game store
       pickPlayer(playerID, displayName);
 
@@ -450,32 +453,34 @@ export default function PlayerDetailScreen() {
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: displayName }} />
-      <GameStatusBar
-        hint={
-          <>
-            <Text style={hintStyles.action}>
-              {`Pick your next team to collect more ${currentMode()?.scoring.targetSet}.`}
-            </Text>
-            <Text style={hintStyles.sub}>
-              You must pick a different franchise!
-            </Text>
-          </>
-        }
-        trailing={
-          isTimed ? (
-            <Text
-              style={[
-                hintStyles.timerBadge,
-                timeLeft <= 10 && hintStyles.timerBadgeRed,
-              ]}
-            >
-              {timeLeft === 0
-                ? "0:00"
-                : `0:${String(timeLeft).padStart(2, "0")}`}
-            </Text>
-          ) : undefined
-        }
-      />
+      {isActiveGame && (
+        <GameStatusBar
+          hint={
+            <>
+              <Text style={hintStyles.action}>
+                {`Pick your next team to collect more ${currentMode()?.scoring.targetSet}.`}
+              </Text>
+              <Text style={hintStyles.sub}>
+                You must pick a different franchise!
+              </Text>
+            </>
+          }
+          trailing={
+            isTimed ? (
+              <Text
+                style={[
+                  hintStyles.timerBadge,
+                  timeLeft <= 10 && hintStyles.timerBadgeRed,
+                ]}
+              >
+                {timeLeft === 0
+                  ? "0:00"
+                  : `0:${String(timeLeft).padStart(2, "0")}`}
+              </Text>
+            ) : undefined
+          }
+        />
+      )}
       <ScrollView contentContainerStyle={styles.content}>
         {bio && !isActiveGame ? (
           <View style={styles.bioSection}>
@@ -492,8 +497,9 @@ export default function PlayerDetailScreen() {
           </View>
         ) : null}
 
-        {/* Show primary stat section first based on career games */}
-        {(pitchingCareer?.G ?? 0) > (battingCareer?.G ?? 0) ? (
+        {/* Show pitching first if 20+ games pitched, or if more games pitched than batted */}
+        {(pitchingCareer?.G ?? 0) >= 20 ||
+        (pitchingCareer?.G ?? 0) > (battingCareer?.G ?? 0) ? (
           <>
             {renderStatSection(
               "Pitching",
