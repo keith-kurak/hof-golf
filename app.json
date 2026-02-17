@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "hof-golf",
+    "name": "HOF Golf",
     "slug": "hof-golf",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,11 +9,15 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/ios-light.png",
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.keithkurak.hofgolf",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#9aa1a6",
+        "backgroundColor": "#3F2F8F",
         "foregroundImage": "./assets/images/adaptive-icon.png"
       },
       "predictiveBackGestureEnabled": false,
