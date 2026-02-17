@@ -2,7 +2,14 @@ import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useMemo, useState } from "react";
-import { Dimensions, Pressable, SectionList, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Pressable,
+  SectionList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { GameStatusBar } from "@/components/game-status-bar";
 import { ThemedText } from "@/components/themed-text";
@@ -346,9 +353,7 @@ export default function TeamRosterScreen() {
 
   // Build target sets for highlighting
   const isActiveGame = active && active.rounds && !active.finished;
-  const currentRound = isActiveGame
-    ? active.rounds?.at(-1) ?? null
-    : null;
+  const currentRound = isActiveGame ? (active.rounds?.at(-1) ?? null) : null;
   const targetIDs = useMemo(() => {
     if (!currentRound?.targetsFound) return new Set<string>();
     return new Set(currentRound.targetsFound.map((t) => t.playerID));
@@ -359,7 +364,9 @@ export default function TeamRosterScreen() {
     const thisRoundIDs = new Set(
       (currentRound?.targetsFound ?? []).map((t) => t.playerID),
     );
-    return new Set((active.seenTargets ?? []).filter((id) => !thisRoundIDs.has(id)));
+    return new Set(
+      (active.seenTargets ?? []).filter((id) => !thisRoundIDs.has(id)),
+    );
   }, [isActiveGame, active?.seenTargets, currentRound?.targetsFound]);
 
   const isNewTarget = (playerID: string) =>
@@ -447,7 +454,9 @@ export default function TeamRosterScreen() {
             : (teamName ?? teamID),
         }}
       />
-      {isActiveGame && <GameStatusBar hint={gameHint} trailing={timerTrailing} />}
+      {isActiveGame && (
+        <GameStatusBar hint={gameHint} trailing={timerTrailing} />
+      )}
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.playerID}
@@ -775,7 +784,7 @@ const styles = StyleSheet.create({
   },
   nameCol: {
     flex: 1,
-    ...(Dimensions.get("window").width <= 375 && { fontSize: 13 }),
+    ...(Dimensions.get("window").width <= 375 && { fontSize: 12 }),
   },
   statCol: {
     width: 40,
