@@ -345,7 +345,7 @@ export default function TeamRosterScreen() {
   };
 
   // Build target sets for highlighting
-  const isActiveGame = active && !active.finished;
+  const isActiveGame = active && active.rounds && !active.finished;
   const currentRound = isActiveGame
     ? active.rounds?.at(-1) ?? null
     : null;

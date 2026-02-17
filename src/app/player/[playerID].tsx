@@ -187,7 +187,7 @@ export default function PlayerDetailScreen() {
     active.rounds &&
     active.rounds.length > gameMode.rounds
   );
-  const isActiveGame = active && !active.finished && !isFinalRound;
+  const isActiveGame = active && active.rounds && !active.finished && !isFinalRound;
   const currentTeamID = isActiveGame
     ? (active.rounds?.at(-1)?.teamID ?? null)
     : null;
