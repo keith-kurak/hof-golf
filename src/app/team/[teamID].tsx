@@ -447,7 +447,7 @@ export default function TeamRosterScreen() {
             : (teamName ?? teamID),
         }}
       />
-      <GameStatusBar hint={gameHint} trailing={timerTrailing} />
+      {isActiveGame && <GameStatusBar hint={gameHint} trailing={timerTrailing} />}
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.playerID}

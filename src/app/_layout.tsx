@@ -20,7 +20,7 @@ export default function RootLayout() {
       assetSource={{ assetId: require("../../lahman/db/database.sqlite") }}
     >
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
+        <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="team/[teamID]" options={{ title: "Roster" }} />
           <Stack.Screen

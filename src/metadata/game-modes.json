@@ -2,6 +2,7 @@
   {
     "id": "hof-golf-2026",
     "name": "HOF Golf",
+    "shortName": "HOF",
     "version": "2026",
     "emoji": "🏆",
     "label": "HOF",
@@ -44,6 +45,7 @@
   {
     "id": "all-star-golf-2026",
     "name": "All-Star Golf",
+    "shortName": "All-Star",
     "version": "2026",
     "emoji": "⭐",
     "label": "All-Star",
@@ -88,6 +90,7 @@
     "version": "2026",
     "emoji": "⚾",
     "label": "Manager",
+    "shortName": "Manager",
     "active": true,
     "rounds": 9,
     "scoring": {
