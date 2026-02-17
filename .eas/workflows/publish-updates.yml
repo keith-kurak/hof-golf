@@ -1,0 +1,25 @@
+# Publish preview update
+#
+# This workflow shows how to publish preview updates.
+# Learn more: https://docs.expo.dev/review/share-previews-with-your-team/
+#
+# Key features:
+# - Triggers on pushes to all branches
+#    (Requires linked GitHub account: https://expo.dev/accounts/[account]/settings/github)
+# - Can be triggered manually with eas workflow:run publish-preview-update.yml
+# - Runs the pre-packaged update job
+#
+# For a detailed guide on using this workflow, visit:
+# https://docs.expo.dev/eas/workflows/examples/publish-preview-update/
+#
+# Created by EAS CLI v18.0.1
+#
+
+name: Publish prod update
+
+jobs:
+  publish_prod_update:
+    name: Publish prod update
+    type: update
+    params:
+      channel: production

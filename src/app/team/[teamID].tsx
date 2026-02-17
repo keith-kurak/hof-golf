@@ -2,7 +2,7 @@ import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, SectionList, StyleSheet, Text, View } from "react-native";
+import { Dimensions, Pressable, SectionList, StyleSheet, Text, View } from "react-native";
 
 import { GameStatusBar } from "@/components/game-status-bar";
 import { ThemedText } from "@/components/themed-text";
@@ -775,6 +775,7 @@ const styles = StyleSheet.create({
   },
   nameCol: {
     flex: 1,
+    ...(Dimensions.get("window").width <= 375 && { fontSize: 13 }),
   },
   statCol: {
     width: 40,
