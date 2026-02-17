@@ -13,6 +13,7 @@
 - history safe area
 - nav bug (probably just need to suppress)
 - cut off big text
+- didn't cut off pre-1947
 
 ## changes
 
@@ -23,3 +24,8 @@
 - show detail on history
 - filter for history/results
 - haptics
+
+## Refactor
+
+- useGame() hook
+- in [playerId], move all game update logic to the other side (after navigating to the next team)

@@ -54,6 +54,7 @@ type RowData = {
   year: string;
   teamID: string;
   yearID: number | null;
+  lgID: string | null;
   cells: string[];
   isCareer: boolean;
 };
@@ -82,7 +83,7 @@ const STAT_COL_WIDTH = 38;
 const LABEL_COL_WIDTH = 36;
 
 function buildRows<T>(
-  seasons: (T & { yearID: number; teamID: string })[],
+  seasons: (T & { yearID: number; teamID: string; lgID: string })[],
   career: T | null,
   columns: StatColumn<T>[],
 ): RowData[] {
@@ -91,6 +92,7 @@ function buildRows<T>(
     year: String(s.yearID),
     teamID: s.teamID,
     yearID: s.yearID,
+    lgID: s.lgID,
     cells: formatCells(columns, s),
     isCareer: false,
   }));
@@ -100,6 +102,7 @@ function buildRows<T>(
       year: "TOT",
       teamID: "",
       yearID: null,
+      lgID: null,
       cells: formatCells(columns, career),
       isCareer: true,
     });
@@ -188,8 +191,18 @@ export default function PlayerDetailScreen() {
     ? active.rounds[active.rounds.length - 1]?.teamID
     : null;
 
-  const isRowDisabled = (row: RowData) =>
-    active && !active.finished && row.teamID === currentTeamID;
+  const isRowDisabled = (row: RowData) => {
+    if (!isActiveGame) return false;
+    // Can't navigate to the current team
+    if (row.teamID === currentTeamID) return true;
+    // Enforce year range (allow non-MLB leagues like negro leagues)
+    if (gameMode && row.yearID != null) {
+      const [minYear, maxYear] = gameMode.start.yearRange;
+      const isMlb = row.lgID === "AL" || row.lgID === "NL";
+      if (isMlb && (row.yearID < minYear || row.yearID > maxYear)) return true;
+    }
+    return false;
+  };
 
   const navigateToTeam = async (row: RowData) => {
     if (row.isCareer || row.yearID == null) return;
@@ -235,14 +248,18 @@ export default function PlayerDetailScreen() {
         );
         roundTimedOut$.set(false);
 
-        //router.dismissAll();
-        router.push({
-          pathname: "/team/[teamID]",
-          params: {
-            teamID: row.teamID,
-            teamName: teamInfo?.name ?? row.teamID,
-            year: String(row.yearID),
-          },
+        // HACK: move this to the next tick becaues the game state changes above will cause a re-render/race condition with the
+        // destroyed screen. The right way to do this would be to move the game logic to the next screen.
+        setTimeout(() => {
+          router.dismissAll();
+          router.push({
+            pathname: "/team/[teamID]",
+            params: {
+              teamID: row.teamID,
+              teamName: teamInfo?.name ?? row.teamID,
+              year: String(row.yearID),
+            },
+          });
         });
         return;
       }
