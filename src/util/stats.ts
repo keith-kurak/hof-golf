@@ -50,18 +50,18 @@ export const YEAR_RANGE_QUERY = `SELECT MIN(yearID) as minYear, MAX(yearID) as m
 
 /** Per-season batting stats grouped by year+team. Returns all stat columns. */
 export const SEASON_BATTING_QUERY = `
-  SELECT yearID, teamID, ${sumSelect(BATTING_COLUMNS)}
+  SELECT yearID, teamID, lgID, ${sumSelect(BATTING_COLUMNS)}
   FROM Batting WHERE playerID = ?
   GROUP BY yearID, teamID ORDER BY yearID`;
 
 /** Per-season pitching stats grouped by year+team. Returns all stat columns. */
 export const SEASON_PITCHING_QUERY = `
-  SELECT yearID, teamID, ${sumSelect(PITCHING_COLUMNS)}
+  SELECT yearID, teamID, lgID, ${sumSelect(PITCHING_COLUMNS)}
   FROM Pitching WHERE playerID = ?
   GROUP BY yearID, teamID ORDER BY yearID`;
 
-export type SeasonBatting = BattingStats & { yearID: number; teamID: string };
-export type SeasonPitching = PitchingStats & { yearID: number; teamID: string };
+export type SeasonBatting = BattingStats & { yearID: number; teamID: string; lgID: string };
+export type SeasonPitching = PitchingStats & { yearID: number; teamID: string; lgID: string };
 
 // ---------------------------------------------------------------------------
 // Formatting helpers

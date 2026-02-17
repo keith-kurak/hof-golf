@@ -427,5 +427,6 @@ const styles = StyleSheet.create({
     fontSize: 120,
     fontWeight: "700",
     color: "#ffffff",
+    lineHeight: 120,
   },
 });

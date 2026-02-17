@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
   scoreValue: {
     fontSize: 64,
     fontWeight: "800",
+    lineHeight: 64,
     marginBottom: Spacing.three,
   },
   newBest: {

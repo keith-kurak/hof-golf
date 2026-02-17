@@ -1,16 +1,20 @@
 import { useSelector } from "@legendapp/state/react";
 import { useRouter } from "expo-router";
+import { useMemo, useState } from "react";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 import gameModes from "@/metadata/game-modes.json";
 import { game$, type SavedGame } from "@/store/game-store";
 import type { GameMode } from "@/store/starting-pools";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const activeModes = gameModes as GameMode[];
+const FILTER_ALL = "all";
+type FilterValue = typeof FILTER_ALL | string;
 
 function formatDate(ts: number): string {
   const d = new Date(ts);
@@ -98,17 +102,62 @@ function GameCard({ game }: { game: SavedGame }) {
   );
 }
 
+function SegmentedControl({
+  selected,
+  onSelect,
+}: {
+  selected: FilterValue;
+  onSelect: (v: FilterValue) => void;
+}) {
+  const theme = useTheme();
+  const segments: { value: FilterValue; label: string }[] =
+    activeModes.map((m) => ({ value: m.id, label: `${m.emoji} ${m.name}` }));
+
+  return (
+    <View style={styles.segmentRow}>
+      {segments.map((seg) => {
+        const isActive = seg.value === selected;
+        return (
+          <Pressable
+            key={seg.value}
+            onPress={() => onSelect(seg.value)}
+            style={[
+              styles.segment,
+              { backgroundColor: isActive ? theme.text : theme.backgroundElement },
+            ]}
+          >
+            <ThemedText
+              type="smallBold"
+              style={{ color: isActive ? theme.background : theme.textSecondary }}
+            >
+              {seg.label}
+            </ThemedText>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
 export default function HistoryScreen() {
   const history = useSelector(() => game$.history.get() ?? []);
-
+  const [filter, setFilter] = useState<FilterValue>(activeModes[0]?.id ?? FILTER_ALL);
   const insets = useSafeAreaInsets();
+
+  const filtered = useMemo(
+    () => filter === FILTER_ALL ? history : history.filter((g) => g.modeId === filter),
+    [history, filter],
+  );
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <FlatList
-        data={history}
+        data={filtered}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
+        ListHeaderComponent={
+          history.length > 0 ? <SegmentedControl selected={filter} onSelect={setFilter} /> : null
+        }
         renderItem={({ item }) => <GameCard game={item} />}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -116,7 +165,7 @@ export default function HistoryScreen() {
               No games yet
             </ThemedText>
             <ThemedText themeColor="textSecondary">
-              Complete a game to see your history.
+              Play this mode to see results here.
             </ThemedText>
           </View>
         }
@@ -132,6 +181,17 @@ const styles = StyleSheet.create({
   list: {
     padding: Spacing.three,
     gap: Spacing.two,
+  },
+  segmentRow: {
+    flexDirection: "row",
+    gap: Spacing.one,
+    marginBottom: Spacing.one,
+  },
+  segment: {
+    flex: 1,
+    paddingVertical: Spacing.two,
+    borderRadius: Spacing.two,
+    alignItems: "center",
   },
   card: {
     borderRadius: Spacing.two,
