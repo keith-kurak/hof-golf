@@ -27,6 +27,8 @@
 
 - filter for history/results
 - haptics
+- refactor game state into hook for less duplicate code
+- confirmation when picking player
 
 ## Refactor
 
