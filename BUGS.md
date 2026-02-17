@@ -16,6 +16,7 @@
   ~~- cut off big text~~
   ~~- didn't cut off pre-1947~~
   ~~- crash when browsing outside game mode~~
+  - back/modal bug on iOS
 
 ## changes
 
