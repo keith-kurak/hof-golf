@@ -187,7 +187,8 @@ export default function PlayerDetailScreen() {
     active.rounds &&
     active.rounds.length > gameMode.rounds
   );
-  const isActiveGame = active && active.rounds && !active.finished && !isFinalRound;
+  const isActiveGame =
+    active && active.rounds && !active.finished && !isFinalRound;
   const currentTeamID = isActiveGame
     ? (active.rounds?.at(-1)?.teamID ?? null)
     : null;
@@ -297,14 +298,14 @@ export default function PlayerDetailScreen() {
             themeColor="textSecondary"
             style={styles.labelCol}
           >
-            Year
+            YR
           </ThemedText>
           <ThemedText
             type="smallBold"
             themeColor="textSecondary"
             style={styles.labelCol}
           >
-            Team
+            TM
           </ThemedText>
         </View>
         {/* Data rows */}

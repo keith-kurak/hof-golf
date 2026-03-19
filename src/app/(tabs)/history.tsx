@@ -110,8 +110,9 @@ function SegmentedControl({
   onSelect: (v: FilterValue) => void;
 }) {
   const theme = useTheme();
-  const segments: { value: FilterValue; label: string }[] =
-    activeModes.map((m) => ({ value: m.id, label: `${m.emoji} ${m.name}` }));
+  const segments: { value: FilterValue; label: string }[] = activeModes.map(
+    (m) => ({ value: m.id, label: `${m.emoji} ${m.shortName}` }),
+  );
 
   return (
     <View style={styles.segmentRow}>
@@ -123,12 +124,18 @@ function SegmentedControl({
             onPress={() => onSelect(seg.value)}
             style={[
               styles.segment,
-              { backgroundColor: isActive ? theme.text : theme.backgroundElement },
+              {
+                backgroundColor: isActive
+                  ? theme.text
+                  : theme.backgroundElement,
+              },
             ]}
           >
             <ThemedText
               type="smallBold"
-              style={{ color: isActive ? theme.background : theme.textSecondary }}
+              style={{
+                color: isActive ? theme.background : theme.textSecondary,
+              }}
             >
               {seg.label}
             </ThemedText>
@@ -141,11 +148,16 @@ function SegmentedControl({
 
 export default function HistoryScreen() {
   const history = useSelector(() => game$.history.get() ?? []);
-  const [filter, setFilter] = useState<FilterValue>(activeModes[0]?.id ?? FILTER_ALL);
+  const [filter, setFilter] = useState<FilterValue>(
+    activeModes[0]?.id ?? FILTER_ALL,
+  );
   const insets = useSafeAreaInsets();
 
   const filtered = useMemo(
-    () => filter === FILTER_ALL ? history : history.filter((g) => g.modeId === filter),
+    () =>
+      filter === FILTER_ALL
+        ? history
+        : history.filter((g) => g.modeId === filter),
     [history, filter],
   );
 
@@ -156,7 +168,9 @@ export default function HistoryScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         ListHeaderComponent={
-          history.length > 0 ? <SegmentedControl selected={filter} onSelect={setFilter} /> : null
+          history.length > 0 ? (
+            <SegmentedControl selected={filter} onSelect={setFilter} />
+          ) : null
         }
         renderItem={({ item }) => <GameCard game={item} />}
         ListEmptyComponent={

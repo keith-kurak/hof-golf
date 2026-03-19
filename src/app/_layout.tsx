@@ -6,21 +6,26 @@ import {
 import { Stack } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
 import React from "react";
-import { useColorScheme } from "react-native";
+import { Platform, StyleSheet, useColorScheme, View } from "react-native";
+
+import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
 };
 
+const isWeb = Platform.OS === "web";
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  return (
+
+  const content = (
     <SQLiteProvider
       databaseName="test.db"
       assetSource={{ assetId: require("../../lahman/db/database.sqlite") }}
     >
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
+        <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="team/[teamID]" options={{ title: "Roster" }} />
           <Stack.Screen
@@ -65,4 +70,25 @@ export default function RootLayout() {
       </ThemeProvider>
     </SQLiteProvider>
   );
+
+  if (!isWeb) return content;
+
+  return (
+    <View style={[webStyles.outer, { backgroundColor: colorScheme === "dark" ? "#111113" : "#E8E8EB" }]}>
+      <View style={webStyles.inner}>{content}</View>
+    </View>
+  );
 }
+
+const webStyles = StyleSheet.create({
+  outer: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: Spacing.three,
+  },
+  inner: {
+    flex: 1,
+    width: "100%",
+    maxWidth: MaxContentWidth,
+  },
+});

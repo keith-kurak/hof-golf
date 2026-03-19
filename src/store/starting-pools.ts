@@ -25,6 +25,7 @@ export type GameBonus = {
 export type GameMode = {
   id: string;
   name: string;
+  shortName: string;
   label: string;
   emoji: string;
   version: string;
