@@ -2,7 +2,7 @@ import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
-} from "@react-navigation/native";
+} from "expo-router/react-navigation";
 import { Stack } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
 import React from "react";
@@ -11,7 +11,7 @@ import { Platform, StyleSheet, useColorScheme, View } from "react-native";
 import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)",
+  anchor: "(tabs)",
 };
 
 const isWeb = Platform.OS === "web";

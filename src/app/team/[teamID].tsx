@@ -463,7 +463,7 @@ export default function TeamRosterScreen() {
         contentContainerStyle={styles.list}
         stickySectionHeadersEnabled={true}
         ListHeaderComponent={
-          isActiveGame ? null : (
+          isActiveGame ? undefined : (
             <>
               <YearPicker year={year} onYearChange={setYear} />
               {teamInfo && (

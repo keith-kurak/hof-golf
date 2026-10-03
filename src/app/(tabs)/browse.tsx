@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type ComponentRef, useCallback, useEffect, useRef, useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -60,7 +60,7 @@ export default function BrowseScreen() {
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
   const [results, setResults] = useState<PlayerResult[]>([]);
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   useEffect(() => {
     db.getAllAsync<Team>(
@@ -142,7 +142,7 @@ export default function BrowseScreen() {
               >
                 No players found
               </ThemedText>
-            ) : null
+            ) : undefined
           }
           renderItem={({ item }) => (
             <Pressable

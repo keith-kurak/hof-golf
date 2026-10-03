@@ -43,3 +43,5 @@ app-example
 /android
 
 /lahman/csvs/**
+# EAS simulator session
+.env.eas-simulator

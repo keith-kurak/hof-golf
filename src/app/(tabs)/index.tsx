@@ -1,5 +1,5 @@
 import { useSelector } from "@legendapp/state/react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router/react-navigation";
 import { useRouter } from "expo-router";
 import { useCallback } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
