@@ -58,14 +58,6 @@ export default function RootLayout() {
             name="game/complete"
             options={{ title: "Game Complete", headerBackVisible: false }}
           />
-          <Stack.Screen
-            name="game/resume"
-            options={{
-              presentation: "transparentModal",
-              headerShown: false,
-              animation: "fade",
-            }}
-          />
         </Stack>
       </ThemeProvider>
     </SQLiteProvider>

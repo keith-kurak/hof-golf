@@ -276,25 +276,29 @@ function isBatterSection(title: string) {
 
 export default function TeamRosterScreen() {
   const {
-    teamID,
+    teamID: teamIDParam,
     teamName,
     year: yearParam,
+    game,
   } = useLocalSearchParams<{
     teamID: string;
     teamName?: string;
     year?: string;
+    game?: string;
   }>();
   const db = useSQLiteContext();
   const router = useRouter();
-  const [year, setYear] = useState(yearParam ? Number(yearParam) : 2025);
+  const [browseYear, setYear] = useState(yearParam ? Number(yearParam) : 2025);
   const [teamInfo, setTeamInfo] = useState<TeamInfo | null>(null);
   const [rawBatters, setRawBatters] = useState<RawBatter[]>([]);
   const [rawPitchers, setRawPitchers] = useState<Pitcher[]>([]);
 
   const insets = useSafeAreaInsets();
 
-  // Game state
-  const active = useSelector(() => game$.active.get());
+  // Game state. Only the game screen (opened with `game=1`) follows the
+  // active game. A roster opened from Browse or History stays read-only.
+  const storeActive = useSelector(() => game$.active.get());
+  const active = game === "1" ? storeActive : null;
   const theme = useTheme();
   const { timeLeft, isTimed } = useRoundTimer();
   const mode =
@@ -308,6 +312,13 @@ export default function TeamRosterScreen() {
     active.rounds &&
     active.rounds.length > mode.rounds
   );
+
+  // The game screen always shows the current round's roster. Picking a new
+  // team on the player screen updates the store and goes back to this screen.
+  const gameRound =
+    active && !active.finished ? active.rounds?.at(-1) : undefined;
+  const teamID = gameRound?.teamID ?? teamIDParam;
+  const year = gameRound?.yearID ?? browseYear;
 
   useEffect(() => {
     db.getFirstAsync<TeamInfo>(TEAM_INFO_QUERY, [year, teamID]).then(
@@ -342,13 +353,18 @@ export default function TeamRosterScreen() {
     if (isFinalRound) return;
     router.push({
       pathname: "/player/[playerID]",
-      params: { playerID, playerName: name, year: String(year) },
+      params: {
+        playerID,
+        playerName: name,
+        year: String(year),
+        ...(isActiveGame ? { game: "1" } : {}),
+      },
     });
   };
 
   const handleContinue = () => {
     endGame();
-    router.push("/game/complete");
+    router.replace("/game/complete");
   };
 
   // Build target sets for highlighting
@@ -458,6 +474,7 @@ export default function TeamRosterScreen() {
         <GameStatusBar hint={gameHint} trailing={timerTrailing} />
       )}
       <SectionList
+        key={`${teamID}-${year}`}
         sections={sections}
         keyExtractor={(item) => item.playerID}
         contentContainerStyle={styles.list}

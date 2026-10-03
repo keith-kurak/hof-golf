@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { GameStatusBar } from "@/components/game-status-bar";
@@ -111,10 +111,11 @@ function buildRows<T>(
 }
 
 export default function PlayerDetailScreen() {
-  const { playerID, playerName } = useLocalSearchParams<{
+  const { playerID, playerName, game } = useLocalSearchParams<{
     playerID: string;
     playerName?: string;
     year?: string;
+    game?: string;
   }>();
   const db = useSQLiteContext();
   const router = useRouter();
@@ -178,7 +179,12 @@ export default function PlayerDetailScreen() {
   const displayName =
     playerName ?? (bio ? `${bio.nameFirst} ${bio.nameLast}` : playerID);
 
-  const active = useSelector(() => game$.active.get());
+  // Only the game screen (opened with `game=1`) can advance the active game.
+  // A player opened from Browse or History stays read-only.
+  const storeActive = useSelector(() => game$.active.get());
+  const active = game === "1" ? storeActive : null;
+  // Blocks a second tap while the first pick is still loading
+  const advancingRef = useRef(false);
   const gameMode = currentMode();
   const isFinalRound = !!(
     active &&
@@ -213,6 +219,9 @@ export default function PlayerDetailScreen() {
     if (isRowDisabled(row)) return;
 
     if (isActiveGame) {
+      if (advancingRef.current) return;
+      advancingRef.current = true;
+
       // During an active game: wire through the game store
       pickPlayer(playerID, displayName);
 
@@ -252,19 +261,9 @@ export default function PlayerDetailScreen() {
         );
         roundTimedOut$.set(false);
 
-        // HACK: move this to the next tick becaues the game state changes above will cause a re-render/race condition with the
-        // destroyed screen. The right way to do this would be to move the game logic to the next screen.
-        setTimeout(() => {
-          router.dismissAll();
-          router.push({
-            pathname: "/team/[teamID]",
-            params: {
-              teamID: row.teamID,
-              teamName: teamInfo?.name ?? row.teamID,
-              year: String(row.yearID),
-            },
-          });
-        });
+        // The game team screen below follows the current round, so going
+        // back shows the new roster and keeps the stack at tabs → team.
+        router.back();
         return;
       }
     }

@@ -1,10 +1,9 @@
 import { useSelector } from "@legendapp/state/react";
-import { useFocusEffect } from "expo-router/react-navigation";
-import { useRouter } from "expo-router";
-import { useCallback } from "react";
+import { useIsFocused, useRouter } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { ResumeGameDialog } from "@/components/resume-game-dialog";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
@@ -19,15 +18,9 @@ export default function GameScreen() {
   const router = useRouter();
   const bestScores = useSelector(() => game$.bestScores.get() ?? {});
 
-  // When this tab gains focus, check for an active game and show resume modal
+  // While this tab is focused, an active game shows the resume dialog
   const hasActiveGame = useSelector(isGameActive$);
-  useFocusEffect(
-    useCallback(() => {
-      if (hasActiveGame) {
-        router.push("/game/resume");
-      }
-    }, [router, hasActiveGame]),
-  );
+  const isFocused = useIsFocused();
 
   return (
     <ThemedView style={styles.container}>
@@ -71,6 +64,7 @@ export default function GameScreen() {
           );
         })}
       </ScrollView>
+      <ResumeGameDialog visible={hasActiveGame && isFocused} />
     </ThemedView>
   );
 }

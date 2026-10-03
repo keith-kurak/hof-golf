@@ -59,6 +59,7 @@ export default function ModeDetailScreen() {
             teamID: currentRound.teamID,
             teamName: currentRound.teamName,
             year: String(currentRound.yearID),
+            game: "1",
           },
         });
       }
