@@ -374,16 +374,19 @@ export default function TeamRosterScreen() {
     if (!currentRound?.targetsFound) return new Set<string>();
     return new Set(currentRound.targetsFound.map((t) => t.playerID));
   }, [currentRound?.targetsFound]);
+  // The store pushes rounds onto the same array, so the memo also keys on
+  // the round count.
+  const roundCount = active?.rounds?.length ?? 0;
   const seenBeforeIDs = useMemo(() => {
-    if (!isActiveGame) return new Set<string>();
-    // seenTargets minus targets found this round = previously collected
-    const thisRoundIDs = new Set(
-      (currentRound?.targetsFound ?? []).map((t) => t.playerID),
-    );
-    return new Set(
-      (active.seenTargets ?? []).filter((id) => !thisRoundIDs.has(id)),
-    );
-  }, [isActiveGame, active?.seenTargets, currentRound?.targetsFound]);
+    const seen = new Set<string>();
+    if (!isActiveGame) return seen;
+    // Targets collected in earlier rounds. A timed-out round collects nothing.
+    for (const round of active.rounds.slice(0, roundCount - 1)) {
+      if (round.timedOut) continue;
+      for (const t of round.targetsFound) seen.add(t.playerID);
+    }
+    return seen;
+  }, [isActiveGame, active?.rounds, roundCount]);
 
   const isNewTarget = (playerID: string) =>
     targetIDs.has(playerID) && !seenBeforeIDs.has(playerID);
