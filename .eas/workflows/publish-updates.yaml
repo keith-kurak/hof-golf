@@ -21,5 +21,7 @@ jobs:
   publish_prod_update:
     name: Publish prod update
     type: update
+    # production environment sets APP_VARIANT=production (see app.config.js)
+    environment: production
     params:
       channel: production
