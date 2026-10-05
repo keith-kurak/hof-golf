@@ -7,6 +7,13 @@
         "mcp"
       ],
       "env": {}
+    },
+    "e2e": {
+      "command": "npx",
+      "args": [
+        "e2e",
+        "mcp"
+      ]
     }
   }
 }

@@ -57,6 +57,16 @@ Runtime version policy: `appVersion`.
 
 EAS project owner: `keithco`.
 
+## E2E tests
+
+[e2e](https://e2e.tester.army/docs) (TesterArmy) runs `tests/*.e2e.ts` through agent-device. `tests/hof-golf-regression.e2e.ts` plays a fixed HOF Golf route and checks the score.
+
+- `e2e-regression-local`: local iOS Simulator or Android Emulator, with a video. Needs a release build of the preview variant.
+- `e2e-regression-cloud-ios`: EAS cloud iOS Simulator. Needs an `e2e-ios-simulator` build of the current commit.
+- `.eas/workflows/e2e-regression.yaml`: runs on the EAS macOS worker when a PR gets the `e2e-regression` label.
+- Model: `ANTHROPIC_API_KEY` if set (EAS secret in the preview environment), else the GitHub Copilot login (`npx e2e login github-copilot`).
+- `.e2e/cache` is committed: recorded agent steps replay without a model call. Commit changes to it.
+
 ## README
 
 Keep `README.md` in this order: description, start the dev server, Features (short bullets), TODO (next major goals).

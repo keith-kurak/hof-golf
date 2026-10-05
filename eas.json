@@ -21,6 +21,13 @@
       "channel": "preview",
       "environment": "preview"
     },
+    "e2e-ios-simulator": {
+      "extends": "preview",
+      "channel": "e2e",
+      "ios": {
+        "simulator": true
+      }
+    },
     "production": {
       "autoIncrement": true,
       "channel": "production",

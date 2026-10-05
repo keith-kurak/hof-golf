@@ -51,7 +51,9 @@ export default function GameCompleteScreen() {
         <ThemedText type="subtitle">{mode?.name ?? "Game"}</ThemedText>
 
         <View style={styles.scoreSection}>
-          <ThemedText style={styles.scoreValue}>{game.totalPoints}</ThemedText>
+          <ThemedText testID="final-score" style={styles.scoreValue}>
+            {game.totalPoints}
+          </ThemedText>
           <ThemedText themeColor="textSecondary">points</ThemedText>
           {game.bonusPoints > 0 && (
             <ThemedText type="small" themeColor="textSecondary">

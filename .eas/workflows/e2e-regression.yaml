@@ -1,0 +1,79 @@
+name: e2e regression (iOS)
+
+# Runs the HOF Golf regression test (tests/hof-golf-regression.e2e.ts) on an
+# iOS Simulator on the EAS macOS worker, then comments the result on the PR.
+#
+# Does not run on every push. It starts when a PR gets the `e2e-regression`
+# label. To run it again, remove and add the label. To run it by hand:
+#   npx eas-cli@latest workflow:run .eas/workflows/e2e-regression.yaml
+#
+# Agent steps that the committed .e2e/cache cannot replay call Claude through
+# ANTHROPIC_API_KEY, a secret in the preview EAS environment.
+
+on:
+  pull_request_labeled:
+    labels: ['e2e-regression']
+  workflow_dispatch: {}
+
+concurrency:
+  cancel_in_progress: true
+  group: ${{ workflow.filename }}-${{ github.ref }}
+
+jobs:
+  # A release build of the preview variant. The JS is in the app, so each run
+  # builds the PR's commit. The e2e channel gets no updates.
+  build_ios:
+    name: Build iOS Simulator app
+    type: build
+    params:
+      platform: ios
+      profile: e2e-ios-simulator
+
+  e2e_ios:
+    name: Run e2e regression on iOS
+    needs: [build_ios]
+    runs_on: macos-medium
+    image: sdk-58 # Node.js 22 (e2e needs 22.12 or later)
+    environment: preview
+    steps:
+      - uses: eas/checkout
+
+      - uses: eas/install_node_modules
+
+      - uses: eas/download_build
+        id: download_build
+        with:
+          build_id: ${{ needs.build_ios.outputs.build_id }}
+          extensions: [app]
+
+      - name: Boot a simulator and install the app
+        run: |
+          UDID=$(xcrun simctl list devices available --json | node -e "const d=JSON.parse(require('fs').readFileSync(0,'utf8')).devices; const all=Object.values(d).flat(); console.log(all.find(x=>x.name.startsWith('iPhone')).udid)")
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl install "$UDID" "${{ steps.download_build.outputs.artifact_path }}"
+
+      - name: Run e2e
+        run: npx e2e run tests/hof-golf-regression.e2e.ts --config e2e.ci.config.ts --video
+
+      - uses: eas/upload_artifact
+        if: ${{ always() }}
+        with:
+          type: other
+          name: e2e-report
+          path: |
+            .e2e/report.json
+            .e2e/artifacts/**/*
+
+  comment:
+    name: Comment on PR
+    after: [e2e_ios]
+    if: ${{ github.event.pull_request.number }}
+    type: github-comment
+    params:
+      payload: |
+        ## e2e regression (iOS): `${{ after.e2e_ios.status }}`
+
+        HOF Golf fixed route from the 1997 Tigers, expected score 16.
+
+        [Workflow run](${{ workflow.url }}) · the report, the video, and failure screenshots are under **Artifacts**.
