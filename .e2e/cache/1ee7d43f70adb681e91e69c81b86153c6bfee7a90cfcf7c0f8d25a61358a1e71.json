@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "trace-1",
+  "createdAt": "2026-10-05T16:58:31.908Z",
+  "payload": {
+    "actions": [
+      {
+        "name": "tap",
+        "summary": "tap other \"HOF Golf 🏆, v.2026, The OG 'Six Degree…\"",
+        "target": {
+          "role": "other",
+          "name": "HOF Golf 🏆, v.2026, The OG 'Six Degrees of Goose Gossage'. How many Hall of Famers can you uncover in an 9-team chain of teammates? Pick a player, then pick a team they played for and collect all of their hall-of-fame teammates. Then do it 8 more times to see how many inductees you can collect in …"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"Choose\"",
+        "target": {
+          "role": "other",
+          "name": "Choose"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"Select Team...\"",
+        "target": {
+          "role": "other",
+          "name": "Select Team..."
+        }
+      },
+      {
+        "name": "type",
+        "summary": "type \"1997 Detroit\" into textbox \"Search teams...\"",
+        "target": {
+          "role": "textbox",
+          "placeholder": "Search teams..."
+        },
+        "value": "1997 Detroit"
+      },
+      {
+        "name": "type",
+        "summary": "type \"1997\" into textbox \"Search teams...\"",
+        "target": {
+          "role": "textbox",
+          "placeholder": "Search teams..."
+        },
+        "value": "1997"
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"1997, Detroit Tigers\"",
+        "target": {
+          "role": "other",
+          "name": "1997, Detroit Tigers"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"1997, Detroit Tigers\"",
+        "target": {
+          "role": "other",
+          "name": "1997, Detroit Tigers"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"Play\"",
+        "target": {
+          "role": "other",
+          "name": "Play"
+        }
+      }
+    ],
+    "executor": {
+      "name": "e2e-default-agent",
+      "version": "2"
+    },
+    "recordedFor": {
+      "testId": "tests/hof-golf-regression.e2e.ts::HOF%20Golf%3A%20fixed%20route%20from%20the%201997%20Tigers%20scores%2016",
+      "targetId": "ios",
+      "instructionDigest": "08aa8111599dc63ef94a271ac7417b09c6845f656cfe86c7ea1834b54f41f30c",
+      "paramsDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "callIndex": 0,
+      "agent": "default"
+    },
+    "summary": "Opened HOF Golf, selected Choose, picked the 1997 Detroit Tigers in the team picker, left Timer on Untimed, and tapped Play. The game screen is now \"1997 Detroit Tigers\" with the status bar \"Rd 1/9, 0 pts\" and the roster listed.",
+    "startPath": "com.keithkurak.hofgolf.preview",
+    "endPath": "com.keithkurak.hofgolf.preview / 1997 Detroit Tigers",
+    "endAnchors": [
+      {
+        "role": "button",
+        "name": "(tabs)",
+        "testId": "BackButton"
+      },
+      {
+        "role": "text",
+        "name": "1997 Detroit Tigers"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 1/9, 0 pts, No targets on this roster. Pick a player.",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Raul Casanova, 101, 5, 24, .243, 1"
+      },
+      {
+        "role": "other",
+        "name": "1B, Tony Clark, 159, 32, 117, .276, 1"
+      },
+      {
+        "role": "other",
+        "name": "2B, Damion Easley, 151, 22, 72, .264, 28"
+      },
+      {
+        "role": "other",
+        "name": "SS, Deivi Cruz, 147, 2, 40, .241, 3"
+      },
+      {
+        "role": "other",
+        "name": "3B, Travis Fryman, 154, 22, 102, .274, 16"
+      }
+    ],
+    "goneAnchors": [
+      {
+        "role": "image",
+        "testId": "SplashScreen"
+      }
+    ],
+    "endWaitMs": 23066
+  }
+}

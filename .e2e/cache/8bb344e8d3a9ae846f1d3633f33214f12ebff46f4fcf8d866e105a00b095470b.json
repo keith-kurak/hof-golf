@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "trace-1",
+  "createdAt": "2026-10-05T16:58:31.911Z",
+  "payload": {
+    "actions": [
+      {
+        "name": "tap",
+        "summary": "tap other \"1B, Tony Clark, 159, 32, 117, .276, 1\"",
+        "target": {
+          "role": "other",
+          "name": "1B, Tony Clark, 159, 32, 117, .276, 1"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"2004, NYA\"",
+        "target": {
+          "role": "other",
+          "name": "2004, NYA"
+        }
+      }
+    ],
+    "executor": {
+      "name": "e2e-default-agent",
+      "version": "2"
+    },
+    "recordedFor": {
+      "testId": "tests/hof-golf-regression.e2e.ts::HOF%20Golf%3A%20fixed%20route%20from%20the%201997%20Tigers%20scores%2016",
+      "targetId": "ios",
+      "instructionDigest": "f2dd230e178b2e842c63bd8f9d1043da5d99efc61b78d13a3114ee9b924f6536",
+      "paramsDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "callIndex": 0,
+      "agent": "default"
+    },
+    "summary": "Tapped Tony Clark, then the \"2004, NYA\" row. The app opened the \"2004 New York Yankees\" roster page. The status bar reads \"Rd 2/9, 3 pts\".",
+    "startPath": "com.keithkurak.hofgolf.preview / 1997 Detroit Tigers",
+    "endPath": "com.keithkurak.hofgolf.preview / 2004 New York Yankees",
+    "endAnchors": [
+      {
+        "role": "text",
+        "name": "2004 New York Yankees"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 2/9, 3 pts, +3 pts. (Derek Jeter +1, Mike Mussina +1, Mariano Rivera +1), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Jorge Posada, 137, 21, 81, .272, 1"
+      },
+      {
+        "role": "other",
+        "name": "1B, Tony Clark, 106, 16, 49, .221, 0"
+      },
+      {
+        "role": "other",
+        "name": "2B, Miguel Cairo, 122, 6, 42, .292, 11"
+      },
+      {
+        "role": "other",
+        "name": "SS, Derek Jeter, 154, 23, 78, .292, 23, +1"
+      },
+      {
+        "role": "other",
+        "name": "3B, Alex Rodriguez, 155, 36, 106, .286, 28"
+      },
+      {
+        "role": "other",
+        "name": "LF, Hideki Matsui, 162, 31, 108, .298, 3"
+      }
+    ],
+    "goneAnchors": [
+      {
+        "role": "text",
+        "name": "1997 Detroit Tigers"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 1/9, 0 pts, No targets on this roster. Pick a player.",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Raul Casanova, 101, 5, 24, .243, 1"
+      },
+      {
+        "role": "other",
+        "name": "1B, Tony Clark, 159, 32, 117, .276, 1"
+      },
+      {
+        "role": "other",
+        "name": "2B, Damion Easley, 151, 22, 72, .264, 28"
+      },
+      {
+        "role": "other",
+        "name": "SS, Deivi Cruz, 147, 2, 40, .241, 3"
+      },
+      {
+        "role": "other",
+        "name": "3B, Travis Fryman, 154, 22, 102, .274, 16"
+      },
+      {
+        "role": "other",
+        "name": "LF, Bobby Higginson, 146, 27, 101, .299, 12"
+      }
+    ],
+    "endWaitMs": 12700
+  }
+}

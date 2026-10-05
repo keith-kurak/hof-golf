@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "trace-1",
+  "createdAt": "2026-10-05T16:58:31.918Z",
+  "payload": {
+    "actions": [
+      {
+        "name": "tap",
+        "summary": "tap other \"CF, Fred Lynn, 145, 21, 105, .331, 10\"",
+        "target": {
+          "role": "other",
+          "name": "CF, Fred Lynn, 145, 21, 105, .331, 10"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"1981, CAL\"",
+        "target": {
+          "role": "other",
+          "name": "1981, CAL"
+        }
+      }
+    ],
+    "executor": {
+      "name": "e2e-default-agent",
+      "version": "2"
+    },
+    "recordedFor": {
+      "testId": "tests/hof-golf-regression.e2e.ts::HOF%20Golf%3A%20fixed%20route%20from%20the%201997%20Tigers%20scores%2016",
+      "targetId": "ios",
+      "instructionDigest": "de5fcb582aec274563f7d479bbd9feaa0b80bfef727e86a3a8ed13c333a0f0ba",
+      "paramsDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "callIndex": 0,
+      "agent": "default"
+    },
+    "summary": "Tapped Fred Lynn, then the \"1981, CAL\" row. App opened \"1981 California Angels\"; status bar reads \"Rd 6/9, 9 pts\".",
+    "startPath": "com.keithkurak.hofgolf.preview / 1975 Boston Red Sox",
+    "endPath": "com.keithkurak.hofgolf.preview / 1981 California Angels",
+    "endAnchors": [
+      {
+        "role": "text",
+        "name": "1981 California Angels"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 6/9, 9 pts, +1 pts. (Rod Carew +1), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Ed Ott, 75, 2, 22, .217, 2"
+      },
+      {
+        "role": "other",
+        "name": "1B, Rod Carew, 93, 2, 21, .305, 16, +1"
+      },
+      {
+        "role": "other",
+        "name": "2B, Bobby Grich, 100, 22, 61, .304, 2"
+      },
+      {
+        "role": "other",
+        "name": "SS, Rick Burleson, 109, 5, 33, .293, 4"
+      },
+      {
+        "role": "other",
+        "name": "3B, Butch Hobson, 85, 4, 36, .235, 1"
+      },
+      {
+        "role": "other",
+        "name": "LF, Brian Downing, 93, 9, 41, .249, 1"
+      }
+    ],
+    "goneAnchors": [
+      {
+        "role": "text",
+        "name": "1975 Boston Red Sox"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 5/9, 8 pts, +2 pts. (Carlton Fisk (+0), Jim Rice +1, Carl Yastrzemski +1), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "1B, Carl Yastrzemski, 149, 14, 60, .269, 8, +1"
+      },
+      {
+        "role": "other",
+        "name": "2B, Doug Griffin, 100, 1, 29, .240, 2"
+      },
+      {
+        "role": "other",
+        "name": "SS, Rick Burleson, 158, 6, 62, .252, 8"
+      },
+      {
+        "role": "other",
+        "name": "3B, Rico Petrocelli, 115, 7, 59, .239, 0"
+      },
+      {
+        "role": "other",
+        "name": "LF, Jim Rice, 144, 22, 102, .309, 10, +1"
+      },
+      {
+        "role": "other",
+        "name": "CF, Fred Lynn, 145, 21, 105, .331, 10"
+      }
+    ],
+    "endWaitMs": 12575
+  }
+}

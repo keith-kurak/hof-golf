@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "trace-1",
+  "createdAt": "2026-10-05T16:58:31.929Z",
+  "payload": {
+    "actions": [
+      {
+        "name": "tap",
+        "summary": "tap other \"2B, Paul Molitor, 125, 6, 45, .273, 30,…\"",
+        "target": {
+          "role": "other",
+          "name": "2B, Paul Molitor, 125, 6, 45, .273, 30, +1"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"1993, TOR\"",
+        "target": {
+          "role": "other",
+          "name": "1993, TOR"
+        }
+      }
+    ],
+    "executor": {
+      "name": "e2e-default-agent",
+      "version": "2"
+    },
+    "recordedFor": {
+      "testId": "tests/hof-golf-regression.e2e.ts::HOF%20Golf%3A%20fixed%20route%20from%20the%201997%20Tigers%20scores%2016",
+      "targetId": "ios",
+      "instructionDigest": "907bfce1fefb4b00c64b5d7d3c6de7779c581f9968b210bea1ee59a1d3ee0f90",
+      "paramsDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "callIndex": 0,
+      "agent": "default"
+    },
+    "summary": "Tapped Paul Molitor, then the \"1993, TOR\" row. The \"1993 Toronto Blue Jays\" page opened. The status bar reads \"Rd 9/9, 14 pts\".",
+    "startPath": "com.keithkurak.hofgolf.preview / 1978 Milwaukee Brewers",
+    "endPath": "com.keithkurak.hofgolf.preview / 1993 Toronto Blue Jays",
+    "endAnchors": [
+      {
+        "role": "text",
+        "name": "1993 Toronto Blue Jays"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 9/9, 14 pts, +3 pts. (Roberto Alomar +1, Rickey Henderson +1, Paul Molitor (+0), Jack Morris +1), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Pat Borders, 138, 9, 55, .254, 2"
+      },
+      {
+        "role": "other",
+        "name": "1B, John Olerud, 158, 24, 107, .363, 0"
+      },
+      {
+        "role": "other",
+        "name": "2B, Roberto Alomar, 153, 17, 93, .326, 55, +1"
+      },
+      {
+        "role": "other",
+        "name": "SS, Tony Fernandez, 94, 4, 50, .306, 15"
+      },
+      {
+        "role": "other",
+        "name": "3B, Ed Sprague, 150, 12, 73, .260, 1"
+      },
+      {
+        "role": "other",
+        "name": "LF, Joe Carter, 155, 33, 121, .254, 8"
+      }
+    ],
+    "goneAnchors": [
+      {
+        "role": "text",
+        "name": "1978 Milwaukee Brewers"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 8/9, 11 pts, +2 pts. (Paul Molitor +1, Robin Yount +1), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Charlie Moore, 96, 5, 31, .269, 4"
+      },
+      {
+        "role": "other",
+        "name": "1B, Cecil Cooper, 107, 13, 54, .312, 3"
+      },
+      {
+        "role": "other",
+        "name": "2B, Paul Molitor, 125, 6, 45, .273, 30, +1"
+      },
+      {
+        "role": "other",
+        "name": "SS, Robin Yount, 127, 9, 71, .293, 16, +1"
+      },
+      {
+        "role": "other",
+        "name": "3B, Sal Bando, 152, 17, 78, .285, 3"
+      },
+      {
+        "role": "other",
+        "name": "LF, Larry Hisle, 142, 34, 115, .290, 10"
+      }
+    ],
+    "endWaitMs": 12734
+  }
+}

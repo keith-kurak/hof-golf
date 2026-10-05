@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "trace-1",
+  "createdAt": "2026-10-05T16:58:31.913Z",
+  "payload": {
+    "actions": [
+      {
+        "name": "scroll",
+        "summary": "scroll up",
+        "direction": "up",
+        "times": 3
+      },
+      {
+        "name": "scroll",
+        "summary": "scroll up on scroll-view (1 of 1)",
+        "direction": "up",
+        "target": {
+          "role": "scroll-view",
+          "position": {
+            "index": 0,
+            "of": 1
+          }
+        },
+        "times": 2,
+        "spans": 0.7796
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"P, Mike Mussina, 27, 4.59, 164.2, 132, …\"",
+        "target": {
+          "role": "other",
+          "name": "P, Mike Mussina, 27, 4.59, 164.2, 132, 0, +1"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"1995, BAL\"",
+        "target": {
+          "role": "other",
+          "name": "1995, BAL"
+        }
+      }
+    ],
+    "executor": {
+      "name": "e2e-default-agent",
+      "version": "2"
+    },
+    "recordedFor": {
+      "testId": "tests/hof-golf-regression.e2e.ts::HOF%20Golf%3A%20fixed%20route%20from%20the%201997%20Tigers%20scores%2016",
+      "targetId": "ios",
+      "instructionDigest": "73474c3240d72686fbd7aa3cb56fb5d7ecbef03faa588010a259d82edb25cd14",
+      "paramsDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "callIndex": 0,
+      "agent": "default"
+    },
+    "summary": "Tapped Mike Mussina on the 2004 Yankees roster, then the \"1995, BAL\" row. App opened \"1995 Baltimore Orioles\"; status bar reads \"Rd 3/9, 5 pts\".",
+    "startPath": "com.keithkurak.hofgolf.preview / 2004 New York Yankees",
+    "endPath": "com.keithkurak.hofgolf.preview / 1995 Baltimore Orioles",
+    "endAnchors": [
+      {
+        "role": "text",
+        "name": "1995 Baltimore Orioles"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 3/9, 5 pts, +2 pts. (Harold Baines +1, Mike Mussina (+0), Cal Ripken +1), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Chris Hoiles, 114, 19, 58, .250, 1"
+      },
+      {
+        "role": "other",
+        "name": "1B, Rafael Palmeiro, 143, 39, 104, .310, 3"
+      },
+      {
+        "role": "other",
+        "name": "2B, Manny Alexander, 94, 3, 23, .236, 11"
+      },
+      {
+        "role": "other",
+        "name": "SS, Cal Ripken, 144, 17, 88, .262, 0, +1"
+      },
+      {
+        "role": "other",
+        "name": "3B, Jeff Manto, 89, 17, 38, .256, 0"
+      },
+      {
+        "role": "other",
+        "name": "LF, Brady Anderson, 143, 16, 64, .262, 26"
+      }
+    ],
+    "goneAnchors": [
+      {
+        "role": "text",
+        "name": "2004 New York Yankees"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 2/9, 3 pts, +3 pts. (Derek Jeter +1, Mike Mussina +1, Mariano Rivera +1), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Jorge Posada, 137, 21, 81, .272, 1"
+      },
+      {
+        "role": "other",
+        "name": "1B, Tony Clark, 106, 16, 49, .221, 0"
+      },
+      {
+        "role": "other",
+        "name": "2B, Miguel Cairo, 122, 6, 42, .292, 11"
+      },
+      {
+        "role": "other",
+        "name": "SS, Derek Jeter, 154, 23, 78, .292, 23, +1"
+      },
+      {
+        "role": "other",
+        "name": "3B, Alex Rodriguez, 155, 36, 106, .286, 28"
+      },
+      {
+        "role": "other",
+        "name": "LF, Hideki Matsui, 162, 31, 108, .298, 3"
+      }
+    ],
+    "endWaitMs": 16761
+  }
+}

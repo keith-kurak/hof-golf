@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "trace-1",
+  "createdAt": "2026-10-05T16:58:31.931Z",
+  "payload": {
+    "actions": [
+      {
+        "name": "scrollUntil",
+        "summary": "scroll down until \"Rickey Henderson\" shows (1 screen)",
+        "text": "Rickey Henderson",
+        "direction": "down"
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"LF, Rickey Henderson, 44, 4, 12, .215, …\"",
+        "target": {
+          "role": "other",
+          "name": "LF, Rickey Henderson, 44, 4, 12, .215, 22, +1"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"1989, OAK\"",
+        "target": {
+          "role": "other",
+          "name": "1989, OAK"
+        }
+      }
+    ],
+    "executor": {
+      "name": "e2e-default-agent",
+      "version": "2"
+    },
+    "recordedFor": {
+      "testId": "tests/hof-golf-regression.e2e.ts::HOF%20Golf%3A%20fixed%20route%20from%20the%201997%20Tigers%20scores%2016",
+      "targetId": "ios",
+      "instructionDigest": "4c339f5e758f94e48aa01e175b44e7663a64ac848fbb39147119d57ead726ef9",
+      "paramsDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "callIndex": 0,
+      "agent": "default"
+    },
+    "summary": "Tapped Rickey Henderson (bench of 1993 Blue Jays), then the \"1989, OAK\" row. The \"1989 Oakland Athletics\" page opened. Status bar reads \"Rd 9/9, 16 pts, Game complete!\"; a Continue button is shown.",
+    "startPath": "com.keithkurak.hofgolf.preview / 1993 Toronto Blue Jays",
+    "endPath": "com.keithkurak.hofgolf.preview / 1989 Oakland Athletics",
+    "endAnchors": [
+      {
+        "role": "text",
+        "name": "1989 Oakland Athletics"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 9/9, 16 pts, +2 pts. (Dennis Eckersley +1, Rickey Henderson (+0), Dave Parker +1), Game complete!",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Terry Steinbach, 130, 7, 42, .273, 1"
+      },
+      {
+        "role": "other",
+        "name": "1B, Mark McGwire, 143, 33, 95, .231, 1"
+      },
+      {
+        "role": "other",
+        "name": "2B, Tony Phillips, 143, 4, 47, .262, 3"
+      },
+      {
+        "role": "other",
+        "name": "SS, Mike Gallego, 133, 3, 30, .252, 7"
+      },
+      {
+        "role": "other",
+        "name": "3B, Carney Lansford, 148, 2, 52, .336, 37"
+      },
+      {
+        "role": "other",
+        "name": "LF, Rickey Henderson, 85, 9, 35, .294, 52, +0"
+      }
+    ],
+    "goneAnchors": [
+      {
+        "role": "text",
+        "name": "1993 Toronto Blue Jays"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 9/9, 14 pts, +3 pts. (Roberto Alomar +1, Rickey Henderson +1, Paul Molitor (+0), Jack Morris +1), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Pat Borders, 138, 9, 55, .254, 2"
+      },
+      {
+        "role": "other",
+        "name": "1B, John Olerud, 158, 24, 107, .363, 0"
+      },
+      {
+        "role": "other",
+        "name": "2B, Roberto Alomar, 153, 17, 93, .326, 55, +1"
+      },
+      {
+        "role": "other",
+        "name": "SS, Tony Fernandez, 94, 4, 50, .306, 15"
+      },
+      {
+        "role": "other",
+        "name": "3B, Ed Sprague, 150, 12, 73, .260, 1"
+      },
+      {
+        "role": "other",
+        "name": "LF, Joe Carter, 155, 33, 121, .254, 8"
+      }
+    ],
+    "endWaitMs": 13220
+  }
+}
