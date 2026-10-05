@@ -7,8 +7,11 @@ name: e2e regression (iOS)
 # label. To run it again, remove and add the label. To run it by hand:
 #   npx eas-cli@latest workflow:run .eas/workflows/e2e-regression.yaml
 #
-# Agent steps that the committed .e2e/cache cannot replay call Claude through
-# ANTHROPIC_API_KEY, a secret in the preview EAS environment.
+# Agent steps replay from the committed .e2e/cache with no model call. A step
+# that cannot replay calls Claude through a GitHub Copilot login: the
+# E2E_OAUTH_CREDENTIALS secret in the preview EAS environment holds a copy of
+# ~/.config/e2e/oauth.json. When that login expires, the run fails with
+# LOGIN_REQUIRED: run `npx e2e login github-copilot` and update the secret.
 
 on:
   pull_request_labeled:

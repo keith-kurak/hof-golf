@@ -9,9 +9,11 @@ import { copilot } from "e2e/oauth/copilot";
 // the JS is in the app and no dev server is needed.
 export const BUNDLE_ID = "com.keithkurak.hofgolf.preview";
 
-// Agent steps use Claude Sonnet 5.5:
-// - ANTHROPIC_API_KEY set (EAS Workflows): the Anthropic API.
-// - Otherwise (local): a GitHub Copilot login, from `npx e2e login github-copilot`.
+// Agent steps use Claude Sonnet 5.5 through a GitHub Copilot login:
+// - Local: `npx e2e login github-copilot` saves it in ~/.config/e2e/oauth.json.
+// - EAS Workflows: the E2E_OAUTH_CREDENTIALS secret holds a copy of that file.
+// Most CI runs make no model call: they replay the steps in .e2e/cache.
+// If ANTHROPIC_API_KEY is set, the Anthropic API is used instead.
 export const agents = {
   default: {
     model: process.env.ANTHROPIC_API_KEY

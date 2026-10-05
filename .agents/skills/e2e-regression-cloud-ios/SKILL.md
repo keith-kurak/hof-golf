@@ -28,7 +28,7 @@ Arguments go to `e2e run`. For example, `--video` saves `video/video.mp4` under 
 ## Credentials
 
 - **EAS:** the integration uses the `eas login` session. If `EXPO_TOKEN` is set, it uses that.
-- **Model:** with no `ANTHROPIC_API_KEY`, agent steps use the GitHub Copilot login (`npx e2e login github-copilot`). Agent steps recorded in `.e2e/cache` replay with no model call.
+- **Model:** agent steps use Claude through the GitHub Copilot login (`npx e2e login github-copilot`). Steps recorded in `.e2e/cache` replay with no model call.
 
 ## Results
 
@@ -36,7 +36,7 @@ Arguments go to `e2e run`. For example, `--video` saves `video/video.mp4` under 
 - `.e2e/report.json` has the result. `.e2e/artifacts/` has a screenshot and `screen.txt` for each failure.
 - The output has the session page link (`https://expo.dev/accounts/keithco/projects/hof-golf/simulator-sessions/...`). Give it to the user.
 
-When the run records new agent steps, `.e2e/cache` changes. Commit those files: CI replays them.
+When the run records new agent steps, `.e2e/cache` changes. Commit those files: the EAS workflow replays them, so it seldom needs a model call.
 
 ## When the test fails
 

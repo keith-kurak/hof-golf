@@ -38,10 +38,10 @@ The video is `video/video.mp4` in the attempt's folder under `.e2e/artifacts/`. 
 
 ## Model
 
-With no `ANTHROPIC_API_KEY`, agent steps use the GitHub Copilot login. If the run fails with `MODEL_PROVIDER_FAILED`, ask the user to run `npx e2e login github-copilot`. Agent steps recorded in `.e2e/cache` replay with no model call.
+Agent steps use Claude through the GitHub Copilot login. If the run fails with `MODEL_PROVIDER_FAILED`, ask the user to run `npx e2e login github-copilot`. Agent steps recorded in `.e2e/cache` replay with no model call.
 
 ## Results
 
 - Exit code 0 means the test passed. `.e2e/report.json` has the result.
 - Each failure has a screenshot and `screen.txt` in `.e2e/artifacts/`.
-- When the run records new agent steps, `.e2e/cache` changes. Commit those files: CI and the cloud skill replay them.
+- When the run records new agent steps, `.e2e/cache` changes. Commit those files: the EAS workflow and the cloud skill replay them.
