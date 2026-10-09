@@ -1,6 +1,6 @@
 {
   "schemaVersion": "trace-1",
-  "createdAt": "2026-10-05T16:58:31.911Z",
+  "createdAt": "2026-10-09T04:46:50.636Z",
   "payload": {
     "actions": [
       {
@@ -32,7 +32,7 @@
       "callIndex": 0,
       "agent": "default"
     },
-    "summary": "Tapped Tony Clark, then the \"2004, NYA\" row. The app opened the \"2004 New York Yankees\" roster page. The status bar reads \"Rd 2/9, 3 pts\".",
+    "summary": "Tapped Tony Clark, then the \"2004, NYA\" row. The 2004 New York Yankees roster page opened. The game moved to Rd 2/9 with 3 pts.",
     "startPath": "com.keithkurak.hofgolf.preview / 1997 Detroit Tigers",
     "endPath": "com.keithkurak.hofgolf.preview / 2004 New York Yankees",
     "endAnchors": [
@@ -105,6 +105,6 @@
         "name": "LF, Bobby Higginson, 146, 27, 101, .299, 12"
       }
     ],
-    "endWaitMs": 12700
+    "endWaitMs": 12147
   }
 }

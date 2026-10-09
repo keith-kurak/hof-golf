@@ -1,6 +1,6 @@
 {
   "schemaVersion": "trace-1",
-  "createdAt": "2026-10-05T16:58:31.913Z",
+  "createdAt": "2026-10-09T04:46:50.638Z",
   "payload": {
     "actions": [
       {
@@ -52,7 +52,7 @@
       "callIndex": 0,
       "agent": "default"
     },
-    "summary": "Tapped Mike Mussina on the 2004 Yankees roster, then the \"1995, BAL\" row. App opened \"1995 Baltimore Orioles\"; status bar reads \"Rd 3/9, 5 pts\".",
+    "summary": "Tapped Mike Mussina, then his \"1995, BAL\" row. The 1995 Baltimore Orioles roster page opened. The game moved to Rd 3/9 with 5 pts.",
     "startPath": "com.keithkurak.hofgolf.preview / 2004 New York Yankees",
     "endPath": "com.keithkurak.hofgolf.preview / 1995 Baltimore Orioles",
     "endAnchors": [
@@ -125,6 +125,6 @@
         "name": "LF, Hideki Matsui, 162, 31, 108, .298, 3"
       }
     ],
-    "endWaitMs": 16761
+    "endWaitMs": 12313
   }
 }

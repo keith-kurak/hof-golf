@@ -1,6 +1,6 @@
 {
   "schemaVersion": "trace-1",
-  "createdAt": "2026-10-05T16:58:31.918Z",
+  "createdAt": "2026-10-09T04:46:50.644Z",
   "payload": {
     "actions": [
       {
@@ -32,7 +32,7 @@
       "callIndex": 0,
       "agent": "default"
     },
-    "summary": "Tapped Fred Lynn, then the \"1981, CAL\" row. App opened \"1981 California Angels\"; status bar reads \"Rd 6/9, 9 pts\".",
+    "summary": "Tapped Fred Lynn, then the \"1981, CAL\" row. The 1981 California Angels roster page opened. The game moved to Rd 6/9 with 9 pts.",
     "startPath": "com.keithkurak.hofgolf.preview / 1975 Boston Red Sox",
     "endPath": "com.keithkurak.hofgolf.preview / 1981 California Angels",
     "endAnchors": [
@@ -82,6 +82,10 @@
       },
       {
         "role": "other",
+        "name": "C, Carlton Fisk, 79, 10, 52, .331, 4, +0"
+      },
+      {
+        "role": "other",
         "name": "1B, Carl Yastrzemski, 149, 14, 60, .269, 8, +1"
       },
       {
@@ -99,12 +103,8 @@
       {
         "role": "other",
         "name": "LF, Jim Rice, 144, 22, 102, .309, 10, +1"
-      },
-      {
-        "role": "other",
-        "name": "CF, Fred Lynn, 145, 21, 105, .331, 10"
       }
     ],
-    "endWaitMs": 12575
+    "endWaitMs": 12144
   }
 }

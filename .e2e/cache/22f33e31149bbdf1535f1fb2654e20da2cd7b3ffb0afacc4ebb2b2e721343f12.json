@@ -1,6 +1,6 @@
 {
   "schemaVersion": "trace-1",
-  "createdAt": "2026-10-05T16:58:31.917Z",
+  "createdAt": "2026-10-09T04:46:50.642Z",
   "payload": {
     "actions": [
       {
@@ -32,7 +32,7 @@
       "callIndex": 0,
       "agent": "default"
     },
-    "summary": "Tapped Carlton Fisk, then the \"1975, BOS\" row. The app opened \"1975 Boston Red Sox\"; the status bar reads \"Rd 5/9, 8 pts\".",
+    "summary": "Tapped Carlton Fisk, then \"1975, BOS\" row. The 1975 Boston Red Sox roster opened. The game is at Rd 5/9 with 8 pts.",
     "startPath": "com.keithkurak.hofgolf.preview / 1983 Chicago White Sox",
     "endPath": "com.keithkurak.hofgolf.preview / 1975 Boston Red Sox",
     "endAnchors": [
@@ -44,6 +44,10 @@
         "role": "other",
         "name": "🏆, HOF Golf, Rd 5/9, 8 pts, +2 pts. (Carlton Fisk (+0), Jim Rice +1, Carl Yastrzemski +1), Pick your next player",
         "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Carlton Fisk, 79, 10, 52, .331, 4, +0"
       },
       {
         "role": "other",
@@ -64,10 +68,6 @@
       {
         "role": "other",
         "name": "LF, Jim Rice, 144, 22, 102, .309, 10, +1"
-      },
-      {
-        "role": "other",
-        "name": "CF, Fred Lynn, 145, 21, 105, .331, 10"
       }
     ],
     "goneAnchors": [
@@ -105,6 +105,6 @@
         "name": "LF, Ron Kittle, 145, 35, 100, .254, 8"
       }
     ],
-    "endWaitMs": 12733
+    "endWaitMs": 12572
   }
 }

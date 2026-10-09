@@ -1,6 +1,6 @@
 {
   "schemaVersion": "trace-1",
-  "createdAt": "2026-10-05T16:58:31.931Z",
+  "createdAt": "2026-10-09T04:46:50.658Z",
   "payload": {
     "actions": [
       {
@@ -38,7 +38,7 @@
       "callIndex": 0,
       "agent": "default"
     },
-    "summary": "Tapped Rickey Henderson (bench of 1993 Blue Jays), then the \"1989, OAK\" row. The \"1989 Oakland Athletics\" page opened. Status bar reads \"Rd 9/9, 16 pts, Game complete!\"; a Continue button is shown.",
+    "summary": "Tapped Rickey Henderson (bench) on the 1993 Blue Jays roster, then the \"1989, OAK\" row. The 1989 Oakland Athletics roster opened. Status bar shows Rd 9/9, 16 pts, \"Game complete!\", and a Continue button is visible.",
     "startPath": "com.keithkurak.hofgolf.preview / 1993 Toronto Blue Jays",
     "endPath": "com.keithkurak.hofgolf.preview / 1989 Oakland Athletics",
     "endAnchors": [
@@ -111,6 +111,6 @@
         "name": "LF, Joe Carter, 155, 33, 121, .254, 8"
       }
     ],
-    "endWaitMs": 13220
+    "endWaitMs": 12538
   }
 }

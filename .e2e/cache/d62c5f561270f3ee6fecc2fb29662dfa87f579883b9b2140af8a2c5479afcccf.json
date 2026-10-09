@@ -1,6 +1,6 @@
 {
   "schemaVersion": "trace-1",
-  "createdAt": "2026-10-05T16:58:31.929Z",
+  "createdAt": "2026-10-09T04:46:50.656Z",
   "payload": {
     "actions": [
       {
@@ -32,7 +32,7 @@
       "callIndex": 0,
       "agent": "default"
     },
-    "summary": "Tapped Paul Molitor, then the \"1993, TOR\" row. The \"1993 Toronto Blue Jays\" page opened. The status bar reads \"Rd 9/9, 14 pts\".",
+    "summary": "Tapped Paul Molitor, then the \"1993, TOR\" row. The 1993 Toronto Blue Jays roster opened. The game is at Rd 9/9 with 14 pts.",
     "startPath": "com.keithkurak.hofgolf.preview / 1978 Milwaukee Brewers",
     "endPath": "com.keithkurak.hofgolf.preview / 1993 Toronto Blue Jays",
     "endAnchors": [
@@ -105,6 +105,6 @@
         "name": "LF, Larry Hisle, 142, 34, 115, .290, 10"
       }
     ],
-    "endWaitMs": 12734
+    "endWaitMs": 12629
   }
 }

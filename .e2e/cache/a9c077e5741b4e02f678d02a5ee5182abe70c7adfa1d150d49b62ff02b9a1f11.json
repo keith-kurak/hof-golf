@@ -1,6 +1,6 @@
 {
   "schemaVersion": "trace-1",
-  "createdAt": "2026-10-05T16:58:31.915Z",
+  "createdAt": "2026-10-09T04:46:50.640Z",
   "payload": {
     "actions": [
       {
@@ -32,7 +32,7 @@
       "callIndex": 0,
       "agent": "default"
     },
-    "summary": "Tapped Harold Baines, then the \"1983, CHA\" row. The app opened \"1983 Chicago White Sox\"; the status bar reads \"Rd 4/9, 6 pts\".",
+    "summary": "Tapped Harold Baines, then the \"1983, CHA\" row. The 1983 Chicago White Sox roster page opened. The game moved to Rd 4/9 with 6 pts.",
     "startPath": "com.keithkurak.hofgolf.preview / 1995 Baltimore Orioles",
     "endPath": "com.keithkurak.hofgolf.preview / 1983 Chicago White Sox",
     "endAnchors": [
@@ -105,6 +105,6 @@
         "name": "LF, Brady Anderson, 143, 16, 64, .262, 26"
       }
     ],
-    "endWaitMs": 12701
+    "endWaitMs": 12087
   }
 }

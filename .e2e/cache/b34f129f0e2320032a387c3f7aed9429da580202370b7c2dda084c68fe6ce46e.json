@@ -1,6 +1,6 @@
 {
   "schemaVersion": "trace-1",
-  "createdAt": "2026-10-05T16:58:31.920Z",
+  "createdAt": "2026-10-09T04:46:50.647Z",
   "payload": {
     "actions": [
       {
@@ -32,7 +32,7 @@
       "callIndex": 0,
       "agent": "default"
     },
-    "summary": "Tapped Rod Carew, then the \"1977, MIN\" row. The app opened \"1977 Minnesota Twins\". The status bar reads \"Rd 7/9, 9 pts\".",
+    "summary": "Tapped Rod Carew, then \"1977, MIN\". The 1977 Minnesota Twins roster opened. The game moved to Rd 7/9 with 9 pts (+0 for Carew).",
     "startPath": "com.keithkurak.hofgolf.preview / 1981 California Angels",
     "endPath": "com.keithkurak.hofgolf.preview / 1977 Minnesota Twins",
     "endAnchors": [
@@ -105,6 +105,6 @@
         "name": "LF, Brian Downing, 93, 9, 41, .249, 1"
       }
     ],
-    "endWaitMs": 12534
+    "endWaitMs": 12460
   }
 }

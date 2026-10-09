@@ -1,6 +1,6 @@
 {
   "schemaVersion": "trace-1",
-  "createdAt": "2026-10-05T16:58:31.922Z",
+  "createdAt": "2026-10-09T04:46:50.654Z",
   "payload": {
     "actions": [
       {
@@ -32,7 +32,7 @@
       "callIndex": 0,
       "agent": "default"
     },
-    "summary": "Tapped Larry Hisle, then the \"1978, ML4\" row. The app opened \"1978 Milwaukee Brewers\". The status bar reads \"Rd 8/9, 11 pts\".",
+    "summary": "Tapped Larry Hisle, then \"1978, ML4\". The 1978 Milwaukee Brewers roster opened. The game is at Rd 8/9 with 11 pts.",
     "startPath": "com.keithkurak.hofgolf.preview / 1977 Minnesota Twins",
     "endPath": "com.keithkurak.hofgolf.preview / 1978 Milwaukee Brewers",
     "endAnchors": [
@@ -105,6 +105,6 @@
         "name": "LF, Larry Hisle, 141, 28, 119, .302, 21"
       }
     ],
-    "endWaitMs": 12818
+    "endWaitMs": 12204
   }
 }

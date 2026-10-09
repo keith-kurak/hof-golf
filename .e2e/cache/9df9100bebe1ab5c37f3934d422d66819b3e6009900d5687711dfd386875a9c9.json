@@ -1,6 +1,6 @@
 {
   "schemaVersion": "trace-1",
-  "createdAt": "2026-10-05T16:58:31.908Z",
+  "createdAt": "2026-10-09T04:46:50.633Z",
   "payload": {
     "actions": [
       {
@@ -35,6 +35,11 @@
           "placeholder": "Search teams..."
         },
         "value": "1997 Detroit"
+      },
+      {
+        "name": "tool",
+        "summary": "tool type (run-time value)",
+        "derived": "pixels"
       },
       {
         "name": "type",
@@ -82,7 +87,7 @@
       "callIndex": 0,
       "agent": "default"
     },
-    "summary": "Opened HOF Golf, selected Choose, picked the 1997 Detroit Tigers in the team picker, left Timer on Untimed, and tapped Play. The game screen is now \"1997 Detroit Tigers\" with the status bar \"Rd 1/9, 0 pts\" and the roster listed.",
+    "summary": "Opened HOF Golf, chose \"Choose\", picked 1997 Detroit Tigers via the team picker, left the timer on Untimed, and tapped Play. The game started: \"1997 Detroit Tigers\" roster, Rd 1/9, 0 pts.",
     "startPath": "com.keithkurak.hofgolf.preview",
     "endPath": "com.keithkurak.hofgolf.preview / 1997 Detroit Tigers",
     "endAnchors": [
@@ -127,6 +132,6 @@
         "testId": "SplashScreen"
       }
     ],
-    "endWaitMs": 23066
+    "endWaitMs": 22373
   }
 }

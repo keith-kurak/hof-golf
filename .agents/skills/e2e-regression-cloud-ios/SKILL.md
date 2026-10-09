@@ -38,16 +38,9 @@ Arguments go to `e2e run`. For example, `--video` saves `video/video.mp4` under 
 
 When the run records new agent steps, `.e2e/cache` changes. Commit those files: the EAS workflow replays them, so it seldom needs a model call.
 
-## Known issue: `boot` denied (seen 2026-10-05, e2e 0.17.0, @e2e-dev/mobile 0.9.2, @e2e-dev/eas 0.2.1)
-
-The run stops before any test with `boot failed: This daemon's policy denies the boot command`. `@e2e-dev/mobile` sends `boot` to every device before the run, and the EAS Simulator daemon refuses it, although its simulator is already booted. Check for a newer `@e2e-dev/mobile` or `@e2e-dev/eas` first.
-
-The cache in this repo was recorded with a temporary local edit, outside git: in `node_modules/@e2e-dev/mobile/dist/pool.js` (`warm()`) and `surface.js` (`init()`), the `boot` call ignores only the error that contains `policy denies the boot command`. Ask the user before you make that edit. Bun installs packages as hard links to its global cache (`~/.bun/install/cache`), so an in-place edit also changes the cached copy, and a reinstall does not undo it. Back up both files first and copy the backups back when you are done.
-
-The EAS Workflows run does not have this problem: the macOS worker boots its own simulator.
-
 ## When the test fails
 
 - **Score or round assertion:** the app's scoring changed, or the route data changed. Compare with the route table in the test file before you change the expected values.
 - **Agent step fails:** read `screen.txt` for the failed attempt. A changed label in the app can break an agent step or a locator.
 - **No session:** check `npx eas-cli@latest simulator:availability`.
+- **`boot failed: This daemon's policy denies the boot command`:** an old `@e2e-dev/mobile` (0.9.x). Version 0.10.0 or later fixes it.
