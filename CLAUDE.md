@@ -66,6 +66,7 @@ EAS project owner: `keithco`.
 - `.eas/workflows/e2e-regression.yaml`: runs on the EAS macOS worker when a PR gets the `e2e-regression` label.
 - Model: Claude through a GitHub Copilot login (`npx e2e login github-copilot`). On EAS, the `E2E_OAUTH_CREDENTIALS` secret (preview environment) holds a copy of `~/.config/e2e/oauth.json`. `ANTHROPIC_API_KEY`, if set, wins.
 - `.e2e/cache` is committed: recorded agent steps replay without a model call. Commit changes to it.
+- `tests/agent-device/hof-golf-regression.ad`: the same route as a deterministic agent-device script (no model). `.eas/workflows/agent-device-regression.yaml` runs it on an EAS Simulator session when a PR gets the `agent-device-regression` label. Roster rows are matched by their full label, so a change to a row's text or stats needs a script update.
 
 ## README
 

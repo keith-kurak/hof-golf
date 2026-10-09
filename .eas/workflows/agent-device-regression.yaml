@@ -1,0 +1,110 @@
+name: agent-device regression (iOS, EAS Simulator)
+
+# Plays the HOF Golf regression route with a deterministic agent-device script
+# (tests/agent-device/hof-golf-regression.ad) on an EAS Simulator session, then
+# comments the result on the PR. Same route and score checks as the e2e test,
+# with no model.
+#
+# Does not run on every push. It starts when a PR gets the
+# `agent-device-regression` label. To run it again, remove and add the label.
+# To run it by hand:
+#   npx eas-cli@latest workflow:run .eas/workflows/agent-device-regression.yaml
+#
+# Starting a session needs an Expo access token with EAS Simulator access:
+# EXPO_TOKEN_SIMULATOR if set, else EXPO_TOKEN (secrets in the preview environment).
+
+on:
+  pull_request_labeled:
+    labels: ['agent-device-regression']
+  workflow_dispatch: {}
+
+concurrency:
+  cancel_in_progress: true
+  group: ${{ workflow.filename }}-${{ github.ref }}
+
+jobs:
+  # The test needs a release build of the preview variant with this commit's
+  # JS in it. If an e2e-ios-simulator build has the same native fingerprint,
+  # repack it with the new JS (fast). Otherwise, make a full build.
+  fingerprint:
+    name: Fingerprint
+    type: fingerprint
+    environment: preview # APP_VARIANT=preview, as in the e2e-ios-simulator profile
+
+  get_build:
+    name: Find a build with the same fingerprint
+    needs: [fingerprint]
+    type: get-build
+    params:
+      fingerprint_hash: ${{ needs.fingerprint.outputs.ios_fingerprint_hash }}
+      platform: ios
+      profile: e2e-ios-simulator
+
+  repack_ios:
+    name: Repack with this commit's JS
+    needs: [get_build]
+    if: ${{ needs.get_build.outputs.build_id }}
+    type: repack
+    params:
+      build_id: ${{ needs.get_build.outputs.build_id }}
+
+  build_ios:
+    name: Build iOS Simulator app
+    needs: [get_build]
+    if: ${{ !needs.get_build.outputs.build_id }}
+    type: build
+    params:
+      platform: ios
+      profile: e2e-ios-simulator
+
+  regression_ios:
+    name: Run agent-device regression on EAS Simulator
+    # One of repack_ios and build_ios is skipped; run after whichever ran
+    after: [repack_ios, build_ios]
+    if: ${{ after.repack_ios.status == 'success' || after.build_ios.status == 'success' }}
+    image: sdk-58
+    environment: preview
+    env:
+      BUILD_ID: ${{ after.repack_ios.outputs.build_id || after.build_ios.outputs.build_id }}
+    outputs:
+      session_url: ${{ steps.start.outputs.session_url }}
+    steps:
+      - uses: eas/checkout
+
+      - name: Start an EAS Simulator session
+        id: start
+        run: |
+          export EXPO_TOKEN="${EXPO_TOKEN_SIMULATOR:-$EXPO_TOKEN}"
+          printf '# managed by eas-cli\n' > .env.eas-simulator
+          npx --yes eas-cli@latest simulator:start --platform ios --type agent-device \
+            --build-id "$BUILD_ID" --max-duration-minutes 20 --non-interactive \
+            --name "agent-device regression ${{ github.ref_name }}"
+          URL=$(npx --yes eas-cli@latest simulator:get --json --non-interactive 2>/dev/null |
+            node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s.slice(s.indexOf("{"))).deviceRunSessionUrl||"")}catch{}})')
+          echo "Session page: $URL"
+          set-output session_url "$URL"
+
+      - name: Run the regression script
+        run: |
+          export EXPO_TOKEN="${EXPO_TOKEN_SIMULATOR:-$EXPO_TOKEN}"
+          npx --yes eas-cli@latest simulator:exec \
+            npx agent-device@0.21.23 replay tests/agent-device/hof-golf-regression.ad --platform ios
+
+      - name: Stop the session
+        if: ${{ always() }}
+        run: |
+          export EXPO_TOKEN="${EXPO_TOKEN_SIMULATOR:-$EXPO_TOKEN}"
+          npx --yes eas-cli@latest simulator:stop --non-interactive || true
+
+  comment:
+    name: Comment on PR
+    after: [regression_ios]
+    if: ${{ github.event.pull_request.number }}
+    type: github-comment
+    params:
+      payload: |
+        ## agent-device regression (iOS, EAS Simulator): `${{ after.regression_ios.status }}`
+
+        HOF Golf fixed route from the 1997 Tigers, expected score 16. Deterministic script, no model.
+
+        [Workflow run](${{ workflow.url }}) · [Simulator session](${{ after.regression_ios.outputs.session_url }}) (screen recording and actions)

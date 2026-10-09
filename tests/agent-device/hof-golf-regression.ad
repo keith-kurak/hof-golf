@@ -1,0 +1,88 @@
+# HOF Golf regression, deterministic: the same route as tests/hof-golf-regression.e2e.ts,
+# with no model. Runs against a release build of the preview variant.
+#   agent-device replay tests/agent-device/hof-golf-regression.ad --platform ios
+# Roster rows are matched by their full accessibility label (position, name, stats,
+# and the +N badge). The data is fixed (Lahman database), so the labels are too.
+# `wait text` matches part of a label: the game status bar reads "Rd N/9, P pts, ...".
+
+open com.keithkurak.hofgolf.preview --relaunch
+wait text "Choose a game" 30000
+
+# Start HOF Golf on the 1997 Detroit Tigers, untimed
+find "Six Degrees of Goose" click
+press 'label="Choose"'
+press 'label="Select Team..."'
+fill 'role="text-field"' "1997"
+type "\n"
+press 'label="1997, Detroit Tigers"'
+press 'label="Play"'
+wait text "Rd 1/9, 0 pts" 20000
+
+# Tony Clark -> 2004, NYA: 3 pts
+scroll down --until 'label="1B, Tony Clark, 159, 32, 117, .276, 1"'
+press 'label="1B, Tony Clark, 159, 32, 117, .276, 1"'
+scroll down --until 'label="2004, NYA"'
+press 'label="2004, NYA"'
+wait text "Rd 2/9, 3 pts" 20000
+
+# Mike Mussina -> 1995, BAL: 5 pts
+scroll down --until 'label="P, Mike Mussina, 27, 4.59, 164.2, 132, 0, +1"'
+press 'label="P, Mike Mussina, 27, 4.59, 164.2, 132, 0, +1"'
+scroll down --until 'label="1995, BAL"'
+press 'label="1995, BAL"'
+wait text "Rd 3/9, 5 pts" 20000
+
+# Harold Baines -> 1983, CHA: 6 pts
+scroll down --until 'label="DH, Harold Baines, 127, 24, 63, .299, 0, +1"'
+press 'label="DH, Harold Baines, 127, 24, 63, .299, 0, +1"'
+scroll down --until 'label="1983, CHA"'
+press 'label="1983, CHA"'
+wait text "Rd 4/9, 6 pts" 20000
+
+# Carlton Fisk -> 1975, BOS: 8 pts
+scroll down --until 'label="C, Carlton Fisk, 138, 26, 86, .289, 9, +1"'
+press 'label="C, Carlton Fisk, 138, 26, 86, .289, 9, +1"'
+scroll down --until 'label="1975, BOS"'
+press 'label="1975, BOS"'
+wait text "Rd 5/9, 8 pts" 20000
+
+# Fred Lynn -> 1981, CAL: 9 pts
+scroll down --until 'label="CF, Fred Lynn, 145, 21, 105, .331, 10"'
+press 'label="CF, Fred Lynn, 145, 21, 105, .331, 10"'
+scroll down --until 'label="1981, CAL"'
+press 'label="1981, CAL"'
+wait text "Rd 6/9, 9 pts" 20000
+
+# Rod Carew -> 1977, MIN: 9 pts
+scroll down --until 'label="1B, Rod Carew, 93, 2, 21, .305, 16, +1"'
+press 'label="1B, Rod Carew, 93, 2, 21, .305, 16, +1"'
+scroll down --until 'label="1977, MIN"'
+press 'label="1977, MIN"'
+wait text "Rd 7/9, 9 pts" 20000
+
+# Larry Hisle -> 1978, ML4: 11 pts
+scroll down --until 'label="LF, Larry Hisle, 141, 28, 119, .302, 21"'
+press 'label="LF, Larry Hisle, 141, 28, 119, .302, 21"'
+scroll down --until 'label="1978, ML4"'
+press 'label="1978, ML4"'
+wait text "Rd 8/9, 11 pts" 20000
+
+# Paul Molitor -> 1993, TOR: 14 pts
+scroll down --until 'label="2B, Paul Molitor, 125, 6, 45, .273, 30, +1"'
+press 'label="2B, Paul Molitor, 125, 6, 45, .273, 30, +1"'
+scroll down --until 'label="1993, TOR"'
+press 'label="1993, TOR"'
+wait text "Rd 9/9, 14 pts" 20000
+
+# Rickey Henderson -> 1989, OAK: 16 pts
+scroll down --until 'label="LF, Rickey Henderson, 44, 4, 12, .215, 22, +1"'
+press 'label="LF, Rickey Henderson, 44, 4, 12, .215, 22, +1"'
+scroll down --until 'label="1989, OAK"'
+press 'label="1989, OAK"'
+wait text "Rd 9/9, 16 pts" 20000
+
+# The last pick ends the game
+wait text "Game complete!"
+press 'label="Continue"'
+wait 'id="final-score"' 20000
+is text 'id="final-score"' 16
