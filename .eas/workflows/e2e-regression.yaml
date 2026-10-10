@@ -77,9 +77,26 @@ jobs:
           build_id: ${{ after.repack_ios.outputs.build_id || after.build_ios.outputs.build_id }}
           extensions: [app]
 
+      # The .e2e/cache steps were recorded on an EAS Simulator iPhone 17. On
+      # another device the replay can miss, and on the worker's iPhone 18 Pro
+      # the team picker sheet reported its rows as covered. Prefer an iPhone 17.
+      # e2e drives whichever simulator is booted, so shut down the others first.
       - name: Boot a simulator and install the app
         run: |
-          UDID=$(xcrun simctl list devices available --json | node -e "const d=JSON.parse(require('fs').readFileSync(0,'utf8')).devices; const all=Object.values(d).flat(); console.log(all.find(x=>x.name.startsWith('iPhone')).udid)")
+          xcrun simctl list devices available --json > /tmp/devices.json
+          node -e '
+            const d = JSON.parse(require("fs").readFileSync("/tmp/devices.json", "utf8")).devices;
+            for (const [runtime, list] of Object.entries(d))
+              for (const x of list) if (x.name.startsWith("iPhone")) console.log(`  ${x.name}  ${runtime.split(".").pop()}  ${x.state}`);
+          '
+          UDID=$(node -e '
+            const d = JSON.parse(require("fs").readFileSync("/tmp/devices.json", "utf8")).devices;
+            const all = Object.values(d).flat().filter((x) => x.name.startsWith("iPhone"));
+            const pick = all.find((x) => x.name === "iPhone 17") ?? all[0];
+            console.log(pick.udid);
+          ')
+          echo "Using $(xcrun simctl list devices | grep "$UDID")"
+          xcrun simctl shutdown all
           xcrun simctl boot "$UDID"
           xcrun simctl bootstatus "$UDID" -b
           xcrun simctl install "$UDID" "${{ steps.download_build.outputs.artifact_path }}"
