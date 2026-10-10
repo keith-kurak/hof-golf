@@ -6,7 +6,8 @@ name: agent-device regression (iOS, EAS Simulator)
 # with no model.
 #
 # Does not run on every push. It starts when a PR gets the
-# `agent-device-regression` label. To run it again, remove and add the label.
+# `agent-device-regression` label. The workflow removes the label when it ends,
+# so add it again to rerun.
 # To run it by hand:
 #   npx eas-cli@latest workflow:run .eas/workflows/agent-device-regression.yaml
 #
@@ -111,3 +112,15 @@ jobs:
         HOF Golf fixed route from the 1997 Tigers, expected score 16. Deterministic script, no model.
 
         [Workflow run](${{ workflow.url }}) · [Simulator session](${{ after.regression_ios.outputs.session_url }}) (screen recording and actions)
+
+  # Remove the label, so adding it again starts a new run
+  remove_label:
+    name: Remove the agent-device-regression label
+    after: [regression_ios, comment]
+    if: ${{ github.event.pull_request.number }}
+    environment: preview # GH_TOKEN
+    steps:
+      - uses: eas/checkout
+      - uses: ./.eas/functions/remove-pr-label
+        with:
+          label: agent-device-regression

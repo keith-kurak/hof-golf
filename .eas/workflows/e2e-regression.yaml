@@ -4,7 +4,8 @@ name: e2e regression (iOS)
 # iOS Simulator on the EAS macOS worker, then comments the result on the PR.
 #
 # Does not run on every push. It starts when a PR gets the `e2e-regression`
-# label. To run it again, remove and add the label. To run it by hand:
+# label. The workflow removes the label when it ends, so add it again to rerun.
+# To run it by hand:
 #   npx eas-cli@latest workflow:run .eas/workflows/e2e-regression.yaml
 #
 # Agent steps replay from the committed .e2e/cache with no model call. A step
@@ -107,3 +108,15 @@ jobs:
         HOF Golf fixed route from the 1997 Tigers, expected score 16.
 
         [Workflow run](${{ workflow.url }}) · the report, the video, and failure screenshots are under **Artifacts**.
+
+  # Remove the label, so adding it again starts a new run
+  remove_label:
+    name: Remove the e2e-regression label
+    after: [e2e_ios, comment]
+    if: ${{ github.event.pull_request.number }}
+    environment: preview # GH_TOKEN
+    steps:
+      - uses: eas/checkout
+      - uses: ./.eas/functions/remove-pr-label
+        with:
+          label: e2e-regression
