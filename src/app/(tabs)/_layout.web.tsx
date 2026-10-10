@@ -9,7 +9,7 @@ export default function TabLayout() {
         options={{
           title: "Golf",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="game-controller" size={size} color={color} />
+            <Ionicons name="game-controller" size={size} color={color as string} />
           ),
         }}
       />
@@ -18,7 +18,7 @@ export default function TabLayout() {
         options={{
           title: "History",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="time" size={size} color={color} />
+            <Ionicons name="time" size={size} color={color as string} />
           ),
         }}
       />
@@ -27,7 +27,7 @@ export default function TabLayout() {
         options={{
           title: "Browse",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="business" size={size} color={color} />
+            <Ionicons name="business" size={size} color={color as string} />
           ),
         }}
       />

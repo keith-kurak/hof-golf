@@ -59,6 +59,7 @@ export default function ModeDetailScreen() {
             teamID: currentRound.teamID,
             teamName: currentRound.teamName,
             year: String(currentRound.yearID),
+            game: "1",
           },
         });
       }
@@ -418,7 +419,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   countdownOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "rgba(0, 0, 0, 0.85)",
     justifyContent: "center",
     alignItems: "center",
