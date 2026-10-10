@@ -71,6 +71,9 @@ jobs:
     steps:
       - uses: eas/checkout
 
+      # eas-cli reads the app config, which loads config plugins from node_modules
+      - uses: eas/install_node_modules
+
       - name: Start an EAS Simulator session
         id: start
         run: |
