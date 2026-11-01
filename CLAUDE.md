@@ -10,6 +10,7 @@ Baseball Hall of Fame guessing/trivia game built with Expo and React Native. Ear
 - **Language**: TypeScript (strict mode)
 - **UI**: React Native 0.88, React 19.3, react-native-reanimated, react-native-gesture-handler
 - **Data**: Lahman Baseball Database (CSV files converted to SQLite via Python/pandas)
+  - `plugins/with-lahman-database.js` embeds `lahman/db/database.sqlite` in the native binary (iOS bundle resource, Android asset) under a hashed name. `src/components/lahman-database-provider.tsx` copies it into the SQLite directory on first launch. Web still imports it as a Metro asset. After a database update, make new builds: the fingerprint changes.
 - **Package Manager**: Bun (`bun.lock` present)
 
 ## Project Structure

@@ -4,10 +4,10 @@ import {
   ThemeProvider,
 } from "expo-router/react-navigation";
 import { Stack } from "expo-router";
-import { SQLiteProvider } from "expo-sqlite";
 import React from "react";
 import { Platform, StyleSheet, useColorScheme, View } from "react-native";
 
+import { LahmanDatabaseProvider } from "@/components/lahman-database-provider";
 import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
 
 export const unstable_settings = {
@@ -20,10 +20,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   const content = (
-    <SQLiteProvider
-      databaseName="test.db"
-      assetSource={{ assetId: require("../../lahman/db/database.sqlite") }}
-    >
+    <LahmanDatabaseProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -60,7 +57,7 @@ export default function RootLayout() {
           />
         </Stack>
       </ThemeProvider>
-    </SQLiteProvider>
+    </LahmanDatabaseProvider>
   );
 
   if (!isWeb) return content;
