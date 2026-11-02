@@ -34,6 +34,7 @@ export default function GameScreen() {
           return (
             <Pressable
               key={mode.id}
+              testID={`mode-${mode.id}`}
               onPress={() =>
                 router.push({
                   pathname: "/game/[modeId]",

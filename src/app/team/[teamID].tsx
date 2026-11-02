@@ -27,6 +27,15 @@ import { formatAvg, formatEra, formatIP, statVal } from "@/util/stats";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const TWO_WAY_SET = new Set(twoWayPlayers);
+const NO_BATTERS: RawBatter[] = [];
+const NO_PITCHERS: Pitcher[] = [];
+
+type LoadedRoster = {
+  key: string;
+  teamInfo: TeamInfo | null;
+  batters: RawBatter[];
+  pitchers: Pitcher[];
+};
 const activeModes = gameModes as GameMode[];
 
 // ---------------------------------------------------------------------------
@@ -289,9 +298,7 @@ export default function TeamRosterScreen() {
   const db = useSQLiteContext();
   const router = useRouter();
   const [browseYear, setYear] = useState(yearParam ? Number(yearParam) : 2025);
-  const [teamInfo, setTeamInfo] = useState<TeamInfo | null>(null);
-  const [rawBatters, setRawBatters] = useState<RawBatter[]>([]);
-  const [rawPitchers, setRawPitchers] = useState<Pitcher[]>([]);
+  const [roster, setRoster] = useState<LoadedRoster | null>(null);
 
   const insets = useSafeAreaInsets();
 
@@ -320,17 +327,28 @@ export default function TeamRosterScreen() {
   const teamID = gameRound?.teamID ?? teamIDParam;
   const year = gameRound?.yearID ?? browseYear;
 
+  // The roster for another team (the previous round, or the previous year)
+  // is never shown: it stays empty until this team's roster has loaded.
+  const rosterKey = `${year}-${teamID}`;
   useEffect(() => {
-    db.getFirstAsync<TeamInfo>(TEAM_INFO_QUERY, [year, teamID]).then(
-      setTeamInfo,
-    );
-    db.getAllAsync<RawBatter>(BATTERS_QUERY, [year, teamID]).then(
-      setRawBatters,
-    );
-    db.getAllAsync<Pitcher>(PITCHERS_QUERY, [year, teamID]).then(
-      setRawPitchers,
-    );
+    let cancelled = false;
+    Promise.all([
+      db.getFirstAsync<TeamInfo>(TEAM_INFO_QUERY, [year, teamID]),
+      db.getAllAsync<RawBatter>(BATTERS_QUERY, [year, teamID]),
+      db.getAllAsync<Pitcher>(PITCHERS_QUERY, [year, teamID]),
+    ]).then(([teamInfo, batters, pitchers]) => {
+      if (!cancelled) {
+        setRoster({ key: `${year}-${teamID}`, teamInfo, batters, pitchers });
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [db, teamID, year]);
+  const currentRoster = roster?.key === rosterKey ? roster : null;
+  const teamInfo = currentRoster?.teamInfo ?? null;
+  const rawBatters = currentRoster?.batters ?? NO_BATTERS;
+  const rawPitchers = currentRoster?.pitchers ?? NO_PITCHERS;
 
   const sections: Section[] = useMemo(() => {
     // Pitchers always go in the pitchers group; exclude them from batters
@@ -478,6 +496,8 @@ export default function TeamRosterScreen() {
       )}
       <SectionList
         key={`${teamID}-${year}`}
+        // Set once this team's roster has loaded (tests wait for it)
+        testID={currentRoster ? `roster-${rosterKey}` : undefined}
         sections={sections}
         keyExtractor={(item) => item.playerID}
         contentContainerStyle={styles.list}
@@ -533,7 +553,10 @@ export default function TeamRosterScreen() {
           if (isBatterSection(section.title)) {
             const b = item as Batter;
             return (
-              <Pressable onPress={() => navigateToPlayer(b.playerID, name)}>
+              <Pressable
+                testID={`player-${b.playerID}`}
+                onPress={() => navigateToPlayer(b.playerID, name)}
+              >
                 <ThemedView
                   type="backgroundElement"
                   style={[
@@ -611,7 +634,10 @@ export default function TeamRosterScreen() {
           }
           const p = item as Pitcher;
           return (
-            <Pressable onPress={() => navigateToPlayer(p.playerID, name)}>
+            <Pressable
+              testID={`player-${p.playerID}`}
+              onPress={() => navigateToPlayer(p.playerID, name)}
+            >
               <ThemedView
                 type="backgroundElement"
                 style={[
@@ -693,6 +719,7 @@ export default function TeamRosterScreen() {
           style={[styles.continueSection, { paddingBottom: insets.bottom }]}
         >
           <Pressable
+            testID="game-complete-continue"
             onPress={handleContinue}
             style={({ pressed }) => [
               styles.continueButton,

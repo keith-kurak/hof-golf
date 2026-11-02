@@ -49,8 +49,7 @@ export default function PickTeamScreen() {
     const q = search.toLowerCase();
     return teams.filter(
       (t) =>
-        t.teamName.toLowerCase().includes(q) ||
-        String(t.yearID).includes(q),
+        t.teamName.toLowerCase().includes(q) || String(t.yearID).includes(q),
     );
   }, [teams, search]);
 
@@ -72,6 +71,7 @@ export default function PickTeamScreen() {
       <Stack.Screen options={{ title: "Choose Starting Team" }} />
       <View style={styles.searchContainer}>
         <TextInput
+          testID="team-search"
           style={[
             styles.searchInput,
             { color: theme.text, borderColor: theme.textSecondary },
@@ -95,6 +95,7 @@ export default function PickTeamScreen() {
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <Pressable
+              testID={`pick-team-${item.yearID}-${item.teamID}`}
               onPress={() => handlePick(item)}
               style={({ pressed }) => pressed && styles.pressed}
             >

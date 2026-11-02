@@ -330,6 +330,7 @@ export default function PlayerDetailScreen() {
           ) : (
             <View key={row.key} style={styles.rowLeft}>
               <Pressable
+                testID={`${title.toLowerCase()}-season-${row.yearID}-${row.teamID}`}
                 onPress={() => navigateToTeam(row)}
                 disabled={isRowDisabled(row)}
                 style={({ pressed }) => pressed && styles.pressed}

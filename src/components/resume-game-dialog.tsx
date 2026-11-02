@@ -83,6 +83,7 @@ export function ResumeGameDialog({ visible }: Props) {
           </ThemedText>
 
           <Pressable
+            testID="resume-continue"
             onPress={handleContinue}
             style={({ pressed }) => [
               styles.continueButton,
@@ -96,6 +97,7 @@ export function ResumeGameDialog({ visible }: Props) {
           </Pressable>
 
           <Pressable
+            testID="resume-abandon"
             onPress={abandonGame}
             style={({ pressed }) => [
               styles.abandonButton,

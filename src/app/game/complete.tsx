@@ -79,6 +79,7 @@ export default function GameCompleteScreen() {
         </View>
 
         <Pressable
+          testID="game-complete-done"
           onPress={() => router.dismissAll()}
           style={({ pressed }) => [
             styles.doneButton,

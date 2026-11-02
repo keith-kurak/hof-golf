@@ -193,6 +193,7 @@ export default function ModeDetailScreen() {
             <ThemedText themeColor="textSecondary">Starting team</ThemedText>
             <View style={styles.toggleGroup}>
               <Pressable
+                testID="start-random"
                 onPress={() => setChooseTeam(false)}
                 style={[
                   styles.toggleButton,
@@ -210,6 +211,7 @@ export default function ModeDetailScreen() {
                 </ThemedText>
               </Pressable>
               <Pressable
+                testID="start-choose"
                 onPress={() => setChooseTeam(true)}
                 style={[
                   styles.toggleButton,
@@ -232,6 +234,7 @@ export default function ModeDetailScreen() {
           {chooseTeam && (
             <View style={styles.pickTeamRow}>
               <Pressable
+                testID="select-team"
                 onPress={() =>
                   router.push({
                     pathname: "/game/pick-team",
@@ -261,6 +264,7 @@ export default function ModeDetailScreen() {
             <ThemedText themeColor="textSecondary">Timer</ThemedText>
             <View style={styles.toggleGroup}>
               <Pressable
+                testID="timer-untimed"
                 onPress={() => setTimed(false)}
                 style={[
                   styles.toggleButton,
@@ -278,6 +282,7 @@ export default function ModeDetailScreen() {
                 </ThemedText>
               </Pressable>
               <Pressable
+                testID="timer-timed"
                 onPress={() => setTimed(true)}
                 style={[
                   styles.toggleButton,
@@ -300,6 +305,7 @@ export default function ModeDetailScreen() {
 
       {/* Play button */}
       <Pressable
+        testID="play"
         onPress={handlePlay}
         disabled={loading || countdown !== null}
         style={({ pressed }) => [
