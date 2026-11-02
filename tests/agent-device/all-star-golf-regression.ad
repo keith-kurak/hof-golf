@@ -1,0 +1,143 @@
+# All-Star Golf regression: a fixed route with known scores, no model.
+#
+# Start state: the app is open on the "Choose a game..." screen with no game
+# in progress. The script ends on the same screen, so scripts can run one
+# after another or alone.
+#
+# Elements are found by testID, so stats in row labels do not matter. The
+# scripts scroll to rows instead of typing in search fields. Before a scroll,
+# they wait for the data to load: roster-<year>-<team> on the team screen,
+# the season row on the player page (<batting|pitching>-season-<year>-<team>).
+# After a scroll, they wait for the list to stop moving: on iOS, a tap while
+# the list still moves only stops the scroll.
+#
+#   agent-device replay tests/agent-device/all-star-golf-regression.ad --platform ios \
+#     -e APP=com.keithkurak.hofgolf.preview --timeout 900000
+#
+# Route and expected points are generated from the Lahman database. Final score: 825.
+
+open ${APP}
+wait text "Choose a game" 30000
+
+# Start All-Star Golf on the 2025 Chicago White Sox, untimed
+press 'id="mode-all-star-golf-2026"'
+press 'id="start-choose"'
+press 'id="select-team"'
+scroll down 0.8 --until 'id="pick-team-2025-CHA"' --max-passes 80
+wait stable 500 10000
+press 'id="pick-team-2025-CHA"'
+# The picker sheet has closed when the mode screen shows the team
+wait text "2025 Chicago White Sox" 20000
+press 'id="timer-untimed"'
+press 'id="play"'
+wait text "Rd 1/9, 25 pts" 20000
+wait 'id="roster-2025-CHA"' 20000
+
+# Andrew Benintendi -> 2018 Boston Red Sox: 120 pts
+scroll down 0.8 --until 'id="player-beninan01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-beninan01"'
+wait 'id="batting-season-2018-BOS"' 20000
+scroll down 0.8 --until 'id="batting-season-2018-BOS"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-2018-BOS"'
+wait text "Rd 2/9, 120 pts" 20000
+wait 'id="roster-2018-BOS"' 20000
+
+# David Price -> 2015 Toronto Blue Jays: 208 pts
+scroll down 0.8 --until 'id="player-priceda01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-priceda01"'
+wait 'id="pitching-season-2015-TOR"' 20000
+scroll down 0.8 --until 'id="pitching-season-2015-TOR"' --max-passes 40
+wait stable 500 10000
+press 'id="pitching-season-2015-TOR"'
+wait text "Rd 3/9, 208 pts" 20000
+wait 'id="roster-2015-TOR"' 20000
+
+# Russell Martin -> 2006 Los Angeles Dodgers: 298 pts
+scroll down 0.8 --until 'id="player-martiru01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-martiru01"'
+wait 'id="batting-season-2006-LAN"' 20000
+scroll down 0.8 --until 'id="batting-season-2006-LAN"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-2006-LAN"'
+wait text "Rd 4/9, 298 pts" 20000
+wait 'id="roster-2006-LAN"' 20000
+
+# Aaron Sele -> 2005 Seattle Mariners: 385 pts
+scroll down 0.8 --until 'id="player-seleaa01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-seleaa01"'
+wait 'id="pitching-season-2005-SEA"' 20000
+scroll down 0.8 --until 'id="pitching-season-2005-SEA"' --max-passes 40
+wait stable 500 10000
+press 'id="pitching-season-2005-SEA"'
+wait text "Rd 5/9, 385 pts" 20000
+wait 'id="roster-2005-SEA"' 20000
+
+# Jeff Nelson -> 1996 New York Yankees: 469 pts
+scroll down 0.8 --until 'id="player-nelsoje01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-nelsoje01"'
+wait 'id="pitching-season-1996-NYA"' 20000
+scroll down 0.8 --until 'id="pitching-season-1996-NYA"' --max-passes 40
+wait stable 500 10000
+press 'id="pitching-season-1996-NYA"'
+wait text "Rd 6/9, 469 pts" 20000
+wait 'id="roster-1996-NYA"' 20000
+
+# Mike Aldrete -> 1988 San Francisco Giants: 555 pts
+scroll down 0.8 --until 'id="player-aldremi01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-aldremi01"'
+wait 'id="batting-season-1988-SFN"' 20000
+scroll down 0.8 --until 'id="batting-season-1988-SFN"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1988-SFN"'
+wait text "Rd 7/9, 555 pts" 20000
+wait 'id="roster-1988-SFN"' 20000
+
+# Ron Davis -> 1979 New York Yankees: 644 pts
+scroll down 0.8 --until 'id="player-davisro02"' --max-passes 40
+wait stable 500 10000
+press 'id="player-davisro02"'
+wait 'id="pitching-season-1979-NYA"' 20000
+scroll down 0.8 --until 'id="pitching-season-1979-NYA"' --max-passes 40
+wait stable 500 10000
+press 'id="pitching-season-1979-NYA"'
+wait text "Rd 8/9, 644 pts" 20000
+wait 'id="roster-1979-NYA"' 20000
+
+# Tommy John -> 1972 Los Angeles Dodgers: 730 pts
+scroll down 0.8 --until 'id="player-johnto01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-johnto01"'
+wait 'id="pitching-season-1972-LAN"' 20000
+scroll down 0.8 --until 'id="pitching-season-1972-LAN"' --max-passes 40
+wait stable 500 10000
+press 'id="pitching-season-1972-LAN"'
+wait text "Rd 9/9, 730 pts" 20000
+wait 'id="roster-1972-LAN"' 20000
+
+# Hoyt Wilhelm -> 1958 Cleveland Indians: 825 pts
+scroll down 0.8 --until 'id="player-wilheho01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-wilheho01"'
+wait 'id="pitching-season-1958-CLE"' 20000
+scroll down 0.8 --until 'id="pitching-season-1958-CLE"' --max-passes 40
+wait stable 500 10000
+press 'id="pitching-season-1958-CLE"'
+wait text "Rd 9/9, 825 pts" 20000
+wait 'id="roster-1958-CLE"' 20000
+
+# The last pick ends the game
+wait text "Game complete!"
+press 'id="game-complete-continue"'
+wait 'id="final-score"' 20000
+is text 'id="final-score"' 825
+
+# Back to the start screen
+press 'id="game-complete-done"'
+wait text "Choose a game" 20000

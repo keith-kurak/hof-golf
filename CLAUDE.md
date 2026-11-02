@@ -67,7 +67,7 @@ EAS project owner: `keithco`.
 - `.eas/workflows/e2e-regression.yaml`: runs on the EAS macOS worker when a PR gets the `e2e-regression` label.
 - Model: Claude through a GitHub Copilot login (`npx e2e login github-copilot`). On EAS, the `E2E_OAUTH_CREDENTIALS` secret (preview environment) holds a copy of `~/.config/e2e/oauth.json`. `ANTHROPIC_API_KEY`, if set, wins.
 - `.e2e/cache` is committed: recorded agent steps replay without a model call. Commit changes to it.
-- `tests/agent-device/hof-golf-regression.ad`: the same route as a deterministic agent-device script (no model). `.eas/workflows/agent-device-regression.yaml` runs it on an EAS Simulator session when a PR gets the `agent-device-regression` label. Roster rows are matched by their full label, so a change to a row's text or stats needs a script update.
+- `tests/agent-device/*-golf-regression.ad` (HOF, All-Star, Manager): fixed routes with known scores as deterministic agent-device scripts (no model). Each starts and ends on the "Choose a game..." screen, so they run alone or in sequence. They find elements by testID (`mode-*`, `pick-team-*`, `player-*`, `<batting|pitching>-season-*`, `roster-<year>-<team>`) and scroll instead of typing. Run one: `agent-device replay <file> --platform ios -e APP=<bundle id> --timeout 1200000` (agent-device 0.21.35+ for `--max-passes`). `.eas/workflows/agent-device-regression.yaml` runs all three on an EAS Simulator session when a PR gets the `agent-device-regression` label.
 - Label-triggered workflows end with a `remove_label` job that calls `.eas/functions/remove-pr-label` (uses the `GH_TOKEN` EAS secret), so adding the label again starts a new run. Use the same function for any new label-triggered workflow.
 
 ## README

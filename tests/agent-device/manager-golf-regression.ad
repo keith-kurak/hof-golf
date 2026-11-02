@@ -1,0 +1,143 @@
+# Manager Golf regression: a fixed route with known scores, no model.
+#
+# Start state: the app is open on the "Choose a game..." screen with no game
+# in progress. The script ends on the same screen, so scripts can run one
+# after another or alone.
+#
+# Elements are found by testID, so stats in row labels do not matter. The
+# scripts scroll to rows instead of typing in search fields. Before a scroll,
+# they wait for the data to load: roster-<year>-<team> on the team screen,
+# the season row on the player page (<batting|pitching>-season-<year>-<team>).
+# After a scroll, they wait for the list to stop moving: on iOS, a tap while
+# the list still moves only stops the scroll.
+#
+#   agent-device replay tests/agent-device/manager-golf-regression.ad --platform ios \
+#     -e APP=com.keithkurak.hofgolf.preview --timeout 900000
+#
+# Route and expected points are generated from the Lahman database. Final score: 53.
+
+open ${APP}
+wait text "Choose a game" 30000
+
+# Start Manager Golf on the 2025 New York Yankees, untimed
+press 'id="mode-manager-golf-2026"'
+press 'id="start-choose"'
+press 'id="select-team"'
+scroll down 0.8 --until 'id="pick-team-2025-NYA"' --max-passes 80
+wait stable 500 10000
+press 'id="pick-team-2025-NYA"'
+# The picker sheet has closed when the mode screen shows the team
+wait text "2025 New York Yankees" 20000
+press 'id="timer-untimed"'
+press 'id="play"'
+wait text "Rd 1/9, 0 pts" 20000
+wait 'id="roster-2025-NYA"' 20000
+
+# Carlos Carrasco -> 2010 Cleveland Indians: 2 pts
+scroll down 0.8 --until 'id="player-carraca01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-carraca01"'
+wait 'id="pitching-season-2010-CLE"' 20000
+scroll down 0.8 --until 'id="pitching-season-2010-CLE"' --max-passes 40
+wait stable 500 10000
+press 'id="pitching-season-2010-CLE"'
+wait text "Rd 2/9, 2 pts" 20000
+wait 'id="roster-2010-CLE"' 20000
+
+# Justin Masterson -> 2008 Boston Red Sox: 6 pts
+scroll down 0.8 --until 'id="player-masteju01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-masteju01"'
+wait 'id="pitching-season-2008-BOS"' 20000
+scroll down 0.8 --until 'id="pitching-season-2008-BOS"' --max-passes 40
+wait stable 500 10000
+press 'id="pitching-season-2008-BOS"'
+wait text "Rd 3/9, 6 pts" 20000
+wait 'id="roster-2008-BOS"' 20000
+
+# Manny Ramirez -> 1995 Cleveland Indians: 11 pts
+scroll down 0.8 --until 'id="player-ramirma02"' --max-passes 40
+wait stable 500 10000
+press 'id="player-ramirma02"'
+wait 'id="batting-season-1995-CLE"' 20000
+scroll down 0.8 --until 'id="batting-season-1995-CLE"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1995-CLE"'
+wait text "Rd 4/9, 11 pts" 20000
+wait 'id="roster-1995-CLE"' 20000
+
+# Dave Winfield -> 1982 New York Yankees: 18 pts
+scroll down 0.8 --until 'id="player-winfida01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-winfida01"'
+wait 'id="batting-season-1982-NYA"' 20000
+scroll down 0.8 --until 'id="batting-season-1982-NYA"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1982-NYA"'
+wait text "Rd 5/9, 18 pts" 20000
+wait 'id="roster-1982-NYA"' 20000
+
+# Barry Foote -> 1977 Montreal Expos: 24 pts
+scroll down 0.8 --until 'id="player-footeba01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-footeba01"'
+wait 'id="batting-season-1977-MON"' 20000
+scroll down 0.8 --until 'id="batting-season-1977-MON"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1977-MON"'
+wait text "Rd 6/9, 24 pts" 20000
+wait 'id="roster-1977-MON"' 20000
+
+# Tony Perez -> 1964 Cincinnati Reds: 30 pts
+scroll down 0.8 --until 'id="player-perezto01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-perezto01"'
+wait 'id="batting-season-1964-CIN"' 20000
+scroll down 0.8 --until 'id="batting-season-1964-CIN"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1964-CIN"'
+wait text "Rd 7/9, 30 pts" 20000
+wait 'id="roster-1964-CIN"' 20000
+
+# Joey Jay -> 1959 Milwaukee Braves: 38 pts
+scroll down 0.8 --until 'id="player-jayjo01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-jayjo01"'
+wait 'id="pitching-season-1959-ML1"' 20000
+scroll down 0.8 --until 'id="pitching-season-1959-ML1"' --max-passes 40
+wait stable 500 10000
+press 'id="pitching-season-1959-ML1"'
+wait text "Rd 8/9, 38 pts" 20000
+wait 'id="roster-1959-ML1"' 20000
+
+# Red Schoendienst -> 1956 St. Louis Cardinals: 46 pts
+scroll down 0.8 --until 'id="player-schoere01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-schoere01"'
+wait 'id="batting-season-1956-SLN"' 20000
+scroll down 0.8 --until 'id="batting-season-1956-SLN"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1956-SLN"'
+wait text "Rd 9/9, 46 pts" 20000
+wait 'id="roster-1956-SLN"' 20000
+
+# Wally Moon -> 1959 Los Angeles Dodgers: 53 pts
+scroll down 0.8 --until 'id="player-moonwa01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-moonwa01"'
+wait 'id="batting-season-1959-LAN"' 20000
+scroll down 0.8 --until 'id="batting-season-1959-LAN"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1959-LAN"'
+wait text "Rd 9/9, 53 pts" 20000
+wait 'id="roster-1959-LAN"' 20000
+
+# The last pick ends the game
+wait text "Game complete!"
+press 'id="game-complete-continue"'
+wait 'id="final-score"' 20000
+is text 'id="final-score"' 53
+
+# Back to the start screen
+press 'id="game-complete-done"'
+wait text "Choose a game" 20000

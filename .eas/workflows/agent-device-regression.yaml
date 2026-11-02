@@ -1,9 +1,9 @@
 name: agent-device regression (iOS, EAS Simulator)
 
-# Plays the HOF Golf regression route with a deterministic agent-device script
-# (tests/agent-device/hof-golf-regression.ad) on an EAS Simulator session, then
-# comments the result on the PR. Same route and score checks as the e2e test,
-# with no model.
+# Plays fixed HOF Golf, All-Star Golf, and Manager Golf routes with
+# deterministic agent-device scripts (tests/agent-device/*-golf-regression.ad)
+# on an EAS Simulator session, then comments the result on the PR. No model.
+# Each script starts and ends on the "Choose a game..." screen.
 #
 # Does not run on every push. It starts when a PR gets the
 # `agent-device-regression` label. The workflow removes the label when it ends,
@@ -81,18 +81,24 @@ jobs:
           export EXPO_TOKEN="${EXPO_TOKEN_SIMULATOR:-$EXPO_TOKEN}"
           printf '# managed by eas-cli\n' > .env.eas-simulator
           npx --yes eas-cli@latest simulator:start --platform ios --type agent-device \
-            --build-id "$BUILD_ID" --max-duration-minutes 20 --non-interactive \
+            --build-id "$BUILD_ID" --max-duration-minutes 30 --non-interactive \
             --name "agent-device regression ${{ github.ref_name }}"
           URL=$(npx --yes eas-cli@latest simulator:get --json --non-interactive 2>/dev/null |
             node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s.slice(s.indexOf("{"))).deviceRunSessionUrl||"")}catch{}})')
           echo "Session page: $URL"
           set-output session_url "$URL"
 
-      - name: Run the regression script
+      # A failed script leaves a game in progress, so the next script could not
+      # start: stop at the first failure.
+      - name: Run the regression scripts
         run: |
           export EXPO_TOKEN="${EXPO_TOKEN_SIMULATOR:-$EXPO_TOKEN}"
-          npx --yes eas-cli@latest simulator:exec \
-            npx agent-device@0.21.23 replay tests/agent-device/hof-golf-regression.ad --platform ios
+          for flow in hof all-star manager; do
+            echo "=== $flow-golf-regression.ad"
+            npx --yes eas-cli@latest simulator:exec npx agent-device@0.21.35 \
+              replay "tests/agent-device/$flow-golf-regression.ad" --platform ios \
+              -e APP=com.keithkurak.hofgolf.preview --timeout 1200000
+          done
 
       - name: Stop the session
         if: ${{ always() }}
@@ -109,7 +115,7 @@ jobs:
       payload: |
         ## agent-device regression (iOS, EAS Simulator): `${{ after.regression_ios.status }}`
 
-        HOF Golf fixed route from the 1997 Tigers, expected score 16. Deterministic script, no model.
+        Fixed routes, deterministic scripts, no model: HOF Golf from the 1997 Tigers (16), All-Star Golf from the 2025 White Sox (825), Manager Golf from the 2025 Yankees (53).
 
         [Workflow run](${{ workflow.url }}) · [Simulator session](${{ after.regression_ios.outputs.session_url }}) (screen recording and actions)
 

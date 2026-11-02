@@ -14,17 +14,18 @@ name: Remove PR label
 inputs:
   - name: label
     required: true
+  # Optional overrides. By default the step reads both from the triggering event.
+  # (An input default of github.event.pull_request.number is a number, and
+  # inputs are strings, so the step reads it in its script instead.)
   - name: pr_number
-    default_value: '${{ github.event.pull_request.number }}'
   - name: repository
-    default_value: '${{ github.event.repository.full_name || github.repository }}'
 runs:
   steps:
     - name: Remove the PR label
       run: |
         LABEL='${{ inputs.label }}'
-        PR='${{ inputs.pr_number }}'
-        REPO='${{ inputs.repository }}'
+        PR='${{ inputs.pr_number || github.event.pull_request.number }}'
+        REPO='${{ inputs.repository || github.event.repository.full_name || github.repository }}'
         if [ -z "$PR" ] || [ -z "$REPO" ]; then
           echo "No pull request for this run. Nothing to remove."
           exit 0
