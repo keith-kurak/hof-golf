@@ -18,6 +18,9 @@
       "pool": "hof-free-teams",
       "yearRange": [1947, 2025]
     },
+    "picks": {
+      "yearRange": [1947, 2025]
+    },
     "bonuses": {
       "scoringOverrides": [],
       "gameBonus": {

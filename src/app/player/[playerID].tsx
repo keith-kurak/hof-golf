@@ -205,9 +205,9 @@ export default function PlayerDetailScreen() {
     if (!isActiveGame) return false;
     // Can't navigate to the current team
     if (row.teamID === currentTeamID) return true;
-    // Enforce year range (allow non-MLB leagues like negro leagues)
-    if (gameMode && row.yearID != null) {
-      const [minYear, maxYear] = gameMode.start.yearRange;
+    // Enforce the mode's pick year range (allow non-MLB leagues like negro leagues)
+    if (gameMode?.picks && row.yearID != null) {
+      const [minYear, maxYear] = gameMode.picks.yearRange;
       const isMlb = row.lgID === "AL" || row.lgID === "NL";
       if (isMlb && (row.yearID < minYear || row.yearID > maxYear)) return true;
     }
