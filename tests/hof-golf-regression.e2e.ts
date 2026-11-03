@@ -16,7 +16,7 @@ const START_TEAM = "1997 Detroit Tigers";
 const ROUTE = [
   {
     player: "Tony Clark",
-    season: "2004, NYA",
+    season: "2004, NYY",
     team: "2004 New York Yankees",
     points: 3,
   },
@@ -28,7 +28,7 @@ const ROUTE = [
   },
   {
     player: "Harold Baines",
-    season: "1983, CHA",
+    season: "1983, CHW",
     team: "1983 Chicago White Sox",
     points: 6,
   },
@@ -52,7 +52,7 @@ const ROUTE = [
   },
   {
     player: "Larry Hisle",
-    season: "1978, ML4",
+    season: "1978, MIL",
     team: "1978 Milwaukee Brewers",
     points: 11,
   },

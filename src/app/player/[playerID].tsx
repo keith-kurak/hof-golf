@@ -53,6 +53,8 @@ type RowData = {
   key: string;
   year: string;
   teamID: string;
+  /** Display abbreviation (Baseball-Reference), e.g. NYY for NYA */
+  teamAbbr: string;
   yearID: number | null;
   lgID: string | null;
   cells: string[];
@@ -83,7 +85,12 @@ const STAT_COL_WIDTH = 38;
 const LABEL_COL_WIDTH = 36;
 
 function buildRows<T>(
-  seasons: (T & { yearID: number; teamID: string; lgID: string })[],
+  seasons: (T & {
+    yearID: number;
+    teamID: string;
+    lgID: string;
+    teamAbbr: string | null;
+  })[],
   career: T | null,
   columns: StatColumn<T>[],
 ): RowData[] {
@@ -91,6 +98,7 @@ function buildRows<T>(
     key: `${s.yearID}-${s.teamID}`,
     year: String(s.yearID),
     teamID: s.teamID,
+    teamAbbr: s.teamAbbr ?? s.teamID,
     yearID: s.yearID,
     lgID: s.lgID,
     cells: formatCells(columns, s),
@@ -101,6 +109,7 @@ function buildRows<T>(
       key: "career",
       year: "TOT",
       teamID: "",
+      teamAbbr: "",
       yearID: null,
       lgID: null,
       cells: formatCells(columns, career),
@@ -365,7 +374,7 @@ export default function PlayerDetailScreen() {
                       isRowDisabled(row) && styles.disabledText,
                     ]}
                   >
-                    {row.teamID}
+                    {row.teamAbbr}
                   </ThemedText>
                 </ThemedView>
               </Pressable>
