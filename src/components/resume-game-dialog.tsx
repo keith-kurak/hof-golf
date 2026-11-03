@@ -31,6 +31,10 @@ export function ResumeGameDialog({ visible }: Props) {
 
   const mode = activeModes.find((m) => m.id === active.modeId);
   const currentRound = active.rounds[active.rounds.length - 1];
+  const totalRounds = mode?.rounds ?? 0;
+  // After the last pick the game is at the end of the last round, not a new
+  // round: show "9 of 9", and the button finishes the game.
+  const isFinalRound = roundIdx + 1 > totalRounds;
 
   const handleContinue = () => {
     router.push({
@@ -64,9 +68,11 @@ export function ResumeGameDialog({ visible }: Props) {
 
           <View style={styles.statsRow}>
             <View style={styles.stat}>
-              <ThemedText type="subtitle">{roundIdx + 1}</ThemedText>
+              <ThemedText type="subtitle">
+                {Math.min(roundIdx + 1, totalRounds)}
+              </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                of {mode?.rounds ?? 0}
+                of {totalRounds}
               </ThemedText>
             </View>
             <View style={styles.divider} />
@@ -92,7 +98,7 @@ export function ResumeGameDialog({ visible }: Props) {
             ]}
           >
             <ThemedText type="mediumBold" style={{ color: theme.background }}>
-              Continue
+              {isFinalRound ? "Finish" : "Continue"}
             </ThemedText>
           </Pressable>
 
