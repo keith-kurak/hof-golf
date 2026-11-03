@@ -315,12 +315,20 @@ export default function ModeDetailScreen() {
           { marginBottom: insets.bottom },
         ]}
       >
-        {loading && countdown === null ? (
-          <ActivityIndicator size="small" color={theme.background} />
-        ) : (
-          <ThemedText type="mediumBold" style={{ color: theme.background }}>
-            Play
-          </ThemedText>
+        {/* The label stays in place while loading so the button keeps its height */}
+        <ThemedText
+          type="mediumBold"
+          style={[
+            { color: theme.background },
+            loading && countdown === null && styles.hidden,
+          ]}
+        >
+          Play
+        </ThemedText>
+        {loading && countdown === null && (
+          <View style={styles.playSpinner}>
+            <ActivityIndicator size="small" color={theme.background} />
+          </View>
         )}
       </Pressable>
 
@@ -423,6 +431,14 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.7,
+  },
+  hidden: {
+    opacity: 0,
+  },
+  playSpinner: {
+    ...StyleSheet.absoluteFill,
+    alignItems: "center",
+    justifyContent: "center",
   },
   countdownOverlay: {
     ...StyleSheet.absoluteFill,
