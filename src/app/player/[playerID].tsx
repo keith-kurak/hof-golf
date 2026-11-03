@@ -193,16 +193,18 @@ export default function PlayerDetailScreen() {
     active.rounds &&
     active.rounds.length > gameMode.rounds
   );
-  const isActiveGame =
-    active && active.rounds && !active.finished && !isFinalRound;
-  const currentTeamID = isActiveGame
-    ? (active.rounds?.at(-1)?.teamID ?? null)
+  // The layout follows `inGame`, which stays true through the final pick, so
+  // the screen does not swap the status bar for the bio while it goes back.
+  const inGame = !!(active && active.rounds && !active.finished);
+  // Picks stop once the final round is reached
+  const canPick = inGame && !isFinalRound;
+  const currentTeamID = canPick
+    ? (active?.rounds?.at(-1)?.teamID ?? null)
     : null;
 
-  console.log(active);
-
   const isRowDisabled = (row: RowData) => {
-    if (!isActiveGame) return false;
+    if (!inGame) return false;
+    if (!canPick) return true;
     // Can't navigate to the current team
     if (row.teamID === currentTeamID) return true;
     // Enforce the mode's pick year range (allow non-MLB leagues like negro leagues)
@@ -218,8 +220,8 @@ export default function PlayerDetailScreen() {
     if (row.isCareer || row.yearID == null) return;
     if (isRowDisabled(row)) return;
 
-    if (isActiveGame) {
-      if (advancingRef.current) return;
+    if (inGame) {
+      if (!canPick || advancingRef.current) return;
       advancingRef.current = true;
 
       // During an active game: wire through the game store
@@ -263,7 +265,10 @@ export default function PlayerDetailScreen() {
 
         // The game team screen below follows the current round, so going
         // back shows the new roster and keeps the stack at tabs → team.
-        router.back();
+        // Go back on the next tick, after this screen has rendered the store
+        // change. Going back in the same tick crashed Android's renderer on
+        // the final pick ("The specified child already has a parent").
+        setTimeout(() => router.back());
         return;
       }
     }
@@ -454,7 +459,7 @@ export default function PlayerDetailScreen() {
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: displayName }} />
-      {isActiveGame && (
+      {inGame && (
         <GameStatusBar
           hint={
             <>
@@ -483,7 +488,7 @@ export default function PlayerDetailScreen() {
         />
       )}
       <ScrollView contentContainerStyle={styles.content}>
-        {bio && !isActiveGame ? (
+        {bio && !inGame ? (
           <View style={styles.bioSection}>
             {hofStatus && (
               <ThemedText type="default">
