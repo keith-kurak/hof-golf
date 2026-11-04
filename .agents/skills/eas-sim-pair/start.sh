@@ -99,7 +99,7 @@ build_for() {
 
 start_session() {
   local p="$1" build url args=()
-  build=$(build_for "$p")
+  build=$(cat "$PAIR_DIR/$p.build")
   if [ "$p" = ios ]; then
     url=$(dev_client_url "$DEV_SERVER")
     args=("${IOS_DEV_MENU_LAUNCH_ARGS[@]}")
@@ -118,8 +118,7 @@ start_session() {
     { cat "$PAIR_DIR/$p.log" >&2; die "simulator:start failed for $p"; }
   (umask 077; grep '^export ' "$PAIR_DIR/$p.log" >"$PAIR_DIR/$p.env")
   grep -oE 'session created \(id: [0-9a-f-]+' "$PAIR_DIR/$p.log" | grep -oE '[0-9a-f-]{36}' >"$PAIR_DIR/$p.id"
-  echo "$build" >"$PAIR_DIR/$p.build"
-  echo "Session: $(cat "$PAIR_DIR/$p.id")"
+  echo "$p session: $(cat "$PAIR_DIR/$p.id")"
 }
 
 ad() { local p="$1"; shift; .agents/skills/eas-sim-pair/ad.sh "$p" "$@"; }
@@ -149,8 +148,34 @@ attach_android() {
   fi
 }
 
-for p in "${PLATFORMS[@]}"; do start_session "$p"; done
-for p in "${PLATFORMS[@]}"; do "attach_$p"; done
+# Runs "$1 <platform>" for every platform at the same time (each in its own
+# subshell, writing to its own files) and fails if any of them failed.
+for_each_platform() {
+  local fn="$1" p pids=() failed=()
+  for p in "${PLATFORMS[@]}"; do
+    "$fn" "$p" &
+    pids+=("$!")
+  done
+  for i in "${!pids[@]}"; do
+    wait "${pids[$i]}" || failed+=("${PLATFORMS[$i]}")
+  done
+  [ ${#failed[@]} -eq 0 ] || die "$fn failed for: ${failed[*]}. Stop any session that started: .agents/skills/eas-sim-pair/stop.sh"
+}
+
+resolve_build() {
+  local id
+  id=$(build_for "$1") || return 1
+  echo "$id" >"$PAIR_DIR/$1.build"
+  echo "$1 build: $id"
+}
+attach() { "attach_$1"; }
+
+# The platforms do not depend on each other: the simulators boot in parallel,
+# so the total wait is the slower boot, not the sum.
+log "Finding development builds for: ${PLATFORMS[*]}"
+for_each_platform resolve_build
+for_each_platform start_session
+for_each_platform attach
 
 cat <<EOT
 
