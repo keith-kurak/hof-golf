@@ -53,6 +53,7 @@ Runtime version policy: `appVersion`.
 ## Cloud simulator skills
 
 - `eas-sim-dev`: run and drive the app on an iOS cloud simulator with Metro.
+- `eas-sim-pair`: iOS and Android cloud simulators at the same time (latest development builds, a dev server with a tunnel), each with its own agent-device config. Drive one with `.agents/skills/eas-sim-pair/ad.sh <ios|android> <verb>`.
 - `eas-sim-verify-pr-ios` / `eas-sim-verify-pr-android`: validate a PR and comment the result.
 - `eas-sim-preview-link`: post an iOS web preview link on a PR.
 
