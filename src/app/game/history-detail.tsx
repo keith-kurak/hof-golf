@@ -9,6 +9,7 @@ import { Spacing } from "@/constants/theme";
 import gameModes from "@/metadata/game-modes.json";
 import { game$ } from "@/store/game-store";
 import type { GameMode } from "@/store/starting-pools";
+import { useHeaderInset } from "@/hooks/use-header-inset";
 
 const activeModes = gameModes as GameMode[];
 
@@ -20,6 +21,7 @@ function formatDuration(ms: number): string {
 }
 
 export default function HistoryDetailScreen() {
+  const headerInset = useHeaderInset();
   const { gameId } = useLocalSearchParams<{ gameId: string }>();
   const history = useSelector(() => game$.history.get() ?? []);
 
@@ -27,7 +29,7 @@ export default function HistoryDetailScreen() {
 
   if (!game) {
     return (
-      <ThemedView style={styles.container}>
+      <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
         <Stack.Screen options={{ title: "Game Details" }} />
         <ThemedText style={styles.empty}>Game not found.</ThemedText>
       </ThemedView>
@@ -45,7 +47,7 @@ export default function HistoryDetailScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen options={{ title: "Game Details" }} />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.headerRow}>

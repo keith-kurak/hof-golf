@@ -9,6 +9,7 @@ import { useTheme } from "@/hooks/use-theme";
 import gameModes from "@/metadata/game-modes.json";
 import { game$ } from "@/store/game-store";
 import type { GameMode } from "@/store/starting-pools";
+import { useHeaderInset } from "@/hooks/use-header-inset";
 
 const activeModes = gameModes as GameMode[];
 
@@ -20,6 +21,7 @@ function formatDuration(ms: number): string {
 }
 
 export default function GameCompleteScreen() {
+  const headerInset = useHeaderInset();
   const router = useRouter();
   const theme = useTheme();
   const history = useSelector(() => game$.history.get());
@@ -28,7 +30,7 @@ export default function GameCompleteScreen() {
   const game = history?.[0];
   if (!game) {
     return (
-      <ThemedView style={styles.container}>
+      <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
         <Stack.Screen
           options={{ title: "Game Complete", headerBackVisible: false }}
         />
@@ -42,7 +44,7 @@ export default function GameCompleteScreen() {
   const duration = formatDuration(game.finishedAt - game.startedAt);
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen
         options={{ title: "Game Complete", headerBackVisible: false }}
       />

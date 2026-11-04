@@ -21,10 +21,12 @@ import { game$, pendingTeamPick$, startGame } from "@/store/game-store";
 import { getTargetsOnRoster } from "@/store/roster-targets";
 import { getRandomStart, type GameMode } from "@/store/starting-pools";
 import { getLookupForMode } from "@/store/target-lookups";
+import { useHeaderInset } from "@/hooks/use-header-inset";
 
 const activeModes = (gameModes as GameMode[]).filter((m) => m.active);
 
 export default function ModeDetailScreen() {
+  const headerInset = useHeaderInset();
   const { modeId } = useLocalSearchParams<{ modeId: string }>();
   const mode = activeModes.find((m) => m.id === modeId);
   const theme = useTheme();
@@ -113,7 +115,7 @@ export default function ModeDetailScreen() {
 
   if (!mode) {
     return (
-      <ThemedView style={styles.container}>
+      <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
         <ThemedText>Mode not found.</ThemedText>
       </ThemedView>
     );
@@ -123,7 +125,7 @@ export default function ModeDetailScreen() {
   const bestScore = bestScores[mode.id];
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen options={{ headerTitle: mode.name }} />
       <ScrollView
         contentContainerStyle={[

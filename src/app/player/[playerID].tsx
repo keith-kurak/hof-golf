@@ -9,6 +9,7 @@ import { GameStatusBar } from "@/components/game-status-bar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
+import { useHeaderInset } from "@/hooks/use-header-inset";
 import { useRoundTimer } from "@/hooks/use-round-timer";
 import { useTheme } from "@/hooks/use-theme";
 import {
@@ -128,6 +129,7 @@ export default function PlayerDetailScreen() {
   }>();
   const db = useSQLiteContext();
   const router = useRouter();
+  const headerInset = useHeaderInset();
   const theme = useTheme();
   const { timeLeft, isTimed } = useRoundTimer();
   const [bio, setBio] = useState<Bio | null>(null);
@@ -466,7 +468,7 @@ export default function PlayerDetailScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen options={{ title: displayName }} />
       {inGame && (
         <GameStatusBar

@@ -16,6 +16,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
+import { useHeaderInset } from "@/hooks/use-header-inset";
 import { useRoundTimer } from "@/hooks/use-round-timer";
 import { useTheme } from "@/hooks/use-theme";
 import gameModes from "@/metadata/game-modes.json";
@@ -297,6 +298,7 @@ export default function TeamRosterScreen() {
   }>();
   const db = useSQLiteContext();
   const router = useRouter();
+  const headerInset = useHeaderInset();
   const [browseYear, setYear] = useState(yearParam ? Number(yearParam) : 2025);
   const [roster, setRoster] = useState<LoadedRoster | null>(null);
 
@@ -483,7 +485,7 @@ export default function TeamRosterScreen() {
     ) : null;
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen
         options={{
           title: isActiveGame

@@ -10,6 +10,7 @@ import { Spacing } from "@/constants/theme";
 import gameModes from "@/metadata/game-modes.json";
 import { cumulativeWL$, game$ } from "@/store/game-store";
 import type { GameMode } from "@/store/starting-pools";
+import { useHeaderInset } from "@/hooks/use-header-inset";
 
 const activeModes = gameModes as GameMode[];
 
@@ -21,6 +22,7 @@ function formatDuration(ms: number): string {
 }
 
 export default function GameSummaryScreen() {
+  const headerInset = useHeaderInset();
   const active = useSelector(() => game$.active.get());
   const cumWL = useSelector(cumulativeWL$);
   const [elapsed, setElapsed] = useState(0);
@@ -36,7 +38,7 @@ export default function GameSummaryScreen() {
 
   if (!active) {
     return (
-      <ThemedView style={styles.container}>
+      <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
         <Stack.Screen options={{ title: "Game Summary" }} />
         <ThemedText style={styles.empty}>No active game.</ThemedText>
       </ThemedView>
@@ -46,7 +48,7 @@ export default function GameSummaryScreen() {
   const mode = activeModes.find((m) => m.id === active.modeId);
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen options={{ title: "Game Summary" }} />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.headerRow}>

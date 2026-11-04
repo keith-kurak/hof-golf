@@ -22,10 +22,12 @@ import {
   type StartingTeam,
 } from "@/store/starting-pools";
 import { getLookupForMode } from "@/store/target-lookups";
+import { useHeaderInset } from "@/hooks/use-header-inset";
 
 const activeModes = (gameModes as GameMode[]).filter((m) => m.active);
 
 export default function PickTeamScreen() {
+  const headerInset = useHeaderInset();
   const { modeId } = useLocalSearchParams<{ modeId: string }>();
   const mode = activeModes.find((m) => m.id === modeId);
   const db = useSQLiteContext();
@@ -60,14 +62,14 @@ export default function PickTeamScreen() {
 
   if (!mode) {
     return (
-      <ThemedView style={styles.container}>
+      <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
         <ThemedText>Mode not found.</ThemedText>
       </ThemedView>
     );
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen options={{ title: "Choose Starting Team" }} />
       <View style={styles.searchContainer}>
         <TextInput
