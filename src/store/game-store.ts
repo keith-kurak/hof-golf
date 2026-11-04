@@ -114,7 +114,8 @@ export const cumulativeWL$ = computed(() => {
   if (!active) return { w: 0, l: 0 };
   let w = 0;
   let l = 0;
-  for (const round of active.rounds) {
+  // A persisted game can be present before its rounds are (see isGameActive$)
+  for (const round of active.rounds ?? []) {
     w += round.teamW ?? 0;
     l += round.teamL ?? 0;
   }
