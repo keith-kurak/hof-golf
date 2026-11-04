@@ -2,16 +2,16 @@ import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
-} from "@react-navigation/native";
+} from "expo-router/react-navigation";
 import { Stack } from "expo-router";
-import { SQLiteProvider } from "expo-sqlite";
 import React from "react";
 import { Platform, StyleSheet, useColorScheme, View } from "react-native";
 
+import { LahmanDatabaseProvider } from "@/components/lahman-database-provider";
 import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)",
+  anchor: "(tabs)",
 };
 
 const isWeb = Platform.OS === "web";
@@ -20,10 +20,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   const content = (
-    <SQLiteProvider
-      databaseName="test.db"
-      assetSource={{ assetId: require("../../lahman/db/database.sqlite") }}
-    >
+    <LahmanDatabaseProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -58,17 +55,9 @@ export default function RootLayout() {
             name="game/complete"
             options={{ title: "Game Complete", headerBackVisible: false }}
           />
-          <Stack.Screen
-            name="game/resume"
-            options={{
-              presentation: "transparentModal",
-              headerShown: false,
-              animation: "fade",
-            }}
-          />
         </Stack>
       </ThemeProvider>
-    </SQLiteProvider>
+    </LahmanDatabaseProvider>
   );
 
   if (!isWeb) return content;

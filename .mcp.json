@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "agent-device": {
+      "type": "stdio",
+      "command": "agent-device",
+      "args": [
+        "mcp"
+      ],
+      "env": {}
+    },
+    "e2e": {
+      "command": "npx",
+      "args": [
+        "e2e",
+        "mcp"
+      ]
+    }
+  }
+}

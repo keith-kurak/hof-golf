@@ -48,20 +48,28 @@ export const YEAR_RANGE_QUERY = `SELECT MIN(yearID) as minYear, MAX(yearID) as m
   SELECT yearID FROM Pitching WHERE playerID = ?
 )`;
 
+/**
+ * The team's Baseball-Reference abbreviation for that season (NYY, not NYA;
+ * MIL, not ML4), for display. Lahman's teamID stays the key.
+ */
+function teamAbbrSelect(table: "Batting" | "Pitching") {
+  return `(SELECT t.teamIDBR FROM Teams t WHERE t.teamID = ${table}.teamID AND t.yearID = ${table}.yearID) AS teamAbbr`;
+}
+
 /** Per-season batting stats grouped by year+team. Returns all stat columns. */
 export const SEASON_BATTING_QUERY = `
-  SELECT yearID, teamID, lgID, ${sumSelect(BATTING_COLUMNS)}
+  SELECT yearID, teamID, lgID, ${teamAbbrSelect("Batting")}, ${sumSelect(BATTING_COLUMNS)}
   FROM Batting WHERE playerID = ?
   GROUP BY yearID, teamID ORDER BY yearID`;
 
 /** Per-season pitching stats grouped by year+team. Returns all stat columns. */
 export const SEASON_PITCHING_QUERY = `
-  SELECT yearID, teamID, lgID, ${sumSelect(PITCHING_COLUMNS)}
+  SELECT yearID, teamID, lgID, ${teamAbbrSelect("Pitching")}, ${sumSelect(PITCHING_COLUMNS)}
   FROM Pitching WHERE playerID = ?
   GROUP BY yearID, teamID ORDER BY yearID`;
 
-export type SeasonBatting = BattingStats & { yearID: number; teamID: string; lgID: string };
-export type SeasonPitching = PitchingStats & { yearID: number; teamID: string; lgID: string };
+export type SeasonBatting = BattingStats & { yearID: number; teamID: string; lgID: string; teamAbbr: string | null };
+export type SeasonPitching = PitchingStats & { yearID: number; teamID: string; lgID: string; teamAbbr: string | null };
 
 // ---------------------------------------------------------------------------
 // Formatting helpers

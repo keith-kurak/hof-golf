@@ -1,0 +1,25 @@
+name: Development builds
+
+# Manual run. Makes the two development builds:
+#   - iOS simulator (development-simulator): used by the eas-sim-* skills
+#   - Android device (development): an APK for a phone or an emulator
+#
+# Run with: npx eas-cli@latest workflow:run .eas/workflows/dev-builds.yaml
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  ios_simulator:
+    name: Build iOS simulator
+    type: build
+    params:
+      platform: ios
+      profile: development-simulator
+
+  android_device:
+    name: Build Android device
+    type: build
+    params:
+      platform: android
+      profile: development

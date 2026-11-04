@@ -4,7 +4,7 @@
     "name": "HOF Golf",
     "shortName": "HOF",
     "version": "2026",
-    "emoji": "🏆",
+    "emoji": "⚾",
     "label": "HOF",
     "active": true,
     "rounds": 9,
@@ -18,6 +18,9 @@
       "pool": "hof-free-teams",
       "yearRange": [1947, 2025]
     },
+    "picks": {
+      "yearRange": [1947, 2025]
+    },
     "bonuses": {
       "scoringOverrides": [],
       "gameBonus": {
@@ -29,7 +32,7 @@
     },
     "info": {
       "overviewBrief": "Navigate baseball history to collect Hall of Famers across 9 rounds.",
-      "overview": "The OG 'Six Degrees of Goose Gossage'. How many Hall of Famers can you uncover in an 9-team chain of teammates? Pick a player, then pick a team they played for and collect all of their hall-of-fame teammates. Then do it 8 more times to see how many inductees you can collect in your chain. Bonus points for picking bad teams!",
+      "overview": "The OG 'Six Degrees of Goose Gossage'.",
       "howToPlay": [
         "You start on a random team+year that has zero Hall of Famers on its roster.",
         "Pick any player on the roster, then choose a different team that player also played for.",

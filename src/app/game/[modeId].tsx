@@ -21,10 +21,12 @@ import { game$, pendingTeamPick$, startGame } from "@/store/game-store";
 import { getTargetsOnRoster } from "@/store/roster-targets";
 import { getRandomStart, type GameMode } from "@/store/starting-pools";
 import { getLookupForMode } from "@/store/target-lookups";
+import { useHeaderInset } from "@/hooks/use-header-inset";
 
 const activeModes = (gameModes as GameMode[]).filter((m) => m.active);
 
 export default function ModeDetailScreen() {
+  const headerInset = useHeaderInset();
   const { modeId } = useLocalSearchParams<{ modeId: string }>();
   const mode = activeModes.find((m) => m.id === modeId);
   const theme = useTheme();
@@ -59,6 +61,7 @@ export default function ModeDetailScreen() {
             teamID: currentRound.teamID,
             teamName: currentRound.teamName,
             year: String(currentRound.yearID),
+            game: "1",
           },
         });
       }
@@ -112,7 +115,7 @@ export default function ModeDetailScreen() {
 
   if (!mode) {
     return (
-      <ThemedView style={styles.container}>
+      <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
         <ThemedText>Mode not found.</ThemedText>
       </ThemedView>
     );
@@ -122,7 +125,7 @@ export default function ModeDetailScreen() {
   const bestScore = bestScores[mode.id];
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen options={{ headerTitle: mode.name }} />
       <ScrollView
         contentContainerStyle={[
@@ -192,6 +195,7 @@ export default function ModeDetailScreen() {
             <ThemedText themeColor="textSecondary">Starting team</ThemedText>
             <View style={styles.toggleGroup}>
               <Pressable
+                testID="start-random"
                 onPress={() => setChooseTeam(false)}
                 style={[
                   styles.toggleButton,
@@ -209,6 +213,7 @@ export default function ModeDetailScreen() {
                 </ThemedText>
               </Pressable>
               <Pressable
+                testID="start-choose"
                 onPress={() => setChooseTeam(true)}
                 style={[
                   styles.toggleButton,
@@ -231,6 +236,7 @@ export default function ModeDetailScreen() {
           {chooseTeam && (
             <View style={styles.pickTeamRow}>
               <Pressable
+                testID="select-team"
                 onPress={() =>
                   router.push({
                     pathname: "/game/pick-team",
@@ -260,6 +266,7 @@ export default function ModeDetailScreen() {
             <ThemedText themeColor="textSecondary">Timer</ThemedText>
             <View style={styles.toggleGroup}>
               <Pressable
+                testID="timer-untimed"
                 onPress={() => setTimed(false)}
                 style={[
                   styles.toggleButton,
@@ -277,6 +284,7 @@ export default function ModeDetailScreen() {
                 </ThemedText>
               </Pressable>
               <Pressable
+                testID="timer-timed"
                 onPress={() => setTimed(true)}
                 style={[
                   styles.toggleButton,
@@ -299,6 +307,7 @@ export default function ModeDetailScreen() {
 
       {/* Play button */}
       <Pressable
+        testID="play"
         onPress={handlePlay}
         disabled={loading || countdown !== null}
         style={({ pressed }) => [
@@ -308,12 +317,20 @@ export default function ModeDetailScreen() {
           { marginBottom: insets.bottom },
         ]}
       >
-        {loading && countdown === null ? (
-          <ActivityIndicator size="small" color={theme.background} />
-        ) : (
-          <ThemedText type="mediumBold" style={{ color: theme.background }}>
-            Play
-          </ThemedText>
+        {/* The label stays in place while loading so the button keeps its height */}
+        <ThemedText
+          type="mediumBold"
+          style={[
+            { color: theme.background },
+            loading && countdown === null && styles.hidden,
+          ]}
+        >
+          Play
+        </ThemedText>
+        {loading && countdown === null && (
+          <View style={styles.playSpinner}>
+            <ActivityIndicator size="small" color={theme.background} />
+          </View>
         )}
       </Pressable>
 
@@ -417,8 +434,16 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.7,
   },
+  hidden: {
+    opacity: 0,
+  },
+  playSpinner: {
+    ...StyleSheet.absoluteFill,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   countdownOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "rgba(0, 0, 0, 0.85)",
     justifyContent: "center",
     alignItems: "center",

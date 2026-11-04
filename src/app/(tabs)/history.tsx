@@ -170,7 +170,7 @@ export default function HistoryScreen() {
         ListHeaderComponent={
           history.length > 0 ? (
             <SegmentedControl selected={filter} onSelect={setFilter} />
-          ) : null
+          ) : undefined
         }
         renderItem={({ item }) => <GameCard game={item} />}
         ListEmptyComponent={

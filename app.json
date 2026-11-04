@@ -31,10 +31,26 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
+      [
+        "./plugins/with-lahman-database",
+        {
+          "path": "./lahman/db/database.sqlite"
+        }
+      ],
       "expo-sharing",
       "expo-font",
       "expo-image",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-splash-screen",
+      "expo-status-bar",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usePrecompiledHeaders": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
@@ -46,7 +62,7 @@
         "projectId": "b4b5b473-8c41-43da-a8ac-773e0bf35423"
       }
     },
-    "owner": "expo-production",
+    "owner": "keithco",
     "runtimeVersion": {
       "policy": "appVersion"
     },

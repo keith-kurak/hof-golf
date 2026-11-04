@@ -1,0 +1,143 @@
+# HOF Golf regression: a fixed route with known scores, no model.
+#
+# Start state: the app is open on the "Choose a game..." screen with no game
+# in progress. The script ends on the same screen, so scripts can run one
+# after another or alone.
+#
+# Elements are found by testID, so stats in row labels do not matter. The
+# scripts scroll to rows instead of typing in search fields. Before a scroll,
+# they wait for the data to load: roster-<year>-<team> on the team screen,
+# the season row on the player page (<batting|pitching>-season-<year>-<team>).
+# After a scroll, they wait for the list to stop moving: on iOS, a tap while
+# the list still moves only stops the scroll.
+#
+#   agent-device replay tests/agent-device/hof-golf-regression.ad --platform ios \
+#     -e APP=com.keithkurak.hofgolf.preview --timeout 900000
+#
+# Route and expected points are generated from the Lahman database. Final score: 16.
+
+open ${APP}
+wait text "Choose a game" 30000
+
+# Start HOF Golf on the 1997 Detroit Tigers, untimed
+press 'id="mode-hof-golf-2026"'
+press 'id="start-choose"'
+press 'id="select-team"'
+scroll down 0.8 --until 'id="pick-team-1997-DET"' --max-passes 80
+wait stable 500 10000
+press 'id="pick-team-1997-DET"'
+# The picker sheet has closed when the mode screen shows the team
+wait text "1997 Detroit Tigers" 20000
+press 'id="timer-untimed"'
+press 'id="play"'
+wait text "Rd 1/9, 0 pts" 20000
+wait 'id="roster-1997-DET"' 20000
+
+# Tony Clark -> 2004 New York Yankees: 3 pts
+scroll down 0.8 --until 'id="player-clarkto02"' --max-passes 40
+wait stable 500 10000
+press 'id="player-clarkto02"'
+wait 'id="batting-season-2004-NYA"' 20000
+scroll down 0.8 --until 'id="batting-season-2004-NYA"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-2004-NYA"'
+wait text "Rd 2/9, 3 pts" 20000
+wait 'id="roster-2004-NYA"' 20000
+
+# Mike Mussina -> 1995 Baltimore Orioles: 5 pts
+scroll down 0.8 --until 'id="player-mussimi01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-mussimi01"'
+wait 'id="pitching-season-1995-BAL"' 20000
+scroll down 0.8 --until 'id="pitching-season-1995-BAL"' --max-passes 40
+wait stable 500 10000
+press 'id="pitching-season-1995-BAL"'
+wait text "Rd 3/9, 5 pts" 20000
+wait 'id="roster-1995-BAL"' 20000
+
+# Harold Baines -> 1983 Chicago White Sox: 6 pts
+scroll down 0.8 --until 'id="player-baineha01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-baineha01"'
+wait 'id="batting-season-1983-CHA"' 20000
+scroll down 0.8 --until 'id="batting-season-1983-CHA"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1983-CHA"'
+wait text "Rd 4/9, 6 pts" 20000
+wait 'id="roster-1983-CHA"' 20000
+
+# Carlton Fisk -> 1975 Boston Red Sox: 8 pts
+scroll down 0.8 --until 'id="player-fiskca01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-fiskca01"'
+wait 'id="batting-season-1975-BOS"' 20000
+scroll down 0.8 --until 'id="batting-season-1975-BOS"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1975-BOS"'
+wait text "Rd 5/9, 8 pts" 20000
+wait 'id="roster-1975-BOS"' 20000
+
+# Fred Lynn -> 1981 California Angels: 9 pts
+scroll down 0.8 --until 'id="player-lynnfr01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-lynnfr01"'
+wait 'id="batting-season-1981-CAL"' 20000
+scroll down 0.8 --until 'id="batting-season-1981-CAL"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1981-CAL"'
+wait text "Rd 6/9, 9 pts" 20000
+wait 'id="roster-1981-CAL"' 20000
+
+# Rod Carew -> 1977 Minnesota Twins: 9 pts
+scroll down 0.8 --until 'id="player-carewro01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-carewro01"'
+wait 'id="batting-season-1977-MIN"' 20000
+scroll down 0.8 --until 'id="batting-season-1977-MIN"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1977-MIN"'
+wait text "Rd 7/9, 9 pts" 20000
+wait 'id="roster-1977-MIN"' 20000
+
+# Larry Hisle -> 1978 Milwaukee Brewers: 11 pts
+scroll down 0.8 --until 'id="player-hislela01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-hislela01"'
+wait 'id="batting-season-1978-ML4"' 20000
+scroll down 0.8 --until 'id="batting-season-1978-ML4"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1978-ML4"'
+wait text "Rd 8/9, 11 pts" 20000
+wait 'id="roster-1978-ML4"' 20000
+
+# Paul Molitor -> 1993 Toronto Blue Jays: 14 pts
+scroll down 0.8 --until 'id="player-molitpa01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-molitpa01"'
+wait 'id="batting-season-1993-TOR"' 20000
+scroll down 0.8 --until 'id="batting-season-1993-TOR"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1993-TOR"'
+wait text "Rd 9/9, 14 pts" 20000
+wait 'id="roster-1993-TOR"' 20000
+
+# Rickey Henderson -> 1989 Oakland Athletics: 16 pts
+scroll down 0.8 --until 'id="player-henderi01"' --max-passes 40
+wait stable 500 10000
+press 'id="player-henderi01"'
+wait 'id="batting-season-1989-OAK"' 20000
+scroll down 0.8 --until 'id="batting-season-1989-OAK"' --max-passes 40
+wait stable 500 10000
+press 'id="batting-season-1989-OAK"'
+wait text "Rd 9/9, 16 pts" 20000
+wait 'id="roster-1989-OAK"' 20000
+
+# The last pick ends the game
+wait text "Game complete!"
+press 'id="game-complete-continue"'
+wait 'id="final-score"' 20000
+is text 'id="final-score"' 16
+
+# Back to the start screen
+press 'id="game-complete-done"'
+wait text "Choose a game" 20000

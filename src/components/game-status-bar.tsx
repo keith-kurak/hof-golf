@@ -27,6 +27,7 @@ export function GameStatusBar({ hint, trailing }: Props) {
 
   return (
     <Pressable
+      testID="game-status-bar"
       onPress={() => router.push("/game/summary")}
       style={({ pressed }) => [styles.bar, pressed && styles.barPressed]}
     >

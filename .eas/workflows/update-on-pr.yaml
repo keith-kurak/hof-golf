@@ -1,0 +1,34 @@
+name: Publish PR update
+
+# On every PR push, publish the PR's JS to an EAS Update branch named after the
+# PR branch, then comment on the PR with a QR code. Scan it with the
+# development build (HOF-DEV) to open the update.
+#
+# The eas-sim-* skills reuse this update to run the PR on a cloud simulator.
+
+on:
+  pull_request: {}
+
+concurrency:
+  cancel_in_progress: true
+  group: ${{ workflow.filename }}-${{ github.ref }}
+
+jobs:
+  # development environment: the update is for development builds, which use
+  # the default (unset) APP_VARIANT.
+  publish_update:
+    name: Publish update
+    type: update
+    environment: development
+    params:
+      branch: ${{ github.event.pull_request.head.ref || github.ref_name }}
+
+  comment:
+    name: Comment on PR
+    needs: [publish_update]
+    type: github-comment
+    params:
+      message: 'Scan the QR code with the development build to open this PR.'
+      build_ids: []
+      update_group_ids:
+        - ${{ needs.publish_update.outputs.first_update_group_id }}

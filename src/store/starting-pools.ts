@@ -2,7 +2,6 @@ import type { SQLiteDatabase } from "expo-sqlite";
 
 import hofFreeTeams from "@/metadata/hof-free-teams.json";
 
-import { getTargetsOnRoster } from "./roster-targets";
 import type { TargetLookup } from "./target-lookups";
 
 // ---------------------------------------------------------------------------
@@ -41,6 +40,10 @@ export type GameMode = {
     pool: string;
     yearRange: [number, number];
     freebie?: boolean;
+  };
+  /** Seasons a pick can go to. Absent: any MLB season. */
+  picks?: {
+    yearRange: [number, number];
   };
   bonuses: {
     scoringOverrides: ScoringOverride[];
@@ -95,33 +98,27 @@ function getHofPool(mode: GameMode): StartingTeam[] {
     .map((t) => ({ teamID: t.teamID, yearID: t.yearID, teamName: t.name }));
 }
 
-async function getAllStarPool(
-  db: SQLiteDatabase,
-  lookup: TargetLookup,
-): Promise<StartingTeam[]> {
-  const teams = await db.getAllAsync<TeamRow>(TEAMS_QUERY, [2025]);
-  const pool: StartingTeam[] = [];
+// Teams with exactly one player selected to the 2025 All-Star Game. That
+// player is the "freebie": every team has at least two career All-Stars.
+const ONE_ALLSTAR_TEAMS_QUERY = `
+SELECT t.teamID, t.yearID, t.name
+FROM Teams t
+JOIN AllstarFull a ON a.teamID = t.teamID AND a.yearID = t.yearID
+WHERE t.yearID = ?
+GROUP BY t.teamID
+HAVING COUNT(DISTINCT a.playerID) = 1
+`;
 
-  for (const team of teams) {
-    const targets = await getTargetsOnRoster(
-      db,
-      team.teamID,
-      team.yearID,
-      lookup,
-    );
-    if (targets.length === 1) {
-      pool.push({
-        teamID: team.teamID,
-        yearID: team.yearID,
-        teamName: team.name,
-      });
-    }
-  }
-
-  if (pool.length === 0) {
+async function getAllStarPool(db: SQLiteDatabase): Promise<StartingTeam[]> {
+  const teams = await db.getAllAsync<TeamRow>(ONE_ALLSTAR_TEAMS_QUERY, [2025]);
+  if (teams.length === 0) {
     throw new Error("No 2025 teams found with exactly 1 All-Star");
   }
-  return pool;
+  return teams.map((t) => ({
+    teamID: t.teamID,
+    yearID: t.yearID,
+    teamName: t.name,
+  }));
 }
 
 async function getManagerPool(db: SQLiteDatabase): Promise<StartingTeam[]> {
@@ -149,7 +146,7 @@ export async function getEligibleTeams(
     case "hof-free-teams":
       return getHofPool(mode);
     case "one-allstar-2025-teams":
-      return getAllStarPool(db, lookup);
+      return getAllStarPool(db);
     case "all-2025-teams":
       return getManagerPool(db);
     default:

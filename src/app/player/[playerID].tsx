@@ -2,13 +2,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { GameStatusBar } from "@/components/game-status-bar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
+import { useHeaderInset } from "@/hooks/use-header-inset";
 import { useRoundTimer } from "@/hooks/use-round-timer";
 import { useTheme } from "@/hooks/use-theme";
 import {
@@ -53,6 +54,8 @@ type RowData = {
   key: string;
   year: string;
   teamID: string;
+  /** Display abbreviation (Baseball-Reference), e.g. NYY for NYA */
+  teamAbbr: string;
   yearID: number | null;
   lgID: string | null;
   cells: string[];
@@ -83,7 +86,12 @@ const STAT_COL_WIDTH = 38;
 const LABEL_COL_WIDTH = 36;
 
 function buildRows<T>(
-  seasons: (T & { yearID: number; teamID: string; lgID: string })[],
+  seasons: (T & {
+    yearID: number;
+    teamID: string;
+    lgID: string;
+    teamAbbr: string | null;
+  })[],
   career: T | null,
   columns: StatColumn<T>[],
 ): RowData[] {
@@ -91,6 +99,7 @@ function buildRows<T>(
     key: `${s.yearID}-${s.teamID}`,
     year: String(s.yearID),
     teamID: s.teamID,
+    teamAbbr: s.teamAbbr ?? s.teamID,
     yearID: s.yearID,
     lgID: s.lgID,
     cells: formatCells(columns, s),
@@ -101,6 +110,7 @@ function buildRows<T>(
       key: "career",
       year: "TOT",
       teamID: "",
+      teamAbbr: "",
       yearID: null,
       lgID: null,
       cells: formatCells(columns, career),
@@ -111,13 +121,15 @@ function buildRows<T>(
 }
 
 export default function PlayerDetailScreen() {
-  const { playerID, playerName } = useLocalSearchParams<{
+  const { playerID, playerName, game } = useLocalSearchParams<{
     playerID: string;
     playerName?: string;
     year?: string;
+    game?: string;
   }>();
   const db = useSQLiteContext();
   const router = useRouter();
+  const headerInset = useHeaderInset();
   const theme = useTheme();
   const { timeLeft, isTimed } = useRoundTimer();
   const [bio, setBio] = useState<Bio | null>(null);
@@ -178,7 +190,12 @@ export default function PlayerDetailScreen() {
   const displayName =
     playerName ?? (bio ? `${bio.nameFirst} ${bio.nameLast}` : playerID);
 
-  const active = useSelector(() => game$.active.get());
+  // Only the game screen (opened with `game=1`) can advance the active game.
+  // A player opened from Browse or History stays read-only.
+  const storeActive = useSelector(() => game$.active.get());
+  const active = game === "1" ? storeActive : null;
+  // Blocks a second tap while the first pick is still loading
+  const advancingRef = useRef(false);
   const gameMode = currentMode();
   const isFinalRound = !!(
     active &&
@@ -187,21 +204,23 @@ export default function PlayerDetailScreen() {
     active.rounds &&
     active.rounds.length > gameMode.rounds
   );
-  const isActiveGame =
-    active && active.rounds && !active.finished && !isFinalRound;
-  const currentTeamID = isActiveGame
-    ? (active.rounds?.at(-1)?.teamID ?? null)
+  // The layout follows `inGame`, which stays true through the final pick, so
+  // the screen does not swap the status bar for the bio while it goes back.
+  const inGame = !!(active && active.rounds && !active.finished);
+  // Picks stop once the final round is reached
+  const canPick = inGame && !isFinalRound;
+  const currentTeamID = canPick
+    ? (active?.rounds?.at(-1)?.teamID ?? null)
     : null;
 
-  console.log(active);
-
   const isRowDisabled = (row: RowData) => {
-    if (!isActiveGame) return false;
+    if (!inGame) return false;
+    if (!canPick) return true;
     // Can't navigate to the current team
     if (row.teamID === currentTeamID) return true;
-    // Enforce year range (allow non-MLB leagues like negro leagues)
-    if (gameMode && row.yearID != null) {
-      const [minYear, maxYear] = gameMode.start.yearRange;
+    // Enforce the mode's pick year range (allow non-MLB leagues like negro leagues)
+    if (gameMode?.picks && row.yearID != null) {
+      const [minYear, maxYear] = gameMode.picks.yearRange;
       const isMlb = row.lgID === "AL" || row.lgID === "NL";
       if (isMlb && (row.yearID < minYear || row.yearID > maxYear)) return true;
     }
@@ -212,7 +231,10 @@ export default function PlayerDetailScreen() {
     if (row.isCareer || row.yearID == null) return;
     if (isRowDisabled(row)) return;
 
-    if (isActiveGame) {
+    if (inGame) {
+      if (!canPick || advancingRef.current) return;
+      advancingRef.current = true;
+
       // During an active game: wire through the game store
       pickPlayer(playerID, displayName);
 
@@ -252,19 +274,12 @@ export default function PlayerDetailScreen() {
         );
         roundTimedOut$.set(false);
 
-        // HACK: move this to the next tick becaues the game state changes above will cause a re-render/race condition with the
-        // destroyed screen. The right way to do this would be to move the game logic to the next screen.
-        setTimeout(() => {
-          router.dismissAll();
-          router.push({
-            pathname: "/team/[teamID]",
-            params: {
-              teamID: row.teamID,
-              teamName: teamInfo?.name ?? row.teamID,
-              year: String(row.yearID),
-            },
-          });
-        });
+        // The game team screen below follows the current round, so going
+        // back shows the new roster and keeps the stack at tabs → team.
+        // Go back on the next tick, after this screen has rendered the store
+        // change. Going back in the same tick crashed Android's renderer on
+        // the final pick ("The specified child already has a parent").
+        setTimeout(() => router.back());
         return;
       }
     }
@@ -331,6 +346,7 @@ export default function PlayerDetailScreen() {
           ) : (
             <View key={row.key} style={styles.rowLeft}>
               <Pressable
+                testID={`${title.toLowerCase()}-season-${row.yearID}-${row.teamID}`}
                 onPress={() => navigateToTeam(row)}
                 disabled={isRowDisabled(row)}
                 style={({ pressed }) => pressed && styles.pressed}
@@ -360,7 +376,7 @@ export default function PlayerDetailScreen() {
                       isRowDisabled(row) && styles.disabledText,
                     ]}
                   >
-                    {row.teamID}
+                    {row.teamAbbr}
                   </ThemedText>
                 </ThemedView>
               </Pressable>
@@ -452,9 +468,9 @@ export default function PlayerDetailScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen options={{ title: displayName }} />
-      {isActiveGame && (
+      {inGame && (
         <GameStatusBar
           hint={
             <>
@@ -483,7 +499,7 @@ export default function PlayerDetailScreen() {
         />
       )}
       <ScrollView contentContainerStyle={styles.content}>
-        {bio && !isActiveGame ? (
+        {bio && !inGame ? (
           <View style={styles.bioSection}>
             {hofStatus && (
               <ThemedText type="default">

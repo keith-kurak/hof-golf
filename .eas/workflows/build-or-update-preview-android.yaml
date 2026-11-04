@@ -1,0 +1,56 @@
+name: Build or update Android preview
+
+# On every push to main, put the change on the Android preview app:
+#   - a preview build with the same fingerprint exists -> publish an update
+#     to the preview channel
+#   - no build matches (native change)                 -> make a new preview build
+#
+# Changes only in hidden folders (.eas, .agents, .claude, .github, ...) do not
+# start a run.
+
+on:
+  push:
+    branches: ['main']
+    paths:
+      - '**'
+      - '!.*/**'
+
+concurrency:
+  cancel_in_progress: true
+  group: ${{ workflow.filename }}-${{ github.ref }}
+
+jobs:
+  # environment must match the preview build profile, so APP_VARIANT=preview
+  # is set and the fingerprint matches preview builds.
+  fingerprint:
+    name: Fingerprint
+    type: fingerprint
+    environment: preview
+
+  get_build:
+    name: Find matching preview build
+    needs: [fingerprint]
+    type: get-build
+    params:
+      fingerprint_hash: ${{ needs.fingerprint.outputs.android_fingerprint_hash }}
+      platform: android
+      profile: preview
+
+  update:
+    name: Publish update to preview
+    needs: [get_build]
+    if: ${{ needs.get_build.outputs.build_id }}
+    type: update
+    environment: preview
+    params:
+      channel: preview
+      platform: android
+
+  build:
+    name: Build preview
+    needs: [get_build]
+    if: ${{ !needs.get_build.outputs.build_id }}
+    type: build
+    params:
+      platform: android
+      profile: preview

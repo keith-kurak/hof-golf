@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "trace-1",
+  "createdAt": "2026-10-09T04:46:50.640Z",
+  "payload": {
+    "actions": [
+      {
+        "name": "tap",
+        "summary": "tap other \"DH, Harold Baines, 127, 24, 63, .299, 0…\"",
+        "target": {
+          "role": "other",
+          "name": "DH, Harold Baines, 127, 24, 63, .299, 0, +1"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"1983, CHA\"",
+        "target": {
+          "role": "other",
+          "name": "1983, CHA"
+        }
+      }
+    ],
+    "executor": {
+      "name": "e2e-default-agent",
+      "version": "2"
+    },
+    "recordedFor": {
+      "testId": "tests/hof-golf-regression.e2e.ts::HOF%20Golf%3A%20fixed%20route%20from%20the%201997%20Tigers%20scores%2016",
+      "targetId": "ios",
+      "instructionDigest": "9803ad1843fb048c9a42042d697b1b7cef79bcd5ea3bb73e5ece2fddc8f70f72",
+      "paramsDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "callIndex": 0,
+      "agent": "default"
+    },
+    "summary": "Tapped Harold Baines, then the \"1983, CHA\" row. The 1983 Chicago White Sox roster page opened. The game moved to Rd 4/9 with 6 pts.",
+    "startPath": "com.keithkurak.hofgolf.preview / 1995 Baltimore Orioles",
+    "endPath": "com.keithkurak.hofgolf.preview / 1983 Chicago White Sox",
+    "endAnchors": [
+      {
+        "role": "text",
+        "name": "1983 Chicago White Sox"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 4/9, 6 pts, +1 pts. (Harold Baines (+0), Carlton Fisk +1), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Carlton Fisk, 138, 26, 86, .289, 9, +1"
+      },
+      {
+        "role": "other",
+        "name": "1B, Mike Squires, 143, 1, 11, .222, 3"
+      },
+      {
+        "role": "other",
+        "name": "2B, Julio Cruz, 99, 1, 40, .251, 24"
+      },
+      {
+        "role": "other",
+        "name": "SS, Jerry Dybzinski, 127, 1, 32, .230, 11"
+      },
+      {
+        "role": "other",
+        "name": "3B, Vance Law, 145, 4, 42, .243, 3"
+      },
+      {
+        "role": "other",
+        "name": "LF, Ron Kittle, 145, 35, 100, .254, 8"
+      }
+    ],
+    "goneAnchors": [
+      {
+        "role": "text",
+        "name": "1995 Baltimore Orioles"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 3/9, 5 pts, +2 pts. (Harold Baines +1, Mike Mussina (+0), Cal Ripken +1), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Chris Hoiles, 114, 19, 58, .250, 1"
+      },
+      {
+        "role": "other",
+        "name": "1B, Rafael Palmeiro, 143, 39, 104, .310, 3"
+      },
+      {
+        "role": "other",
+        "name": "2B, Manny Alexander, 94, 3, 23, .236, 11"
+      },
+      {
+        "role": "other",
+        "name": "SS, Cal Ripken, 144, 17, 88, .262, 0, +1"
+      },
+      {
+        "role": "other",
+        "name": "3B, Jeff Manto, 89, 17, 38, .256, 0"
+      },
+      {
+        "role": "other",
+        "name": "LF, Brady Anderson, 143, 16, 64, .262, 26"
+      }
+    ],
+    "endWaitMs": 12087
+  }
+}

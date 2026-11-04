@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "trace-1",
+  "createdAt": "2026-10-09T04:46:50.647Z",
+  "payload": {
+    "actions": [
+      {
+        "name": "tap",
+        "summary": "tap other \"1B, Rod Carew, 93, 2, 21, .305, 16, +1\"",
+        "target": {
+          "role": "other",
+          "name": "1B, Rod Carew, 93, 2, 21, .305, 16, +1"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap other \"1977, MIN\"",
+        "target": {
+          "role": "other",
+          "name": "1977, MIN"
+        }
+      }
+    ],
+    "executor": {
+      "name": "e2e-default-agent",
+      "version": "2"
+    },
+    "recordedFor": {
+      "testId": "tests/hof-golf-regression.e2e.ts::HOF%20Golf%3A%20fixed%20route%20from%20the%201997%20Tigers%20scores%2016",
+      "targetId": "ios",
+      "instructionDigest": "d461a0b60da80d5846d3d2a9c8698f3dfab7a6acf03d3e4e3e6b6ae66f593d61",
+      "paramsDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "callIndex": 0,
+      "agent": "default"
+    },
+    "summary": "Tapped Rod Carew, then \"1977, MIN\". The 1977 Minnesota Twins roster opened. The game moved to Rd 7/9 with 9 pts (+0 for Carew).",
+    "startPath": "com.keithkurak.hofgolf.preview / 1981 California Angels",
+    "endPath": "com.keithkurak.hofgolf.preview / 1977 Minnesota Twins",
+    "endAnchors": [
+      {
+        "role": "text",
+        "name": "1977 Minnesota Twins"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 7/9, 9 pts, +0 pts. (Rod Carew (+0)), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Butch Wynegar, 144, 10, 79, .261, 2"
+      },
+      {
+        "role": "other",
+        "name": "1B, Rod Carew, 155, 14, 100, .388, 23, +0"
+      },
+      {
+        "role": "other",
+        "name": "2B, Bob Randall, 103, 0, 22, .239, 1"
+      },
+      {
+        "role": "other",
+        "name": "SS, Roy Smalley, 150, 6, 56, .231, 5"
+      },
+      {
+        "role": "other",
+        "name": "3B, Mike Cubbage, 129, 9, 55, .264, 1"
+      },
+      {
+        "role": "other",
+        "name": "LF, Larry Hisle, 141, 28, 119, .302, 21"
+      }
+    ],
+    "goneAnchors": [
+      {
+        "role": "text",
+        "name": "1981 California Angels"
+      },
+      {
+        "role": "other",
+        "name": "🏆, HOF Golf, Rd 6/9, 9 pts, +1 pts. (Rod Carew +1), Pick your next player",
+        "testId": "game-status-bar"
+      },
+      {
+        "role": "other",
+        "name": "C, Ed Ott, 75, 2, 22, .217, 2"
+      },
+      {
+        "role": "other",
+        "name": "1B, Rod Carew, 93, 2, 21, .305, 16, +1"
+      },
+      {
+        "role": "other",
+        "name": "2B, Bobby Grich, 100, 22, 61, .304, 2"
+      },
+      {
+        "role": "other",
+        "name": "SS, Rick Burleson, 109, 5, 33, .293, 4"
+      },
+      {
+        "role": "other",
+        "name": "3B, Butch Hobson, 85, 4, 36, .235, 1"
+      },
+      {
+        "role": "other",
+        "name": "LF, Brian Downing, 93, 9, 41, .249, 1"
+      }
+    ],
+    "endWaitMs": 12460
+  }
+}
