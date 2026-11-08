@@ -1,3 +1,4 @@
+import { SymbolView } from "expo-symbols";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
@@ -27,38 +28,48 @@ export function YearPicker({
         onPress={() => canGoBack && onYearChange(year - 1)}
         style={({ pressed }) => [
           styles.button,
-          { backgroundColor: theme.backgroundElement },
+          { backgroundColor: theme.tintMuted },
           !canGoBack && styles.disabled,
           pressed && canGoBack && styles.pressed,
         ]}
         disabled={!canGoBack}
+        accessibilityRole="button"
+        accessibilityLabel="Previous year"
       >
-        <ThemedText
-          type="default"
-          themeColor={canGoBack ? "text" : "textSecondary"}
-        >
-          {"<"}
-        </ThemedText>
+        <SymbolView
+          name={{ ios: "chevron.left", android: "chevron_left", web: "chevron_left" }}
+          size={16}
+          weight="bold"
+          tintColor={theme.tint}
+          fallback={null}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        />
       </Pressable>
-      <ThemedText type="subtitle" style={styles.year}>
+      <ThemedText type="subtitle" style={styles.year} accessibilityRole="header">
         {year}
       </ThemedText>
       <Pressable
         onPress={() => canGoForward && onYearChange(year + 1)}
         style={({ pressed }) => [
           styles.button,
-          { backgroundColor: theme.backgroundElement },
+          { backgroundColor: theme.tintMuted },
           !canGoForward && styles.disabled,
           pressed && canGoForward && styles.pressed,
         ]}
         disabled={!canGoForward}
+        accessibilityRole="button"
+        accessibilityLabel="Next year"
       >
-        <ThemedText
-          type="default"
-          themeColor={canGoForward ? "text" : "textSecondary"}
-        >
-          {">"}
-        </ThemedText>
+        <SymbolView
+          name={{ ios: "chevron.right", android: "chevron_right", web: "chevron_right" }}
+          size={16}
+          weight="bold"
+          tintColor={theme.tint}
+          fallback={null}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        />
       </Pressable>
     </View>
   );
@@ -80,8 +91,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   year: {
-    minWidth: 80,
+    minWidth: 96,
     textAlign: "center",
+    fontWeight: "700",
+    fontVariant: ["tabular-nums"],
   },
   disabled: {
     opacity: 0.3,

@@ -1,8 +1,9 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Spacing } from "@/constants/theme";
+import { Radius, Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 import type { GameRound } from "@/store/game-store";
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export function GameRoundsTimeline({ rounds, targetSet, totalRounds }: Props) {
+  const theme = useTheme();
   const seenBefore = new Set<string>();
 
   return (
@@ -37,14 +39,38 @@ export function GameRoundsTimeline({ rounds, targetSet, totalRounds }: Props) {
             style={styles.roundCard}
           >
             <View style={styles.roundHeader}>
-              <ThemedText type="smallBold">{label}</ThemedText>
-              <ThemedText type="smallBold">
-                {round.timedOut ? "0" : `+${round.pointsEarned}`} pts
+              <ThemedText type="smallBold" themeColor="textSecondary">
+                {label.toUpperCase()}
               </ThemedText>
+              <View
+                style={[
+                  styles.pointsPill,
+                  {
+                    backgroundColor:
+                      round.pointsEarned > 0 && !round.timedOut
+                        ? theme.successMuted
+                        : theme.fill,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.pointsPillText,
+                    {
+                      color:
+                        round.pointsEarned > 0 && !round.timedOut
+                          ? theme.success
+                          : theme.textSecondary,
+                    },
+                  ]}
+                >
+                  {round.timedOut ? "0" : `+${round.pointsEarned}`} pts
+                </Text>
+              </View>
             </View>
 
             <View style={styles.teamRow}>
-              <ThemedText>
+              <ThemedText style={styles.teamName}>
                 {round.yearID} {round.teamName}
               </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
@@ -63,7 +89,7 @@ export function GameRoundsTimeline({ rounds, targetSet, totalRounds }: Props) {
             ) : null}
 
             {round.timedOut && (
-              <ThemedText type="small" style={styles.timedOut}>
+              <ThemedText type="small" style={[styles.timedOut, { color: theme.danger }]}>
                 Timed out — 0 pts
               </ThemedText>
             )}
@@ -72,11 +98,11 @@ export function GameRoundsTimeline({ rounds, targetSet, totalRounds }: Props) {
               <View style={styles.targetList}>
                 {newTargets.map((t) => (
                   <View key={t.playerID} style={styles.targetRow}>
-                    <View style={styles.dot} />
+                    <View style={[styles.dot, { backgroundColor: theme.success }]} />
                     <ThemedText type="small" style={styles.targetName}>
                       {t.name}
                     </ThemedText>
-                    <ThemedText type="smallBold" style={styles.targetPoints}>
+                    <ThemedText type="smallBold" style={{ color: theme.success }}>
                       +{t.points}
                     </ThemedText>
                   </View>
@@ -88,7 +114,7 @@ export function GameRoundsTimeline({ rounds, targetSet, totalRounds }: Props) {
               <View style={styles.targetList}>
                 {seenTargets.map((t) => (
                   <View key={t.playerID} style={styles.targetRow}>
-                    <View style={[styles.dot, styles.dotSeen]} />
+                    <View style={[styles.dot, { backgroundColor: theme.warning }]} />
                     <ThemedText
                       type="small"
                       themeColor="textSecondary"
@@ -118,7 +144,8 @@ export function GameRoundsTimeline({ rounds, targetSet, totalRounds }: Props) {
 
 const styles = StyleSheet.create({
   roundCard: {
-    borderRadius: Spacing.two,
+    borderRadius: Radius.card,
+    borderCurve: "continuous",
     padding: Spacing.three,
     gap: Spacing.two,
   },
@@ -133,8 +160,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   timedOut: {
-    color: "#E53935",
     fontWeight: "600",
+  },
+  teamName: {
+    flex: 1,
+    fontSize: 17,
+    fontWeight: "600",
+  },
+  pointsPill: {
+    borderRadius: Radius.pill,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: 2,
+  },
+  pointsPillText: {
+    fontSize: 13,
+    fontWeight: "700",
+    fontVariant: ["tabular-nums"],
   },
   targetList: {
     gap: Spacing.one,
@@ -148,15 +189,8 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#22C55E",
-  },
-  dotSeen: {
-    backgroundColor: "#EAB308",
   },
   targetName: {
     flex: 1,
-  },
-  targetPoints: {
-    color: "#22C55E",
   },
 });

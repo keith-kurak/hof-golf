@@ -18,10 +18,11 @@ Baseball Hall of Fame guessing/trivia game built with Expo and React Native. Ear
 ```
 src/
   app/              # Expo Router file-based routes
-    _layout.tsx     # Root layout with ThemeProvider and tab navigation
-    index.tsx       # Home screen
-    explore.tsx     # Explore screen (template example)
+    _layout.tsx     # Root layout with ThemeProvider and the root Stack
+    (tabs)/         # NativeTabs; each tab ((home), history, browse) has its own Stack (components/tab-stack.tsx) with a large title
+    game/, team/, player/  # Screens pushed on the root Stack
   components/       # Reusable UI components
+    ui/             # Shared primitives: Button, SegmentedControl, Section/GroupedRow (inset grouped lists)
   constants/
     theme.ts        # Colors, Fonts, Spacing constants
   hooks/            # Custom hooks (useColorScheme, useTheme)
@@ -79,7 +80,8 @@ When a change adds a feature or completes a goal, update Features and TODO in th
 ## Key Conventions
 
 - Path aliases: `@/*` maps to `./src/*`, `@/assets/*` maps to `./assets/*`
-- Light/dark theme support via `Colors.light` / `Colors.dark` in `src/constants/theme.ts`
+- Light/dark theme support via `Colors.light` / `Colors.dark` in `src/constants/theme.ts`: grouped `background` (page), `backgroundElement` (cards), brand `tint`, `success`/`warning`/`danger`. Use these, not hex values. `Radius` has the corner radii.
+- Segmented controls with per-segment testIDs (the agent-device scripts tap `start-choose`, `timer-untimed`): keep `SegmentedControl` instead of a native picker. On iOS, agent-device cannot tap off-screen elements: keep mode options above the fold.
 - Spacing system uses a scale: `Spacing.one` (4px) through `Spacing.six` (64px)
 - Platform-specific files use `.web.tsx` suffix
 - React Compiler and typed routes are enabled (`app.json` experiments)

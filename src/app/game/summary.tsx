@@ -1,9 +1,11 @@
 import { useSelector } from "@legendapp/state/react";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 
 import { GameRoundsTimeline } from "@/components/game-rounds-timeline";
+import { GameScoreHeader } from "@/components/game-score-header";
+import { SheetCloseButton } from "@/components/sheet-close-button";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
@@ -50,31 +52,24 @@ export default function GameSummaryScreen() {
   return (
     <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen options={{ title: "Game Summary" }} />
+      <SheetCloseButton />
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.headerRow}>
-          <ThemedText type="mediumBold">
-            {mode?.emoji} {mode?.name ?? "Game"}
-          </ThemedText>
-          <ThemedText type="mediumBold">{active.totalPoints} pts</ThemedText>
-        </View>
-
-        <View style={styles.metaRow}>
-          {active.rounds.length <= (mode?.rounds ?? 0) ? (
-            <ThemedText type="small" themeColor="textSecondary">
-              Rd {active.rounds.length}/{mode?.rounds ?? 0}
-            </ThemedText>
-          ) : (
-            <ThemedText type="small" themeColor="textSecondary">
-              Final team
-            </ThemedText>
-          )}
-          <ThemedText type="small" themeColor="textSecondary">
-            {formatDuration(elapsed)}
-          </ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            W-L: {cumWL.w}-{cumWL.l}
-          </ThemedText>
-        </View>
+        <GameScoreHeader
+          emoji={mode?.emoji}
+          name={mode?.name ?? "Game"}
+          points={active.totalPoints}
+          stats={[
+            {
+              label: "Round",
+              value:
+                active.rounds.length <= (mode?.rounds ?? 0)
+                  ? `${active.rounds.length}/${mode?.rounds ?? 0}`
+                  : "Final",
+            },
+            { label: "Time", value: formatDuration(elapsed) },
+            { label: "W-L", value: `${cumWL.w}-${cumWL.l}` },
+          ]}
+        />
 
         <GameRoundsTimeline
           rounds={active.rounds}
@@ -97,15 +92,5 @@ const styles = StyleSheet.create({
   },
   empty: {
     padding: Spacing.three,
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  metaRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
   },
 });

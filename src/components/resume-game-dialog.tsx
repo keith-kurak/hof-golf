@@ -1,9 +1,10 @@
 import { useSelector } from "@legendapp/state/react";
 import { useRouter } from "expo-router";
-import { Modal, Pressable, StyleSheet, View } from "react-native";
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
-import { Spacing } from "@/constants/theme";
+import { Button } from "@/components/ui/button";
+import { Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import gameModes from "@/metadata/game-modes.json";
 import { abandonGame, currentRound$, game$ } from "@/store/game-store";
@@ -56,7 +57,12 @@ export function ResumeGameDialog({ visible }: Props) {
       onRequestClose={() => {}}
     >
       <View style={styles.backdrop}>
-        <View style={[styles.modal, { backgroundColor: theme.background }]}>
+        <View
+          style={[styles.modal, { backgroundColor: theme.backgroundElement }]}
+        >
+          <View style={[styles.emojiTile, { backgroundColor: theme.tintMuted }]}>
+            <Text style={styles.emoji}>{mode?.emoji}</Text>
+          </View>
           <ThemedText type="mediumBold" style={styles.title}>
             Game in Progress
           </ThemedText>
@@ -68,16 +74,18 @@ export function ResumeGameDialog({ visible }: Props) {
 
           <View style={styles.statsRow}>
             <View style={styles.stat}>
-              <ThemedText type="subtitle">
+              <ThemedText type="subtitle" style={styles.statValue}>
                 {Math.min(roundIdx + 1, totalRounds)}
               </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
                 of {totalRounds}
               </ThemedText>
             </View>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: theme.separator }]} />
             <View style={styles.stat}>
-              <ThemedText type="subtitle">{active.totalPoints}</ThemedText>
+              <ThemedText type="subtitle" style={styles.statValue}>
+                {active.totalPoints}
+              </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
                 points
               </ThemedText>
@@ -88,31 +96,25 @@ export function ResumeGameDialog({ visible }: Props) {
             {currentRound.yearID} {currentRound.teamName}
           </ThemedText>
 
-          <Pressable
+          <Button
             testID="resume-continue"
+            title={isFinalRound ? "Finish" : "Continue"}
             onPress={handleContinue}
-            style={({ pressed }) => [
-              styles.continueButton,
-              { backgroundColor: theme.text },
-              pressed && styles.pressed,
-            ]}
-          >
-            <ThemedText type="mediumBold" style={{ color: theme.background }}>
-              {isFinalRound ? "Finish" : "Continue"}
-            </ThemedText>
-          </Pressable>
+            style={styles.continueButton}
+          />
 
           <Pressable
             testID="resume-abandon"
+            accessibilityRole="button"
             onPress={abandonGame}
             style={({ pressed }) => [
               styles.abandonButton,
               pressed && styles.pressed,
             ]}
           >
-            <ThemedText type="small" themeColor="textSecondary">
+            <Text style={[styles.abandonText, { color: theme.danger }]}>
               Abandon Game
-            </ThemedText>
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -123,7 +125,7 @@ export function ResumeGameDialog({ visible }: Props) {
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
     justifyContent: "center",
     alignItems: "center",
     padding: Spacing.four,
@@ -131,13 +133,27 @@ const styles = StyleSheet.create({
   modal: {
     width: "100%",
     maxWidth: 360,
-    borderRadius: Spacing.three,
+    borderRadius: 32,
+    borderCurve: "continuous",
     padding: Spacing.four,
     alignItems: "center",
     gap: Spacing.two,
+    boxShadow: "0 12px 40px rgba(0, 0, 0, 0.25)",
+  },
+  emojiTile: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    borderCurve: "continuous",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: Spacing.one,
+  },
+  emoji: {
+    fontSize: 30,
   },
   title: {
-    marginBottom: Spacing.one,
+    marginBottom: -Spacing.one,
   },
   statsRow: {
     flexDirection: "row",
@@ -148,24 +164,30 @@ const styles = StyleSheet.create({
   stat: {
     alignItems: "center",
   },
+  statValue: {
+    fontWeight: "700",
+    fontVariant: ["tabular-nums"],
+  },
   divider: {
-    width: 1,
+    width: StyleSheet.hairlineWidth,
     height: 40,
-    backgroundColor: "rgba(128, 128, 128, 0.3)",
   },
   teamLabel: {
     marginBottom: Spacing.two,
   },
   continueButton: {
-    width: "100%",
-    paddingVertical: Spacing.three,
-    borderRadius: Spacing.two,
-    alignItems: "center",
+    alignSelf: "stretch",
+    borderRadius: Radius.pill,
   },
   abandonButton: {
     paddingVertical: Spacing.two,
+    paddingHorizontal: Spacing.three,
+  },
+  abandonText: {
+    fontSize: 15,
+    fontWeight: "500",
   },
   pressed: {
-    opacity: 0.7,
+    opacity: 0.6,
   },
 });

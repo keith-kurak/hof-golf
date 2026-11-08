@@ -1,9 +1,11 @@
 import { useSelector } from "@legendapp/state/react";
 import { Stack, useRouter } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
+import { SymbolView } from "expo-symbols";
+import { StyleSheet, Text, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { Button } from "@/components/ui/button";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import gameModes from "@/metadata/game-modes.json";
@@ -49,13 +51,18 @@ export default function GameCompleteScreen() {
         options={{ title: "Game Complete", headerBackVisible: false }}
       />
       <View style={styles.content}>
-        <ThemedText style={styles.emoji}>{mode?.emoji}</ThemedText>
-        <ThemedText type="subtitle">{mode?.name ?? "Game"}</ThemedText>
+        <View style={[styles.emojiTile, { backgroundColor: theme.tintMuted }]}>
+          <Text style={styles.emoji}>{mode?.emoji}</Text>
+        </View>
+        <ThemedText style={styles.modeName}>{mode?.name ?? "Game"}</ThemedText>
 
         <View style={styles.scoreSection}>
-          <ThemedText testID="final-score" style={styles.scoreValue}>
+          <Text
+            testID="final-score"
+            style={[styles.scoreValue, { color: theme.tint }]}
+          >
             {game.totalPoints}
-          </ThemedText>
+          </Text>
           <ThemedText themeColor="textSecondary">points</ThemedText>
           {game.bonusPoints > 0 && (
             <ThemedText type="small" themeColor="textSecondary">
@@ -65,7 +72,19 @@ export default function GameCompleteScreen() {
         </View>
 
         {isNewBest && game.totalPoints > 0 && (
-          <ThemedText style={styles.newBest}>New Best!</ThemedText>
+          <View style={[styles.newBest, { backgroundColor: theme.successMuted }]}>
+            <SymbolView
+              name={{ ios: "trophy.fill", android: "trophy", web: "trophy" }}
+              size={14}
+              tintColor={theme.success}
+              fallback={null}
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+            />
+            <Text style={[styles.newBestText, { color: theme.success }]}>
+              New Best!
+            </Text>
+          </View>
         )}
 
         <View style={styles.metaRow}>
@@ -80,19 +99,25 @@ export default function GameCompleteScreen() {
           </ThemedText>
         </View>
 
-        <Pressable
-          testID="game-complete-done"
-          onPress={() => router.dismissAll()}
-          style={({ pressed }) => [
-            styles.doneButton,
-            { backgroundColor: theme.text },
-            pressed && styles.pressed,
-          ]}
-        >
-          <ThemedText type="mediumBold" style={{ color: theme.background }}>
-            Done
-          </ThemedText>
-        </Pressable>
+        <View style={styles.actions}>
+          <Button
+            testID="game-complete-share"
+            title="Share Score"
+            variant="tinted"
+            icon={{ ios: "square.and.arrow.up", android: "share", web: "share" }}
+            onPress={() =>
+              router.push({
+                pathname: "/game/share",
+                params: { gameId: game.id },
+              })
+            }
+          />
+          <Button
+            testID="game-complete-done"
+            title="Done"
+            onPress={() => router.dismissAll()}
+          />
+        </View>
       </View>
     </ThemedView>
   );
@@ -112,8 +137,21 @@ const styles = StyleSheet.create({
   empty: {
     padding: Spacing.three,
   },
+  emojiTile: {
+    width: 88,
+    height: 88,
+    borderRadius: 24,
+    borderCurve: "continuous",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: Spacing.two,
+  },
   emoji: {
     fontSize: 48,
+  },
+  modeName: {
+    fontSize: 22,
+    fontWeight: "700",
   },
   scoreSection: {
     alignItems: "center",
@@ -121,14 +159,22 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   scoreValue: {
-    fontSize: 64,
+    fontSize: 88,
     fontWeight: "800",
-    lineHeight: 64,
-    marginBottom: Spacing.three,
+    lineHeight: 96,
+    fontVariant: ["tabular-nums"],
   },
   newBest: {
-    color: "#22C55E",
-    fontSize: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.one,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
+    borderRadius: 999,
+    marginTop: Spacing.two,
+  },
+  newBestText: {
+    fontSize: 16,
     fontWeight: "700",
   },
   metaRow: {
@@ -136,14 +182,9 @@ const styles = StyleSheet.create({
     gap: Spacing.four,
     marginTop: Spacing.two,
   },
-  doneButton: {
-    width: "100%",
-    paddingVertical: Spacing.three,
-    borderRadius: Spacing.two,
-    alignItems: "center",
+  actions: {
+    alignSelf: "stretch",
+    gap: Spacing.two,
     marginTop: Spacing.four,
-  },
-  pressed: {
-    opacity: 0.7,
   },
 });

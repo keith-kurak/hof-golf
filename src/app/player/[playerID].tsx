@@ -9,7 +9,7 @@ import { GameStatusBar } from "@/components/game-status-bar";
 import { PlayerAwards } from "@/components/player-awards";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Spacing } from "@/constants/theme";
+import { Radius, Spacing } from "@/constants/theme";
 import { useHeaderInset } from "@/hooks/use-header-inset";
 import { useRoundTimer } from "@/hooks/use-round-timer";
 import { useTheme } from "@/hooks/use-theme";
@@ -358,34 +358,35 @@ export default function PlayerDetailScreen() {
                 disabled={isRowDisabled(row)}
                 style={({ pressed }) => pressed && styles.pressed}
               >
-                <ThemedView
-                  type="backgroundElement"
+                <View
                   style={[
                     styles.yearTeamButton,
-                    isRowDisabled(row) && styles.disabledRow,
+                    isRowDisabled(row)
+                      ? styles.disabledRow
+                      : { backgroundColor: theme.tintMuted },
                   ]}
                 >
-                  <ThemedText
-                    type="small"
+                  <Text
                     style={[
                       styles.labelCol,
-                      { marginLeft: Spacing.one },
+                      styles.yearText,
+                      { color: isRowDisabled(row) ? theme.textSecondary : theme.tint },
                       isRowDisabled(row) && styles.disabledText,
                     ]}
                   >
                     {row.year}
-                  </ThemedText>
-                  <ThemedText
-                    type="small"
-                    themeColor="textSecondary"
+                  </Text>
+                  <Text
                     style={[
                       styles.labelCol,
+                      styles.teamText,
+                      { color: isRowDisabled(row) ? theme.textSecondary : theme.tint },
                       isRowDisabled(row) && styles.disabledText,
                     ]}
                   >
                     {row.teamAbbr}
-                  </ThemedText>
-                </ThemedView>
+                  </Text>
+                </View>
               </Pressable>
             </View>
           ),
@@ -430,7 +431,7 @@ export default function PlayerDetailScreen() {
           ) : (
             <View key={row.key} style={styles.rowRightData}>
               {row.cells.map((cell, i) => (
-                <ThemedText key={i} type="small" style={statStyle}>
+                <ThemedText key={i} type="small" style={[statStyle, styles.num]}>
                   {cell}
                 </ThemedText>
               ))}
@@ -443,8 +444,15 @@ export default function PlayerDetailScreen() {
     return (
       <View style={styles.sectionContainer}>
         <View style={styles.sectionTitleRow}>
-          <ThemedText type="smallBold">{title}</ThemedText>
-          <Pressable onPress={onToggle} hitSlop={8}>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+            {title}
+          </Text>
+          <Pressable
+            onPress={onToggle}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={expanded ? "Fewer stats" : "More stats"}
+          >
             <MaterialCommunityIcons
               name={
                 expanded
@@ -452,11 +460,16 @@ export default function PlayerDetailScreen() {
                   : "arrow-expand-horizontal"
               }
               size={20}
-              color={theme.textSecondary}
+              color={theme.tint}
             />
           </Pressable>
         </View>
-        <View style={styles.tableContainer}>
+        <View
+          style={[
+            styles.tableContainer,
+            { backgroundColor: theme.backgroundElement },
+          ]}
+        >
           {fixedColumn}
           {expanded ? (
             <ScrollView
@@ -610,9 +623,38 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: Spacing.two,
+    paddingHorizontal: Spacing.three,
+  },
+  sectionTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
   },
   tableContainer: {
     flexDirection: "row",
+    borderRadius: Radius.card,
+    borderCurve: "continuous",
+    paddingLeft: Spacing.three,
+    paddingRight: Spacing.one,
+    paddingVertical: Spacing.two,
+    overflow: "hidden",
+  },
+  num: {
+    fontVariant: ["tabular-nums"],
+  },
+  yearText: {
+    width: LABEL_COL_WIDTH + 2,
+    fontSize: 13,
+    lineHeight: 20,
+    fontWeight: "600",
+    marginLeft: 2,
+    fontVariant: ["tabular-nums"],
+  },
+  teamText: {
+    fontSize: 13,
+    lineHeight: 20,
+    fontWeight: "500",
   },
   rowLeft: {
     flexDirection: "row",
@@ -643,7 +685,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.one,
     paddingHorizontal: Spacing.one,
     marginLeft: -Spacing.two,
-    borderRadius: Spacing.two,
+    borderRadius: Radius.small,
+    borderCurve: "continuous",
   },
   divider: {
     height: StyleSheet.hairlineWidth,
@@ -666,7 +709,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   disabledRow: {
-    opacity: 0.35,
+    opacity: 0.5,
   },
   disabledText: {
     textDecorationLine: "line-through",
