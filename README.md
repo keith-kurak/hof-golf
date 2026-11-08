@@ -24,6 +24,7 @@ npx eas-cli@latest workflow:run .eas/workflows/dev-builds.yaml
 - Game history with round details
 - Browse team rosters by year
 - Search players and view career stats
+- Player awards (MVP, Cy Young, Rookie of the Year, Gold Glove, All-Star) by season; each game mode can show or hide them
 - Offline Lahman database (SQLite)
 
 ## TODO

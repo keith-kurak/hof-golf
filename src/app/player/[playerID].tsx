@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { GameStatusBar } from "@/components/game-status-bar";
+import { PlayerAwards } from "@/components/player-awards";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
@@ -38,6 +39,7 @@ import {
   pickColumns,
   pitchingQuery,
 } from "@/util/stats";
+import { type PlayerAward, fetchPlayerAwards } from "@/util/awards";
 
 type Bio = {
   nameFirst: string;
@@ -134,6 +136,7 @@ export default function PlayerDetailScreen() {
   const { timeLeft, isTimed } = useRoundTimer();
   const [bio, setBio] = useState<Bio | null>(null);
   const [hofStatus, setHofStatus] = useState<HofStatus | null>(null);
+  const [awards, setAwards] = useState<PlayerAward[]>([]);
   const [battingSeasons, setBattingSeasons] = useState<SeasonBatting[]>([]);
   const [battingCareer, setBattingCareer] = useState<BattingStats | null>(null);
   const [pitchingSeasons, setPitchingSeasons] = useState<SeasonPitching[]>([]);
@@ -153,6 +156,8 @@ export default function PlayerDetailScreen() {
       `SELECT yearid, category FROM HallOfFame WHERE playerID = ? AND inducted = 'Y'`,
       [playerID],
     ).then(setHofStatus);
+
+    fetchPlayerAwards(db, playerID).then(setAwards);
 
     Promise.all([
       db.getAllAsync<SeasonBatting>(SEASON_BATTING_QUERY, [playerID]),
@@ -207,6 +212,8 @@ export default function PlayerDetailScreen() {
   // The layout follows `inGame`, which stays true through the final pick, so
   // the screen does not swap the status bar for the bio while it goes back.
   const inGame = !!(active && active.rounds && !active.finished);
+  // Browse always shows awards. A game shows them only if its mode turns them on.
+  const showAwards = inGame ? !!gameMode?.showAwards : true;
   // Picks stop once the final round is reached
   const canPick = inGame && !isFinalRound;
   const currentTeamID = canPick
@@ -513,6 +520,7 @@ export default function PlayerDetailScreen() {
             </ThemedText>
           </View>
         ) : null}
+        {showAwards && <PlayerAwards awards={awards} />}
 
         {/* Show pitching first if 20+ games pitched, or if more games pitched than batted */}
         {(pitchingCareer?.G ?? 0) >= 20 ||

@@ -21,6 +21,7 @@
     "picks": {
       "yearRange": [1947, 2025]
     },
+    "showAwards": false,
     "bonuses": {
       "scoringOverrides": [],
       "gameBonus": {
@@ -65,6 +66,7 @@
       "yearRange": [2025, 2025],
       "freebie": true
     },
+    "showAwards": false,
     "bonuses": {
       "scoringOverrides": [
         { "when": "gte", "threshold": 10, "points": 0 },
@@ -106,6 +108,7 @@
       "pool": "all-2025-teams",
       "yearRange": [2025, 2025]
     },
+    "showAwards": false,
     "bonuses": null,
     "info": {
       "overviewBrief": "Find the players who went on to manage.",

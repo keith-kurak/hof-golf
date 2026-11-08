@@ -45,6 +45,8 @@ export type GameMode = {
   picks?: {
     yearRange: [number, number];
   };
+  /** Show the player's awards (MVP, Cy Young, etc.) on the player screen during this game. Absent: hidden. */
+  showAwards?: boolean;
   bonuses: {
     scoringOverrides: ScoringOverride[];
     gameBonus: GameBonus | null;
