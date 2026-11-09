@@ -86,6 +86,8 @@ const pitchingColsCompact = pickColumns(PITCHING_STAT_COLUMNS, [
 
 const STAT_COL_WIDTH = 38;
 const LABEL_COL_WIDTH = 36;
+const HEADER_ROW_HEIGHT = 28;
+const DATA_ROW_HEIGHT = 36;
 
 function buildRows<T>(
   seasons: (T & {
@@ -309,6 +311,21 @@ export default function PlayerDetailScreen() {
     const statHeaders = columnHeaders(columns as StatColumn<unknown>[]);
     const statsWidth = columns.length * STAT_COL_WIDTH;
     const statStyle = expanded ? styles.statColFixed : styles.statCol;
+    // Fitted mode: each column's share of the width follows its widest
+    // value, so "3562.2" in IP gets more room than "0" in SV.
+    const colStyle = (i: number) =>
+      expanded
+        ? statStyle
+        : [
+            statStyle,
+            {
+              flex: Math.max(
+                3,
+                statHeaders[i]?.length ?? 0,
+                ...rows.map((r) => r.cells[i]?.length ?? 0),
+              ),
+            },
+          ];
 
     // Fixed left column: Year + Team labels for each row
     const fixedColumn = (
@@ -351,7 +368,7 @@ export default function PlayerDetailScreen() {
               </View>
             </View>
           ) : (
-            <View key={row.key} style={styles.rowLeft}>
+            <View key={row.key} style={styles.rowLeftItem}>
               <Pressable
                 testID={`${title.toLowerCase()}-season-${row.yearID}-${row.teamID}`}
                 onPress={() => navigateToTeam(row)}
@@ -399,12 +416,15 @@ export default function PlayerDetailScreen() {
       <View style={expanded ? { width: statsWidth } : undefined}>
         {/* Header labels */}
         <View style={styles.rowRight}>
-          {statHeaders.map((h) => (
+          {statHeaders.map((h, i) => (
             <ThemedText
               key={h}
               type="smallBold"
               themeColor="textSecondary"
-              style={statStyle}
+              style={colStyle(i)}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.6}
             >
               {h}
             </ThemedText>
@@ -421,7 +441,10 @@ export default function PlayerDetailScreen() {
                     key={i}
                     type="smallBold"
                     themeColor="textSecondary"
-                    style={statStyle}
+                    style={colStyle(i)}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.6}
                   >
                     {cell}
                   </ThemedText>
@@ -431,7 +454,14 @@ export default function PlayerDetailScreen() {
           ) : (
             <View key={row.key} style={styles.rowRightData}>
               {row.cells.map((cell, i) => (
-                <ThemedText key={i} type="small" style={[statStyle, styles.num]}>
+                <ThemedText
+                  key={i}
+                  type="small"
+                  style={[colStyle(i), styles.num]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.6}
+                >
                   {cell}
                 </ThemedText>
               ))}
@@ -520,7 +550,12 @@ export default function PlayerDetailScreen() {
       )}
       <ScrollView contentContainerStyle={styles.content}>
         {bio && !inGame ? (
-          <View style={styles.bioSection}>
+          <View
+            style={[
+              styles.bioSection,
+              { backgroundColor: theme.backgroundElement },
+            ]}
+          >
             {hofStatus && (
               <ThemedText type="default">
                 Hall of Fame, elected in {hofStatus.yearid}
@@ -613,7 +648,9 @@ const styles = StyleSheet.create({
   },
   bioSection: {
     gap: Spacing.one,
-    marginBottom: Spacing.three,
+    padding: Spacing.three,
+    borderRadius: Radius.card,
+    borderCurve: "continuous",
   },
   sectionContainer: {
     marginTop: Spacing.three,
@@ -635,7 +672,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderRadius: Radius.card,
     borderCurve: "continuous",
-    paddingLeft: Spacing.three,
+    paddingLeft: Spacing.two + Spacing.one,
     paddingRight: Spacing.one,
     paddingVertical: Spacing.two,
     overflow: "hidden",
@@ -656,25 +693,32 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     fontWeight: "500",
   },
+  // Both halves of the table use the same fixed row heights, so the
+  // year/team column always lines up with the stats.
   rowLeft: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: Spacing.one,
+    height: HEADER_ROW_HEIGHT,
+  },
+  rowLeftItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: DATA_ROW_HEIGHT,
   },
   rowLeftData: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: Spacing.two,
+    height: DATA_ROW_HEIGHT,
   },
   rowRight: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: Spacing.one,
+    height: HEADER_ROW_HEIGHT,
   },
   rowRightData: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: Spacing.two,
+    height: DATA_ROW_HEIGHT,
   },
   statsScroll: {
     flex: 1,
@@ -697,13 +741,16 @@ const styles = StyleSheet.create({
   labelCol: {
     width: LABEL_COL_WIDTH,
   },
+  // The horizontal padding keeps a gap between numbers that shrink to fit
   statCol: {
     flex: 1,
     textAlign: "center",
+    paddingHorizontal: 2,
   },
   statColFixed: {
     width: STAT_COL_WIDTH,
     textAlign: "center",
+    paddingHorizontal: 2,
   },
   pressed: {
     opacity: 0.7,

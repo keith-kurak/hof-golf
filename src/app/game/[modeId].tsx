@@ -4,7 +4,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useEffect, useState } from "react";
 import { SymbolView } from "expo-symbols";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import Animated, { FadeOut, ZoomIn } from "react-native-reanimated";
+import Animated, { Easing, FadeOut, Keyframe } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themed-text";
@@ -22,6 +22,16 @@ import { getLookupForMode } from "@/store/target-lookups";
 import { useHeaderInset } from "@/hooks/use-header-inset";
 
 const activeModes = (gameModes as GameMode[]).filter((m) => m.active);
+
+// Countdown digits: a short fade with a small scale change, no bounce
+const countdownEnter = new Keyframe({
+  0: { opacity: 0, transform: [{ scale: 0.94 }] },
+  100: {
+    opacity: 1,
+    transform: [{ scale: 1 }],
+    easing: Easing.out(Easing.cubic),
+  },
+}).duration(220);
 
 export default function ModeDetailScreen() {
   const headerInset = useHeaderInset();
@@ -292,7 +302,7 @@ export default function ModeDetailScreen() {
         <View style={styles.countdownOverlay}>
           <Animated.View
             key={countdown}
-            entering={ZoomIn.springify().damping(14)}
+            entering={countdownEnter}
             exiting={FadeOut.duration(150)}
           >
             <Text style={styles.countdownNumber}>{countdown}</Text>

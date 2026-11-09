@@ -121,6 +121,7 @@ WHERE pit.yearID = ? AND pit.teamID = ?
 ORDER BY pit.G DESC`;
 
 type TeamInfo = {
+  name: string;
   W: number;
   L: number;
   R: number;
@@ -133,7 +134,7 @@ type TeamInfo = {
   manager: string;
 };
 
-const TEAM_INFO_QUERY = `SELECT t.W, t.L, CAST(t.R AS INTEGER) as R, CAST(t.RA AS INTEGER) as RA,
+const TEAM_INFO_QUERY = `SELECT t.name, t.W, t.L, CAST(t.R AS INTEGER) as R, CAST(t.RA AS INTEGER) as RA,
   t.Rank, t.DivWin, t.WCWin, t.lgID, t.divID,
   GROUP_CONCAT(p.nameFirst || ' ' || p.nameLast, ' / ') as manager
 FROM Teams t
@@ -492,7 +493,7 @@ export default function TeamRosterScreen() {
         options={{
           title: isActiveGame
             ? `${year} ${currentRound?.teamName ?? teamName ?? teamID}`
-            : (teamName ?? teamID),
+            : (teamInfo?.name ?? teamName ?? teamID),
         }}
       />
       {isActiveGame && (
@@ -539,6 +540,8 @@ export default function TeamRosterScreen() {
             <Text
               style={[styles.headerTitle, { color: theme.textSecondary }]}
               numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
             >
               {section.title}
             </Text>
@@ -636,6 +639,9 @@ export default function TeamRosterScreen() {
                 <Text
                   key={i}
                   allowFontScaling={false}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.7}
                   style={[styles.statCol, styles.statText, { color: theme.textSecondary }]}
                 >
                   {value}
@@ -761,8 +767,10 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "800",
   },
+  // paddingLeft keeps a gap between right-aligned numbers
   statCol: {
-    width: 36,
+    width: 40,
+    paddingLeft: 4,
     textAlign: "right",
   },
   statText: {
