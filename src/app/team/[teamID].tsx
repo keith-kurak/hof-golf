@@ -3,8 +3,6 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useMemo, useState } from "react";
 import {
-  Dimensions,
-  Pressable,
   SectionList,
   StyleSheet,
   Text,
@@ -15,7 +13,9 @@ import { GameStatusBar } from "@/components/game-status-bar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { YearPicker } from "@/components/year-picker";
-import { Spacing } from "@/constants/theme";
+import { Button } from "@/components/ui/button";
+import { GroupedRow } from "@/components/ui/section";
+import { Fonts, Radius, Spacing } from "@/constants/theme";
 import { useHeaderInset } from "@/hooks/use-header-inset";
 import { useRoundTimer } from "@/hooks/use-round-timer";
 import { useTheme } from "@/hooks/use-theme";
@@ -28,6 +28,8 @@ import { formatAvg, formatEra, formatIP, statVal } from "@/util/stats";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const TWO_WAY_SET = new Set(twoWayPlayers);
+/** Width of the position column in roster rows */
+const POS_WIDTH = 30;
 const NO_BATTERS: RawBatter[] = [];
 const NO_PITCHERS: Pitcher[] = [];
 
@@ -119,6 +121,7 @@ WHERE pit.yearID = ? AND pit.teamID = ?
 ORDER BY pit.G DESC`;
 
 type TeamInfo = {
+  name: string;
   W: number;
   L: number;
   R: number;
@@ -131,7 +134,7 @@ type TeamInfo = {
   manager: string;
 };
 
-const TEAM_INFO_QUERY = `SELECT t.W, t.L, CAST(t.R AS INTEGER) as R, CAST(t.RA AS INTEGER) as RA,
+const TEAM_INFO_QUERY = `SELECT t.name, t.W, t.L, CAST(t.R AS INTEGER) as R, CAST(t.RA AS INTEGER) as RA,
   t.Rank, t.DivWin, t.WCWin, t.lgID, t.divID,
   GROUP_CONCAT(p.nameFirst || ' ' || p.nameLast, ' / ') as manager
 FROM Teams t
@@ -490,7 +493,7 @@ export default function TeamRosterScreen() {
         options={{
           title: isActiveGame
             ? `${year} ${currentRound?.teamName ?? teamName ?? teamID}`
-            : (teamName ?? teamID),
+            : (teamInfo?.name ?? teamName ?? teamID),
         }}
       />
       {isActiveGame && (
@@ -510,13 +513,14 @@ export default function TeamRosterScreen() {
               <YearPicker year={year} onYearChange={setYear} />
               {teamInfo && (
                 <View style={styles.teamInfo}>
-                  <ThemedText type="default">
+                  <ThemedText style={styles.teamRecord}>
                     {teamInfo.W}-{teamInfo.L}
-                    {"  "}
-                    <ThemedText type="small" themeColor="textSecondary">
+                  </ThemedText>
+                  {formatStanding(teamInfo) !== "" && (
+                    <ThemedText type="small">
                       {formatStanding(teamInfo)}
                     </ThemedText>
-                  </ThemedText>
+                  )}
                   <ThemedText type="small" themeColor="textSecondary">
                     Pythagorean W-L: {pythagWL(teamInfo.R, teamInfo.RA)},{" "}
                     {teamInfo.R} RS / {teamInfo.RA} RA
@@ -532,127 +536,97 @@ export default function TeamRosterScreen() {
           )
         }
         renderSectionHeader={({ section }) => (
-          <ThemedView style={styles.headerRow}>
-            <ThemedText type="smallBold" style={styles.posCol} />
-            <ThemedText type="smallBold" style={styles.nameCol}>
+          <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
+            <Text
+              style={[styles.headerTitle, { color: theme.textSecondary }]}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
+            >
               {section.title}
-            </ThemedText>
+            </Text>
             {(isBatterSection(section.title)
               ? BATTER_STAT_HEADERS
               : PITCHER_STAT_HEADERS
             ).map((h) => (
-              <ThemedText key={h} type="smallBold" style={styles.statCol}>
+              <Text
+                key={h}
+                style={[
+                  styles.statCol,
+                  styles.headerStat,
+                  { color: theme.textSecondary },
+                ]}
+              >
                 {h}
-              </ThemedText>
+              </Text>
             ))}
-          </ThemedView>
+          </View>
         )}
-        renderItem={({ item, section }) => {
+        renderItem={({ item, section, index }) => {
           const name = `${item.nameFirst} ${item.nameLast}`;
           const newTarget = isNewTarget(item.playerID);
           const seenTarget = isSeenTarget(item.playerID);
           const pts = targetPoints.get(item.playerID);
-          if (isBatterSection(section.title)) {
-            const b = item as Batter;
-            return (
-              <Pressable
-                testID={`player-${b.playerID}`}
-                onPress={() => navigateToPlayer(b.playerID, name)}
+          const isBatter = isBatterSection(section.title);
+          const b = item as Batter;
+          const p = item as Pitcher;
+          const stats = isBatter
+            ? [
+                String(b.G),
+                statVal(b.HR),
+                statVal(b.RBI),
+                formatAvg(b.H, b.AB),
+                statVal(b.SB),
+              ]
+            : [
+                String(p.G),
+                formatEra(p.ER, p.IPouts),
+                formatIP(p.IPouts),
+                statVal(p.SO),
+                statVal(p.SV),
+              ];
+          const accent = newTarget
+            ? theme.success
+            : seenTarget
+              ? theme.warning
+              : undefined;
+          return (
+            <GroupedRow
+              testID={`player-${item.playerID}`}
+              index={index}
+              count={section.data.length}
+              onPress={() => navigateToPlayer(item.playerID, name)}
+              style={[
+                styles.playerRow,
+                newTarget && { backgroundColor: theme.successMuted },
+                seenTarget && { backgroundColor: theme.warningMuted },
+              ]}
+              separatorInset={Spacing.three + POS_WIDTH}
+            >
+              <Text
+                style={[styles.posCol, { color: theme.textSecondary }]}
+                allowFontScaling={false}
               >
-                <ThemedView
-                  type="backgroundElement"
+                {isBatter ? b.position : "P"}
+              </Text>
+              <View style={styles.nameCol}>
+                <Text
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.8}
                   style={[
-                    styles.playerRow,
-                    newTarget && styles.targetRow,
-                    seenTarget && styles.seenTargetRow,
+                    styles.nameText,
+                    { color: accent ?? theme.text },
+                    accent && styles.targetName,
                   ]}
                 >
-                  {pts != null && (
-                    <View
-                      style={[
-                        styles.pointsBadge,
-                        seenTarget && styles.pointsBadgeSeen,
-                      ]}
-                    >
-                      <Text style={styles.pointsBadgeText}>
-                        +{seenTarget ? 0 : pts}
-                      </Text>
-                    </View>
-                  )}
-                  <ThemedText
-                    type="code"
-                    themeColor="textSecondary"
-                    style={styles.posCol}
-                  >
-                    {b.position}
-                  </ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.nameCol,
-                      newTarget && styles.targetName,
-                      seenTarget && styles.seenTargetName,
-                    ]}
-                  >
-                    {name}
-                  </ThemedText>
-                  <ThemedText
-                    themeColor="textSecondary"
-                    type="small"
-                    style={styles.statCol}
-                  >
-                    {b.G}
-                  </ThemedText>
-                  <ThemedText
-                    themeColor="textSecondary"
-                    type="small"
-                    style={styles.statCol}
-                  >
-                    {statVal(b.HR)}
-                  </ThemedText>
-                  <ThemedText
-                    themeColor="textSecondary"
-                    type="small"
-                    style={styles.statCol}
-                  >
-                    {statVal(b.RBI)}
-                  </ThemedText>
-                  <ThemedText
-                    themeColor="textSecondary"
-                    type="small"
-                    style={styles.statCol}
-                  >
-                    {formatAvg(b.H, b.AB)}
-                  </ThemedText>
-                  <ThemedText
-                    themeColor="textSecondary"
-                    type="small"
-                    style={styles.statCol}
-                  >
-                    {statVal(b.SB)}
-                  </ThemedText>
-                </ThemedView>
-              </Pressable>
-            );
-          }
-          const p = item as Pitcher;
-          return (
-            <Pressable
-              testID={`player-${p.playerID}`}
-              onPress={() => navigateToPlayer(p.playerID, name)}
-            >
-              <ThemedView
-                type="backgroundElement"
-                style={[
-                  styles.playerRow,
-                  newTarget && styles.targetRow,
-                  seenTarget && styles.seenTargetRow,
-                ]}
-              >
+                  {name}
+                </Text>
                 {pts != null && (
                   <View
                     style={[
                       styles.pointsBadge,
-                      seenTarget && styles.pointsBadgeSeen,
+                      { backgroundColor: accent ?? theme.success },
                     ]}
                   >
                     <Text style={styles.pointsBadgeText}>
@@ -660,79 +634,35 @@ export default function TeamRosterScreen() {
                     </Text>
                   </View>
                 )}
-                <ThemedText
-                  type="code"
-                  themeColor="textSecondary"
-                  style={styles.posCol}
+              </View>
+              {stats.map((value, i) => (
+                <Text
+                  key={i}
+                  allowFontScaling={false}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.7}
+                  style={[styles.statCol, styles.statText, { color: theme.textSecondary }]}
                 >
-                  P
-                </ThemedText>
-                <ThemedText
-                  style={[
-                    styles.nameCol,
-                    newTarget && styles.targetName,
-                    seenTarget && styles.seenTargetName,
-                  ]}
-                >
-                  {name}
-                </ThemedText>
-                <ThemedText
-                  themeColor="textSecondary"
-                  type="small"
-                  style={styles.statCol}
-                >
-                  {p.G}
-                </ThemedText>
-                <ThemedText
-                  themeColor="textSecondary"
-                  type="small"
-                  style={styles.statCol}
-                >
-                  {formatEra(p.ER, p.IPouts)}
-                </ThemedText>
-                <ThemedText
-                  themeColor="textSecondary"
-                  type="small"
-                  style={styles.statCol}
-                >
-                  {formatIP(p.IPouts)}
-                </ThemedText>
-                <ThemedText
-                  themeColor="textSecondary"
-                  type="small"
-                  style={styles.statCol}
-                >
-                  {statVal(p.SO)}
-                </ThemedText>
-                <ThemedText
-                  themeColor="textSecondary"
-                  type="small"
-                  style={styles.statCol}
-                >
-                  {statVal(p.SV)}
-                </ThemedText>
-              </ThemedView>
-            </Pressable>
+                  {value}
+                </Text>
+              ))}
+            </GroupedRow>
           );
         }}
       />
       {isFinalRound ? (
         <View
-          style={[styles.continueSection, { paddingBottom: insets.bottom }]}
+          style={[
+            styles.continueSection,
+            { paddingBottom: insets.bottom + Spacing.two },
+          ]}
         >
-          <Pressable
+          <Button
             testID="game-complete-continue"
+            title="Continue"
             onPress={handleContinue}
-            style={({ pressed }) => [
-              styles.continueButton,
-              { backgroundColor: theme.text },
-              pressed && styles.pressed,
-            ]}
-          >
-            <ThemedText type="mediumBold" style={{ color: theme.background }}>
-              Continue
-            </ThemedText>
-          </Pressable>
+          />
         </View>
       ) : null}
     </ThemedView>
@@ -775,83 +705,80 @@ const styles = StyleSheet.create({
   },
   teamInfo: {
     gap: Spacing.one,
-    marginBottom: Spacing.three,
+    marginBottom: Spacing.two,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.three,
+  },
+  teamRecord: {
+    fontSize: 22,
+    fontWeight: "700",
+    fontVariant: ["tabular-nums"],
   },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: Spacing.two,
+    paddingTop: Spacing.three,
+    paddingBottom: Spacing.two,
     paddingHorizontal: Spacing.three,
-    marginBottom: Spacing.one,
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
+  },
+  headerStat: {
+    fontSize: 12,
+    fontWeight: "600",
   },
   playerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: Spacing.three,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.two,
-    marginVertical: Spacing.half,
-    borderLeftWidth: 3,
-    borderLeftColor: "transparent",
-  },
-  targetRow: {
-    borderLeftColor: "#22C55E",
-    backgroundColor: "rgba(34, 197, 94, 0.1)",
-  },
-  targetName: {
-    color: "#22C55E",
-    fontWeight: "700",
-  },
-  seenTargetRow: {
-    borderLeftColor: "#EAB308",
-    backgroundColor: "rgba(234, 179, 8, 0.08)",
-  },
-  seenTargetName: {
-    color: "#EAB308",
-    fontWeight: "700",
-  },
-  pointsBadge: {
-    position: "absolute",
-    top: 2,
-    right: 4,
-    backgroundColor: "#22C55E",
-    borderRadius: 8,
-    paddingHorizontal: 5,
-    paddingVertical: 1,
-    zIndex: 1,
-  },
-  pointsBadgeSeen: {
-    backgroundColor: "#EAB308",
-  },
-  pointsBadgeText: {
-    color: "#ffffff",
-    fontSize: 10,
-    fontWeight: "800",
+    minHeight: 44,
+    paddingVertical: 10,
+    gap: 0,
   },
   posCol: {
-    width: 36,
+    width: POS_WIDTH,
+    fontSize: 12,
+    fontWeight: "600",
+    fontFamily: Fonts?.mono,
   },
   nameCol: {
     flex: 1,
-    ...(Dimensions.get("window").width <= 375 && { fontSize: 12 }),
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingRight: Spacing.one,
   },
+  nameText: {
+    flexShrink: 1,
+    fontSize: 15,
+  },
+  targetName: {
+    fontWeight: "700",
+  },
+  pointsBadge: {
+    borderRadius: Radius.pill,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+  },
+  pointsBadgeText: {
+    color: "#ffffff",
+    fontSize: 11,
+    fontWeight: "800",
+  },
+  // paddingLeft keeps a gap between right-aligned numbers
   statCol: {
     width: 40,
-    textAlign: "center",
+    paddingLeft: 4,
+    textAlign: "right",
+  },
+  statText: {
+    fontSize: 14,
+    fontVariant: ["tabular-nums"],
   },
   continueSection: {
-    paddingTop: Spacing.three,
-    paddingBottom: Spacing.three,
-    alignItems: "center",
-    marginHorizontal: Spacing.three,
-  },
-  continueButton: {
-    width: "100%",
-    paddingVertical: Spacing.three,
-    borderRadius: Spacing.two,
-    alignItems: "center",
-  },
-  pressed: {
-    opacity: 0.7,
+    paddingTop: Spacing.two,
+    paddingHorizontal: Spacing.three,
   },
 });

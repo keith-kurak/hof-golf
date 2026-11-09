@@ -9,7 +9,7 @@ import { GameStatusBar } from "@/components/game-status-bar";
 import { PlayerAwards } from "@/components/player-awards";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Spacing } from "@/constants/theme";
+import { Radius, Spacing } from "@/constants/theme";
 import { useHeaderInset } from "@/hooks/use-header-inset";
 import { useRoundTimer } from "@/hooks/use-round-timer";
 import { useTheme } from "@/hooks/use-theme";
@@ -86,6 +86,8 @@ const pitchingColsCompact = pickColumns(PITCHING_STAT_COLUMNS, [
 
 const STAT_COL_WIDTH = 38;
 const LABEL_COL_WIDTH = 36;
+const HEADER_ROW_HEIGHT = 28;
+const DATA_ROW_HEIGHT = 36;
 
 function buildRows<T>(
   seasons: (T & {
@@ -309,6 +311,21 @@ export default function PlayerDetailScreen() {
     const statHeaders = columnHeaders(columns as StatColumn<unknown>[]);
     const statsWidth = columns.length * STAT_COL_WIDTH;
     const statStyle = expanded ? styles.statColFixed : styles.statCol;
+    // Fitted mode: each column's share of the width follows its widest
+    // value, so "3562.2" in IP gets more room than "0" in SV.
+    const colStyle = (i: number) =>
+      expanded
+        ? statStyle
+        : [
+            statStyle,
+            {
+              flex: Math.max(
+                3,
+                statHeaders[i]?.length ?? 0,
+                ...rows.map((r) => r.cells[i]?.length ?? 0),
+              ),
+            },
+          ];
 
     // Fixed left column: Year + Team labels for each row
     const fixedColumn = (
@@ -351,41 +368,42 @@ export default function PlayerDetailScreen() {
               </View>
             </View>
           ) : (
-            <View key={row.key} style={styles.rowLeft}>
+            <View key={row.key} style={styles.rowLeftItem}>
               <Pressable
                 testID={`${title.toLowerCase()}-season-${row.yearID}-${row.teamID}`}
                 onPress={() => navigateToTeam(row)}
                 disabled={isRowDisabled(row)}
                 style={({ pressed }) => pressed && styles.pressed}
               >
-                <ThemedView
-                  type="backgroundElement"
+                <View
                   style={[
                     styles.yearTeamButton,
-                    isRowDisabled(row) && styles.disabledRow,
+                    isRowDisabled(row)
+                      ? styles.disabledRow
+                      : { backgroundColor: theme.tintMuted },
                   ]}
                 >
-                  <ThemedText
-                    type="small"
+                  <Text
                     style={[
                       styles.labelCol,
-                      { marginLeft: Spacing.one },
+                      styles.yearText,
+                      { color: isRowDisabled(row) ? theme.textSecondary : theme.tint },
                       isRowDisabled(row) && styles.disabledText,
                     ]}
                   >
                     {row.year}
-                  </ThemedText>
-                  <ThemedText
-                    type="small"
-                    themeColor="textSecondary"
+                  </Text>
+                  <Text
                     style={[
                       styles.labelCol,
+                      styles.teamText,
+                      { color: isRowDisabled(row) ? theme.textSecondary : theme.tint },
                       isRowDisabled(row) && styles.disabledText,
                     ]}
                   >
                     {row.teamAbbr}
-                  </ThemedText>
-                </ThemedView>
+                  </Text>
+                </View>
               </Pressable>
             </View>
           ),
@@ -398,12 +416,15 @@ export default function PlayerDetailScreen() {
       <View style={expanded ? { width: statsWidth } : undefined}>
         {/* Header labels */}
         <View style={styles.rowRight}>
-          {statHeaders.map((h) => (
+          {statHeaders.map((h, i) => (
             <ThemedText
               key={h}
               type="smallBold"
               themeColor="textSecondary"
-              style={statStyle}
+              style={colStyle(i)}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.6}
             >
               {h}
             </ThemedText>
@@ -420,7 +441,10 @@ export default function PlayerDetailScreen() {
                     key={i}
                     type="smallBold"
                     themeColor="textSecondary"
-                    style={statStyle}
+                    style={colStyle(i)}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.6}
                   >
                     {cell}
                   </ThemedText>
@@ -430,7 +454,14 @@ export default function PlayerDetailScreen() {
           ) : (
             <View key={row.key} style={styles.rowRightData}>
               {row.cells.map((cell, i) => (
-                <ThemedText key={i} type="small" style={statStyle}>
+                <ThemedText
+                  key={i}
+                  type="small"
+                  style={[colStyle(i), styles.num]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.6}
+                >
                   {cell}
                 </ThemedText>
               ))}
@@ -443,8 +474,15 @@ export default function PlayerDetailScreen() {
     return (
       <View style={styles.sectionContainer}>
         <View style={styles.sectionTitleRow}>
-          <ThemedText type="smallBold">{title}</ThemedText>
-          <Pressable onPress={onToggle} hitSlop={8}>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+            {title}
+          </Text>
+          <Pressable
+            onPress={onToggle}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={expanded ? "Fewer stats" : "More stats"}
+          >
             <MaterialCommunityIcons
               name={
                 expanded
@@ -452,11 +490,16 @@ export default function PlayerDetailScreen() {
                   : "arrow-expand-horizontal"
               }
               size={20}
-              color={theme.textSecondary}
+              color={theme.tint}
             />
           </Pressable>
         </View>
-        <View style={styles.tableContainer}>
+        <View
+          style={[
+            styles.tableContainer,
+            { backgroundColor: theme.backgroundElement },
+          ]}
+        >
           {fixedColumn}
           {expanded ? (
             <ScrollView
@@ -507,7 +550,12 @@ export default function PlayerDetailScreen() {
       )}
       <ScrollView contentContainerStyle={styles.content}>
         {bio && !inGame ? (
-          <View style={styles.bioSection}>
+          <View
+            style={[
+              styles.bioSection,
+              { backgroundColor: theme.backgroundElement },
+            ]}
+          >
             {hofStatus && (
               <ThemedText type="default">
                 Hall of Fame, elected in {hofStatus.yearid}
@@ -600,7 +648,9 @@ const styles = StyleSheet.create({
   },
   bioSection: {
     gap: Spacing.one,
-    marginBottom: Spacing.three,
+    padding: Spacing.three,
+    borderRadius: Radius.card,
+    borderCurve: "continuous",
   },
   sectionContainer: {
     marginTop: Spacing.three,
@@ -610,29 +660,65 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: Spacing.two,
+    paddingHorizontal: Spacing.three,
+  },
+  sectionTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
   },
   tableContainer: {
     flexDirection: "row",
+    borderRadius: Radius.card,
+    borderCurve: "continuous",
+    paddingLeft: Spacing.two + Spacing.one,
+    paddingRight: Spacing.one,
+    paddingVertical: Spacing.two,
+    overflow: "hidden",
   },
+  num: {
+    fontVariant: ["tabular-nums"],
+  },
+  yearText: {
+    width: LABEL_COL_WIDTH + 2,
+    fontSize: 13,
+    lineHeight: 20,
+    fontWeight: "600",
+    marginLeft: 2,
+    fontVariant: ["tabular-nums"],
+  },
+  teamText: {
+    fontSize: 13,
+    lineHeight: 20,
+    fontWeight: "500",
+  },
+  // Both halves of the table use the same fixed row heights, so the
+  // year/team column always lines up with the stats.
   rowLeft: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: Spacing.one,
+    height: HEADER_ROW_HEIGHT,
+  },
+  rowLeftItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: DATA_ROW_HEIGHT,
   },
   rowLeftData: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: Spacing.two,
+    height: DATA_ROW_HEIGHT,
   },
   rowRight: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: Spacing.one,
+    height: HEADER_ROW_HEIGHT,
   },
   rowRightData: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: Spacing.two,
+    height: DATA_ROW_HEIGHT,
   },
   statsScroll: {
     flex: 1,
@@ -643,7 +729,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.one,
     paddingHorizontal: Spacing.one,
     marginLeft: -Spacing.two,
-    borderRadius: Spacing.two,
+    borderRadius: Radius.small,
+    borderCurve: "continuous",
   },
   divider: {
     height: StyleSheet.hairlineWidth,
@@ -654,19 +741,22 @@ const styles = StyleSheet.create({
   labelCol: {
     width: LABEL_COL_WIDTH,
   },
+  // The horizontal padding keeps a gap between numbers that shrink to fit
   statCol: {
     flex: 1,
     textAlign: "center",
+    paddingHorizontal: 2,
   },
   statColFixed: {
     width: STAT_COL_WIDTH,
     textAlign: "center",
+    paddingHorizontal: 2,
   },
   pressed: {
     opacity: 0.7,
   },
   disabledRow: {
-    opacity: 0.35,
+    opacity: 0.5,
   },
   disabledText: {
     textDecorationLine: "line-through",

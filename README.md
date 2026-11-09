@@ -22,10 +22,12 @@ npx eas-cli@latest workflow:run .eas/workflows/dev-builds.yaml
 - Timed or untimed rounds
 - Resume a game in progress
 - Game history with round details
+- Share a score as an image (a scorecard with the points of each round), from the end of a game or from history
 - Browse team rosters by year
 - Search players and view career stats
 - Player awards (MVP, Cy Young, Rookie of the Year, Gold Glove, All-Star) by season; each game mode can show or hide them
 - Offline Lahman database (SQLite)
+- Native look: large titles, native header search, inset grouped lists, SF Symbols / Material icons, brand tint, light and dark mode
 
 ## TODO
 

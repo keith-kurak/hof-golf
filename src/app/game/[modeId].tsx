@@ -2,19 +2,17 @@ import { useSelector } from "@legendapp/state/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { SymbolView } from "expo-symbols";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import Animated, { Easing, FadeOut, Keyframe } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Spacing } from "@/constants/theme";
+import { Button } from "@/components/ui/button";
+import { Section, Separator } from "@/components/ui/section";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import gameModes from "@/metadata/game-modes.json";
 import { game$, pendingTeamPick$, startGame } from "@/store/game-store";
@@ -24,6 +22,16 @@ import { getLookupForMode } from "@/store/target-lookups";
 import { useHeaderInset } from "@/hooks/use-header-inset";
 
 const activeModes = (gameModes as GameMode[]).filter((m) => m.active);
+
+// Countdown digits: a short fade with a small scale change, no bounce
+const countdownEnter = new Keyframe({
+  0: { opacity: 0, transform: [{ scale: 0.94 }] },
+  100: {
+    opacity: 1,
+    transform: [{ scale: 1 }],
+    easing: Easing.out(Easing.cubic),
+  },
+}).duration(220);
 
 export default function ModeDetailScreen() {
   const headerInset = useHeaderInset();
@@ -124,6 +132,10 @@ export default function ModeDetailScreen() {
   const { info } = mode;
   const bestScore = bestScores[mode.id];
 
+  const pickLabel = pendingPick
+    ? `${pendingPick.yearID} ${pendingPick.teamName}`
+    : "Select Team...";
+
   return (
     <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen options={{ headerTitle: mode.name }} />
@@ -134,215 +146,166 @@ export default function ModeDetailScreen() {
         ]}
       >
         {/* Overview */}
-        <ThemedView type="backgroundSelected" style={styles.card}>
+        <View style={styles.hero}>
+          <View style={[styles.emojiTile, { backgroundColor: theme.tintMuted }]}>
+            <Text style={styles.emoji}>{mode.emoji}</Text>
+          </View>
           <ThemedText style={styles.overviewText}>
             {info.overviewBrief}
           </ThemedText>
           {bestScore != null && bestScore > 0 && (
-            <ThemedText type="smallBold" themeColor="textSecondary">
-              Best score: {bestScore}
-            </ThemedText>
-          )}
-        </ThemedView>
-
-        {/* How to play */}
-        <ThemedView type="backgroundElement" style={styles.card}>
-          <ThemedText type="smallBold" style={styles.sectionLabel}>
-            How to play
-          </ThemedText>
-          {info.howToPlay.map((step, i) => (
-            <View key={i} style={styles.stepRow}>
-              <ThemedText
-                type="smallBold"
-                themeColor="textSecondary"
-                style={styles.stepNumber}
-              >
-                {i + 1}.
-              </ThemedText>
-              <ThemedText themeColor="textSecondary" style={styles.stepText}>
-                {step}
-              </ThemedText>
+            <View
+              style={[styles.bestPill, { backgroundColor: theme.successMuted }]}
+            >
+              <SymbolView
+                name={{ ios: "trophy.fill", android: "trophy", web: "trophy" }}
+                size={12}
+                tintColor={theme.success}
+                fallback={null}
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+              />
+              <Text style={[styles.bestText, { color: theme.success }]}>
+                Best score: {bestScore}
+              </Text>
             </View>
-          ))}
-        </ThemedView>
+          )}
+        </View>
 
-        {/* Extra details */}
-        {info.bullets.length > 0 && (
-          <ThemedView type="backgroundElement" style={styles.card}>
-            {info.bullets.map((b, i) => (
-              <View key={i} style={styles.bulletRow}>
-                <ThemedText themeColor="textSecondary" style={styles.bulletDot}>
-                  {"\u2022"}
-                </ThemedText>
-                <ThemedText
-                  themeColor="textSecondary"
-                  style={styles.bulletText}
-                >
-                  {b}
-                </ThemedText>
-              </View>
-            ))}
-          </ThemedView>
-        )}
         {/* Game options */}
-        <ThemedView type="backgroundElement" style={styles.card}>
-          <ThemedText type="smallBold" style={styles.sectionLabel}>
-            Options
-          </ThemedText>
-
-          {/* Starting team toggle */}
+        <Section title="Options">
           <View style={styles.optionRow}>
-            <ThemedText themeColor="textSecondary">Starting team</ThemedText>
-            <View style={styles.toggleGroup}>
-              <Pressable
-                testID="start-random"
-                onPress={() => setChooseTeam(false)}
-                style={[
-                  styles.toggleButton,
-                  chooseTeam
-                    ? { borderColor: theme.textSecondary }
-                    : { backgroundColor: theme.text },
+            <ThemedText style={styles.optionLabel}>Starting team</ThemedText>
+            <View style={styles.segmentWrap}>
+              <SegmentedControl
+                selected={chooseTeam ? "choose" : "random"}
+                onSelect={(v) => setChooseTeam(v === "choose")}
+                options={[
+                  { value: "random", label: "Random", testID: "start-random" },
+                  { value: "choose", label: "Choose", testID: "start-choose" },
                 ]}
-              >
-                <ThemedText
-                  type="small"
-                  allowFontScaling={false}
-                  style={!chooseTeam ? { color: theme.background } : undefined}
-                >
-                  Random
-                </ThemedText>
-              </Pressable>
-              <Pressable
-                testID="start-choose"
-                onPress={() => setChooseTeam(true)}
-                style={[
-                  styles.toggleButton,
-                  chooseTeam
-                    ? { backgroundColor: theme.text }
-                    : { borderColor: theme.textSecondary },
-                ]}
-              >
-                <ThemedText
-                  allowFontScaling={false}
-                  type="small"
-                  style={chooseTeam ? { color: theme.background } : undefined}
-                >
-                  Choose
-                </ThemedText>
-              </Pressable>
+              />
             </View>
           </View>
 
           {chooseTeam && (
-            <View style={styles.pickTeamRow}>
+            <>
+              <Separator />
               <Pressable
                 testID="select-team"
+                accessibilityRole="button"
                 onPress={() =>
                   router.push({
                     pathname: "/game/pick-team",
                     params: { modeId: mode.id },
                   })
                 }
-                style={[
-                  styles.selectTeamButton,
-                  { borderColor: theme.textSecondary },
+                style={({ pressed }) => [
+                  styles.optionRow,
+                  pressed && { backgroundColor: theme.backgroundSelected },
                 ]}
               >
-                <ThemedText
-                  type="small"
-                  allowFontScaling={false}
-                  themeColor="textSecondary"
-                >
-                  {pendingPick
-                    ? `${pendingPick.yearID} ${pendingPick.teamName}`
-                    : "Select Team..."}
-                </ThemedText>
+                <ThemedText style={styles.optionLabel}>Team</ThemedText>
+                <View style={styles.pickValue}>
+                  <ThemedText
+                    numberOfLines={1}
+                    style={[
+                      styles.pickValueText,
+                      { color: pendingPick ? theme.text : theme.tint },
+                    ]}
+                  >
+                    {pickLabel}
+                  </ThemedText>
+                  <SymbolView
+                    name={{
+                      ios: "chevron.right",
+                      android: "chevron_right",
+                      web: "chevron_right",
+                    }}
+                    size={13}
+                    weight="semibold"
+                    tintColor={theme.textSecondary}
+                    fallback={null}
+                    accessibilityElementsHidden
+                    importantForAccessibility="no-hide-descendants"
+                  />
+                </View>
               </Pressable>
-            </View>
+            </>
           )}
 
-          {/* Timed toggle */}
+          <Separator />
           <View style={styles.optionRow}>
-            <ThemedText themeColor="textSecondary">Timer</ThemedText>
-            <View style={styles.toggleGroup}>
-              <Pressable
-                testID="timer-untimed"
-                onPress={() => setTimed(false)}
-                style={[
-                  styles.toggleButton,
-                  timed
-                    ? { borderColor: theme.textSecondary }
-                    : { backgroundColor: theme.text },
+            <ThemedText style={styles.optionLabel}>Timer</ThemedText>
+            <View style={styles.segmentWrap}>
+              <SegmentedControl
+                selected={timed ? "timed" : "untimed"}
+                onSelect={(v) => setTimed(v === "timed")}
+                options={[
+                  { value: "untimed", label: "Untimed", testID: "timer-untimed" },
+                  { value: "timed", label: "Timed", testID: "timer-timed" },
                 ]}
-              >
-                <ThemedText
-                  type="small"
-                  allowFontScaling={false}
-                  style={!timed ? { color: theme.background } : undefined}
-                >
-                  Untimed
-                </ThemedText>
-              </Pressable>
-              <Pressable
-                testID="timer-timed"
-                onPress={() => setTimed(true)}
-                style={[
-                  styles.toggleButton,
-                  timed
-                    ? { backgroundColor: theme.text }
-                    : { borderColor: theme.textSecondary },
-                ]}
-              >
-                <ThemedText
-                  type="small"
-                  style={timed ? { color: theme.background } : undefined}
-                >
-                  Timed
-                </ThemedText>
-              </Pressable>
+              />
             </View>
           </View>
-        </ThemedView>
+        </Section>
+
+        {/* How to play */}
+        <Section title="How to play" contentStyle={styles.sectionBody}>
+          {info.howToPlay.map((step, i) => (
+            <View key={i} style={styles.stepRow}>
+              <View style={[styles.stepBadge, { backgroundColor: theme.tint }]}>
+                <Text style={styles.stepBadgeText}>{i + 1}</Text>
+              </View>
+              <ThemedText style={styles.stepText}>{step}</ThemedText>
+            </View>
+          ))}
+        </Section>
+
+        {/* Extra details */}
+        {info.bullets.length > 0 && (
+          <Section title="Details" contentStyle={styles.sectionBody}>
+            {info.bullets.map((b, i) => (
+              <View key={i} style={styles.bulletRow}>
+                <View
+                  style={[styles.bulletDot, { backgroundColor: theme.tint }]}
+                />
+                <ThemedText themeColor="textSecondary" style={styles.stepText}>
+                  {b}
+                </ThemedText>
+              </View>
+            ))}
+          </Section>
+        )}
+
       </ScrollView>
 
       {/* Play button */}
-      <Pressable
-        testID="play"
-        onPress={handlePlay}
-        disabled={loading || countdown !== null}
-        style={({ pressed }) => [
-          styles.playButton,
-          { backgroundColor: theme.text },
-          pressed && styles.pressed,
-          { marginBottom: insets.bottom },
+      <View
+        style={[
+          styles.playBar,
+          { paddingBottom: insets.bottom + Spacing.two },
         ]}
       >
-        {/* The label stays in place while loading so the button keeps its height */}
-        <ThemedText
-          type="mediumBold"
-          style={[
-            { color: theme.background },
-            loading && countdown === null && styles.hidden,
-          ]}
-        >
-          Play
-        </ThemedText>
-        {loading && countdown === null && (
-          <View style={styles.playSpinner}>
-            <ActivityIndicator size="small" color={theme.background} />
-          </View>
-        )}
-      </Pressable>
+        <Button
+          testID="play"
+          title="Play"
+          icon={{ ios: "play.fill", android: "play_arrow", web: "play_arrow" }}
+          onPress={handlePlay}
+          disabled={countdown !== null}
+          loading={loading && countdown === null}
+        />
+      </View>
 
       {/* Countdown overlay */}
       {countdown !== null && countdown > 0 && (
         <View style={styles.countdownOverlay}>
           <Animated.View
             key={countdown}
-            entering={FadeIn.duration(200)}
-            exiting={FadeOut.duration(200)}
+            entering={countdownEnter}
+            exiting={FadeOut.duration(150)}
           >
-            <ThemedText style={styles.countdownNumber}>{countdown}</ThemedText>
+            <Text style={styles.countdownNumber}>{countdown}</Text>
           </Animated.View>
         </View>
       )}
@@ -356,91 +319,113 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: Spacing.three,
-    rowGap: Spacing.three,
+    rowGap: Spacing.four,
   },
-  card: {
-    borderRadius: Spacing.two,
-    padding: Spacing.three,
-    rowGap: Spacing.two,
+  hero: {
+    alignItems: "center",
+    gap: Spacing.three,
+    paddingTop: Spacing.two,
+    paddingHorizontal: Spacing.three,
+  },
+  emojiTile: {
+    width: 72,
+    height: 72,
+    borderRadius: 18,
+    borderCurve: "continuous",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  emoji: {
+    fontSize: 40,
   },
   overviewText: {
-    lineHeight: 22,
+    fontSize: 17,
+    lineHeight: 23,
+    fontWeight: "500",
+    textAlign: "center",
   },
-  sectionLabel: {
-    textTransform: "uppercase",
+  bestPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.one,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: 3,
+    borderRadius: Radius.pill,
+  },
+  bestText: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  sectionBody: {
+    padding: Spacing.three,
+    gap: Spacing.three,
   },
   stepRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: Spacing.two,
+    gap: Spacing.three,
   },
-  stepNumber: {
-    width: 20,
-    lineHeight: 22,
+  stepBadge: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 1,
+  },
+  stepBadgeText: {
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: "700",
   },
   stepText: {
     flex: 1,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 21,
+    fontWeight: "400",
   },
   bulletRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: Spacing.two,
+    gap: Spacing.three,
   },
   bulletDot: {
-    lineHeight: 22,
-  },
-  bulletText: {
-    flex: 1,
-    lineHeight: 22,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginTop: 8,
+    marginHorizontal: 8,
   },
   optionRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    minHeight: 52,
+    paddingHorizontal: Spacing.three,
+    gap: Spacing.three,
   },
-  toggleGroup: {
+  optionLabel: {
+    fontSize: 16,
+    fontWeight: "400",
+  },
+  segmentWrap: {
+    width: 190,
+  },
+  pickValue: {
+    flex: 1,
     flexDirection: "row",
-    borderRadius: Spacing.two,
-    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "flex-end",
     gap: Spacing.two,
   },
-  toggleButton: {
-    paddingVertical: Spacing.one,
+  pickValueText: {
+    flexShrink: 1,
+    fontSize: 16,
+    fontWeight: "400",
+  },
+  playBar: {
     paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.two,
-    borderWidth: 1,
-    borderColor: "transparent",
-    width: 100,
-    alignItems: "center",
-  },
-  pickTeamRow: {
-    marginTop: Spacing.one,
-    marginBottom: Spacing.one,
-  },
-  selectTeamButton: {
-    paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.two,
-    borderWidth: 1,
-    alignItems: "center",
-  },
-  playButton: {
-    paddingVertical: Spacing.three,
-    borderRadius: Spacing.two,
-    alignItems: "center",
-    margin: Spacing.three,
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  hidden: {
-    opacity: 0,
-  },
-  playSpinner: {
-    ...StyleSheet.absoluteFill,
-    alignItems: "center",
-    justifyContent: "center",
+    paddingTop: Spacing.two,
   },
   countdownOverlay: {
     ...StyleSheet.absoluteFill,
@@ -450,8 +435,9 @@ const styles = StyleSheet.create({
   },
   countdownNumber: {
     fontSize: 120,
-    fontWeight: "700",
+    fontWeight: "800",
     color: "#ffffff",
-    lineHeight: 120,
+    lineHeight: 130,
+    fontVariant: ["tabular-nums"],
   },
 });

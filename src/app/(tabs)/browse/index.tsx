@@ -1,18 +1,11 @@
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { type ComponentRef, useCallback, useEffect, useRef, useState } from "react";
-import {
-  FlatList,
-  Pressable,
-  SectionList,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useEffect, useState } from "react";
+import { FlatList, SectionList, StyleSheet } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { GroupedHeader, GroupedRow } from "@/components/ui/section";
 import { YearPicker } from "@/components/year-picker";
 import { Spacing } from "@/constants/theme";
 import { DIVISION_ORDER, divisionName } from "@/util/divisions";
@@ -54,13 +47,11 @@ export default function BrowseScreen() {
   const db = useSQLiteContext();
   const router = useRouter();
   const theme = useTheme();
-  const { top } = useSafeAreaInsets();
   const [year, setYear] = useState(2025);
   const [sections, setSections] = useState<Section[]>([]);
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
   const [results, setResults] = useState<PlayerResult[]>([]);
-  const inputRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   useEffect(() => {
     db.getAllAsync<Team>(
@@ -97,42 +88,28 @@ export default function BrowseScreen() {
 
   const searching = focused || query.length > 0;
 
-  const cancelSearch = useCallback(() => {
-    setQuery("");
-    setFocused(false);
-    inputRef.current?.blur();
-  }, []);
-
   return (
-    <ThemedView style={[styles.container, { paddingTop: top }]}>
-      <View style={styles.searchRow}>
-        <TextInput
-          ref={inputRef}
-          style={[
-            styles.searchInput,
-            { color: theme.text, backgroundColor: theme.backgroundElement },
-          ]}
-          placeholder="Search players..."
-          placeholderTextColor={theme.textSecondary}
-          value={query}
-          onChangeText={setQuery}
-          onFocus={() => setFocused(true)}
-          autoCorrect={false}
-          autoCapitalize="words"
-          returnKeyType="search"
-        />
-        {searching && (
-          <Pressable onPress={cancelSearch} style={styles.cancelButton}>
-            <ThemedText type="link">Cancel</ThemedText>
-          </Pressable>
-        )}
-      </View>
+    <ThemedView style={styles.container}>
+      <Stack.SearchBar
+        placeholder="Search players"
+        autoCapitalize="words"
+        tintColor={theme.tint}
+        onChangeText={(e) => setQuery(e.nativeEvent.text)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        onCancelButtonPress={() => {
+          setQuery("");
+          setFocused(false);
+        }}
+      />
 
       {searching ? (
         <FlatList
           data={results}
+          contentInsetAdjustmentBehavior="automatic"
           keyExtractor={(item) => item.playerID}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           contentContainerStyle={styles.list}
           ListEmptyComponent={
             query.trim().length > 0 ? (
@@ -144,10 +121,12 @@ export default function BrowseScreen() {
               </ThemedText>
             ) : undefined
           }
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => {
-                cancelSearch();
+          renderItem={({ item, index }) => (
+            <GroupedRow
+              index={index}
+              count={results.length}
+              chevron
+              onPress={() =>
                 router.push({
                   pathname: "/player/[playerID]",
                   params: {
@@ -155,24 +134,22 @@ export default function BrowseScreen() {
                     playerName: `${item.nameFirst} ${item.nameLast}`,
                     year: String(item.lastYear),
                   },
-                });
-              }}
-              style={({ pressed }) => pressed && styles.pressed}
+                })
+              }
             >
-              <ThemedView type="backgroundElement" style={styles.resultRow}>
-                <ThemedText>
-                  {item.nameFirst} {item.nameLast}
-                </ThemedText>
-                <ThemedText themeColor="textSecondary" type="small">
-                  {item.lastYear > 0 ? item.lastYear : "—"}
-                </ThemedText>
-              </ThemedView>
-            </Pressable>
+              <ThemedText style={styles.rowTitle}>
+                {item.nameFirst} {item.nameLast}
+              </ThemedText>
+              <ThemedText themeColor="textSecondary" type="small">
+                {item.lastYear > 0 ? item.lastYear : "—"}
+              </ThemedText>
+            </GroupedRow>
           )}
         />
       ) : (
         <SectionList
           sections={sections}
+          contentInsetAdjustmentBehavior="automatic"
           keyExtractor={(item) => item.teamID}
           contentContainerStyle={styles.list}
           stickySectionHeadersEnabled={false}
@@ -180,12 +157,13 @@ export default function BrowseScreen() {
             <YearPicker year={year} onYearChange={setYear} />
           }
           renderSectionHeader={({ section }) => (
-            <ThemedText type="smallBold" style={styles.sectionHeader}>
-              {section.title}
-            </ThemedText>
+            <GroupedHeader title={section.title} />
           )}
-          renderItem={({ item }) => (
-            <Pressable
+          renderItem={({ item, index, section }) => (
+            <GroupedRow
+              index={index}
+              count={section.data.length}
+              chevron
               onPress={() =>
                 router.push({
                   pathname: "/team/[teamID]",
@@ -196,17 +174,17 @@ export default function BrowseScreen() {
                   },
                 })
               }
-              style={({ pressed }) => pressed && styles.pressed}
             >
-              <ThemedView type="backgroundElement" style={styles.teamRow}>
-                <ThemedText style={styles.teamName}>{item.name}</ThemedText>
-                <ThemedText themeColor="textSecondary" type="small">
-                  {item.W}-{item.L}
-                </ThemedText>
-              </ThemedView>
-            </Pressable>
+              <ThemedText style={styles.rowTitle}>{item.name}</ThemedText>
+              <ThemedText
+                themeColor="textSecondary"
+                type="small"
+                style={styles.record}
+              >
+                {item.W}-{item.L}
+              </ThemedText>
+            </GroupedRow>
           )}
-          renderSectionFooter={() => <View style={styles.sectionFooter} />}
         />
       )}
     </ThemedView>
@@ -217,62 +195,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  searchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two,
-    gap: Spacing.two,
-  },
-  searchInput: {
-    flex: 1,
-    height: 40,
-    borderRadius: Spacing.two,
-    paddingHorizontal: Spacing.three,
-    fontSize: 16,
-  },
-  cancelButton: {
-    paddingVertical: Spacing.one,
-  },
   list: {
-    padding: Spacing.three,
-    paddingBottom: Spacing.six,
-  },
-  resultRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: Spacing.three,
     paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.two,
-    marginVertical: Spacing.half,
+    paddingBottom: Spacing.six,
   },
   emptyText: {
     textAlign: "center",
     paddingTop: Spacing.four,
   },
-  sectionHeader: {
-    textTransform: "uppercase",
-    paddingHorizontal: Spacing.three,
-    paddingTop: Spacing.three,
-    paddingBottom: Spacing.two,
-  },
-  sectionFooter: {
-    height: Spacing.two,
-  },
-  teamRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: Spacing.three,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.two,
-    marginVertical: Spacing.half,
-  },
-  teamName: {
+  rowTitle: {
     flex: 1,
+    fontWeight: "400",
   },
-  pressed: {
-    opacity: 0.7,
+  record: {
+    fontVariant: ["tabular-nums"],
   },
 });

@@ -1,10 +1,12 @@
 import { useSelector } from "@legendapp/state/react";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Platform, ScrollView, StyleSheet } from "react-native";
 
 import { GameRoundsTimeline } from "@/components/game-rounds-timeline";
+import { GameScoreHeader } from "@/components/game-score-header";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { Button } from "@/components/ui/button";
 import { Spacing } from "@/constants/theme";
 import gameModes from "@/metadata/game-modes.json";
 import { game$ } from "@/store/game-store";
@@ -24,6 +26,7 @@ export default function HistoryDetailScreen() {
   const headerInset = useHeaderInset();
   const { gameId } = useLocalSearchParams<{ gameId: string }>();
   const history = useSelector(() => game$.history.get() ?? []);
+  const router = useRouter();
 
   const game = history.find((g) => g.id === gameId);
 
@@ -37,6 +40,8 @@ export default function HistoryDetailScreen() {
   }
 
   const mode = activeModes.find((m) => m.id === game.modeId);
+  const shareScore = () =>
+    router.push({ pathname: "/game/share", params: { gameId: game.id } });
   const duration = formatDuration(game.finishedAt - game.startedAt);
 
   let w = 0;
@@ -49,30 +54,40 @@ export default function HistoryDetailScreen() {
   return (
     <ThemedView style={[styles.container, { paddingTop: headerInset }]}>
       <Stack.Screen options={{ title: "Game Details" }} />
+      {Platform.OS === "ios" && (
+        <Stack.Toolbar placement="right">
+          <Stack.Toolbar.Button
+            icon="square.and.arrow.up"
+            accessibilityLabel="Share score"
+            onPress={shareScore}
+          />
+        </Stack.Toolbar>
+      )}
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.headerRow}>
-          <ThemedText type="mediumBold">
-            {mode?.emoji} {mode?.name ?? "Game"}
-          </ThemedText>
-          <ThemedText type="mediumBold">{game.totalPoints} pts</ThemedText>
-        </View>
+        <GameScoreHeader
+          emoji={mode?.emoji}
+          name={mode?.name ?? "Game"}
+          points={game.totalPoints}
+          stats={[
+            { label: "Rounds", value: String(mode?.rounds ?? 0) },
+            { label: "Time", value: duration },
+            { label: "W-L", value: `${w}-${l}` },
+          ]}
+          footnote={
+            game.bonusPoints > 0
+              ? `Includes +${game.bonusPoints} bonus points`
+              : undefined
+          }
+        />
 
-        <View style={styles.metaRow}>
-          <ThemedText type="small" themeColor="textSecondary">
-            {mode?.rounds ?? 0} rounds
-          </ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            {duration}
-          </ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            W-L: {w}-{l}
-          </ThemedText>
-        </View>
-
-        {game.bonusPoints > 0 && (
-          <ThemedText type="small" themeColor="textSecondary">
-            Includes +{game.bonusPoints} bonus points
-          </ThemedText>
+        {Platform.OS === "android" && (
+          <Button
+            testID="history-share"
+            title="Share Score"
+            variant="tinted"
+            icon={{ android: "share" }}
+            onPress={shareScore}
+          />
         )}
 
         <GameRoundsTimeline
@@ -96,15 +111,5 @@ const styles = StyleSheet.create({
   },
   empty: {
     padding: Spacing.three,
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  metaRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
   },
 });

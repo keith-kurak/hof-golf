@@ -5,7 +5,13 @@ import {
 } from "expo-router/react-navigation";
 import { Stack } from "expo-router";
 import React from "react";
-import { Platform, StyleSheet, useColorScheme, View } from "react-native";
+import {
+  Platform,
+  PlatformColor,
+  StyleSheet,
+  useColorScheme,
+  View,
+} from "react-native";
 
 import { LahmanDatabaseProvider } from "@/components/lahman-database-provider";
 import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
@@ -16,13 +22,47 @@ export const unstable_settings = {
 
 const isWeb = Platform.OS === "web";
 
+const navigationThemes = {
+  light: {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: Colors.light.tint,
+      background: Colors.light.background,
+      card: Colors.light.backgroundElement,
+      border: Colors.light.separator,
+    },
+  },
+  dark: {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      primary: Colors.dark.tint,
+      background: Colors.dark.background,
+      card: Colors.dark.backgroundElement,
+      border: Colors.dark.separator,
+    },
+  },
+};
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const titleColor =
+    Platform.OS === "ios"
+      ? PlatformColor("label")
+      : Colors[colorScheme === "dark" ? "dark" : "light"].text;
 
   const content = (
     <LahmanDatabaseProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>
+      <ThemeProvider value={navigationThemes[colorScheme === "dark" ? "dark" : "light"]}>
+        <Stack
+          screenOptions={{
+            headerBackButtonDisplayMode: "minimal",
+            // iOS: a dynamic system color, so the title of an open screen
+            // follows a light/dark switch
+            headerTitleStyle: { color: titleColor },
+          }}
+        >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="team/[teamID]" options={{ title: "Roster" }} />
           <Stack.Screen
@@ -45,6 +85,13 @@ export default function RootLayout() {
             options={{
               presentation: "modal",
               title: "Game Summary",
+            }}
+          />
+          <Stack.Screen
+            name="game/share"
+            options={{
+              presentation: "modal",
+              title: "Share Score",
             }}
           />
           <Stack.Screen

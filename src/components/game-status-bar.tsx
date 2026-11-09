@@ -1,14 +1,16 @@
 import { useSelector } from "@legendapp/state/react";
 import { useRouter } from "expo-router";
+import { SymbolView } from "expo-symbols";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+
+import { Radius, Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 
 import gameModes from "@/metadata/game-modes.json";
 import { currentRound$, game$ } from "@/store/game-store";
 import type { GameMode } from "@/store/starting-pools";
 
 const activeModes = gameModes as GameMode[];
-
-const BAR_BG = "#2563EB";
 
 type Props = {
   hint: React.ReactNode;
@@ -20,6 +22,7 @@ export function GameStatusBar({ hint, trailing }: Props) {
   const active = useSelector(() => game$.active.get());
   const roundIdx = useSelector(currentRound$);
   const router = useRouter();
+  const theme = useTheme();
 
   if (!active || active.finished) return null;
 
@@ -29,7 +32,12 @@ export function GameStatusBar({ hint, trailing }: Props) {
     <Pressable
       testID="game-status-bar"
       onPress={() => router.push("/game/summary")}
-      style={({ pressed }) => [styles.bar, pressed && styles.barPressed]}
+      accessibilityHint="Shows the game summary"
+      style={({ pressed }) => [
+        styles.bar,
+        { backgroundColor: theme.tint },
+        pressed && styles.barPressed,
+      ]}
     >
       <View style={styles.topRow}>
         <View style={styles.left}>
@@ -43,6 +51,15 @@ export function GameStatusBar({ hint, trailing }: Props) {
           <View style={styles.divider} />
           <Text style={styles.stat}>{active.totalPoints} pts</Text>
           {trailing}
+          <SymbolView
+            name={{ ios: "chevron.right", android: "chevron_right", web: "chevron_right" }}
+            size={11}
+            weight="bold"
+            tintColor="rgba(255, 255, 255, 0.7)"
+            fallback={null}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          />
         </View>
       </View>
       {typeof hint === "string" ? (
@@ -56,14 +73,18 @@ export function GameStatusBar({ hint, trailing }: Props) {
 
 const styles = StyleSheet.create({
   bar: {
-    backgroundColor: BAR_BG,
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 10,
+    marginHorizontal: Spacing.three,
+    marginTop: Spacing.two,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: 10,
     gap: 4,
+    borderRadius: Radius.medium + 4,
+    borderCurve: "continuous",
+    boxShadow: "0 4px 14px rgba(40, 20, 120, 0.25)",
   },
   barPressed: {
-    opacity: 0.85,
+    opacity: 0.9,
+    transform: [{ scale: 0.99 }],
   },
   topRow: {
     flexDirection: "row",
@@ -80,7 +101,7 @@ const styles = StyleSheet.create({
   },
   label: {
     color: "#ffffff",
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "700",
   },
   right: {
@@ -89,22 +110,20 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   stat: {
-    color: "rgba(255, 255, 255, 0.9)",
+    color: "#ffffff",
     fontSize: 14,
     fontWeight: "600",
+    fontVariant: ["tabular-nums"],
   },
   divider: {
     width: 1,
     height: 14,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(255, 255, 255, 0.35)",
   },
   hint: {
-    color: "rgba(255, 255, 255, 0.75)",
+    color: "rgba(255, 255, 255, 0.8)",
     fontSize: 13,
     fontWeight: "500",
-  },
-  bonusActive: {
-    color: "#4ADE80",
   },
   hintRow: {
     gap: 2,

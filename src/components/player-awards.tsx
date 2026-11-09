@@ -1,10 +1,9 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Spacing } from "@/constants/theme";
+import { Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import type { AwardKey, AwardSeason, PlayerAward } from "@/util/awards";
 
@@ -26,16 +25,16 @@ function seasonLabel(s: AwardSeason) {
 }
 
 function SeasonChips({ seasons }: { seasons: AwardSeason[] }) {
+  const theme = useTheme();
   return (
     <View style={styles.chips}>
       {seasons.map((s) => (
-        <ThemedView
+        <View
           key={`${s.yearID}-${s.note ?? ""}`}
-          type="backgroundElement"
-          style={styles.chip}
+          style={[styles.chip, { backgroundColor: theme.fill }]}
         >
           <ThemedText type="tiny">{seasonLabel(s)}</ThemedText>
-        </ThemedView>
+        </View>
       ))}
     </View>
   );
@@ -88,22 +87,38 @@ function AwardRow({ award }: { award: PlayerAward }) {
 }
 
 export function PlayerAwards({ awards }: { awards: PlayerAward[] }) {
+  const theme = useTheme();
   if (awards.length === 0) return null;
 
   return (
     <View style={styles.section} testID="player-awards">
-      <ThemedText type="smallBold">Awards</ThemedText>
-      {awards.map((award) => (
-        <AwardRow key={award.key} award={award} />
-      ))}
+      <Text style={[styles.title, { color: theme.textSecondary }]}>Awards</Text>
+      <View style={[styles.card, { backgroundColor: theme.backgroundElement }]}>
+        {awards.map((award) => (
+          <AwardRow key={award.key} award={award} />
+        ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   section: {
-    gap: Spacing.two,
-    marginTop: Spacing.two,
+    marginTop: Spacing.three,
+  },
+  title: {
+    fontSize: 13,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
+    marginBottom: Spacing.two,
+    paddingHorizontal: Spacing.three,
+  },
+  card: {
+    gap: Spacing.three,
+    padding: Spacing.three,
+    borderRadius: Radius.card,
+    borderCurve: "continuous",
   },
   awardRow: {
     borderLeftWidth: 3,
@@ -117,7 +132,7 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   countBadge: {
-    borderRadius: Spacing.two,
+    borderRadius: Radius.pill,
     paddingHorizontal: Spacing.two,
     paddingVertical: Spacing.half,
   },
@@ -130,7 +145,7 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   chip: {
-    borderRadius: Spacing.one,
+    borderRadius: Radius.pill,
     paddingHorizontal: Spacing.two,
     paddingVertical: Spacing.half,
   },
